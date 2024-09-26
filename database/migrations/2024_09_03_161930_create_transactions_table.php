@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('logs', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
-            $table->foreignId('transaction_id')->nullable()->constrained();
-            $table->date('date');
+            $table->date('transaction_date');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->decimal('total_amount', 8, 2);
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('logs');
+        Schema::dropIfExists('transactions');
     }
 };

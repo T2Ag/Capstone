@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
-class Log extends Model
+class Transaction extends Model
 {
     use HasFactory;
 
@@ -16,9 +17,9 @@ class Log extends Model
         return $this->belongsTo(Client::class);
     }
 
-    public function transaction()
+    public function logs()
     {
-        return $this->belongsTo(Transaction::class);
+        return $this->hasMany(Log::class);
     }
 
 }

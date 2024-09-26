@@ -3,18 +3,44 @@
     
       <div class="bg-white min-h-[100rem] h-full"> 
           
-          <div class="modal fade" id="alert" tabindex="-1" aria-labelledby="alertTitle" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="alertTitle">Alert</h5>
-                    </div>
-                    <div class="modal-body">
-                      Success
-                    </div>
+        <div class="modal fade" id="alert" tabindex="-1" aria-labelledby="alertTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-light shadow-lg rounded-lg">
+              <div class="modal-body text-center py-5">
+                <div class="mb-4">
+                  
+                  <p class="text-2xl font-extrabold">
+                    <template v-if="showSuccess && clientData">
+                      <p class="text-success">Success</p>
+                    </template>
+                    <template v-else>
+                      <p class="text-danger">Error</p>
+                    </template>
+                  </p>
+                  <p class="text-lg font-semibold text-gray-700">
+                    <template v-if="showSuccess && clientData">
+                      <p>Welcome</p>
+                    </template>
+                    <template v-else>
+                      <p>Oops!</p>
+                    </template>
+                  </p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                  <p class="text-lg font-semibold text-gray-900">
+                    <template v-if="showSuccess && clientData">
+                      {{ clientData.first_name }} {{ clientData.last_name }}
+                    </template>
+                    <template v-else>
+                      {{ error || 'Client doesn\'t exist' }}
+                    </template>
+                  </p>
                 </div>
               </div>
+            </div>
           </div>
+        </div>
+
 
          <p>{{ error }}</p>
          
@@ -45,11 +71,14 @@ const error = ref('');
 const decodedString = ref('');
 const showSuccess = ref(false);
 const isScanningPaused = ref(false);
+const clientData = ref('');
+
+const props = defineProps({
+   logs: Array
+})
 
 const form = useForm({
-
   client_id: ''
-
 });
 
 async function onInit(promise) {
@@ -88,24 +117,37 @@ function onDecode(result) {
 
   // Submit the form after a successful scan
   form.post(route('logs.store'), {
-    onSuccess: () => {
+    onSuccess: (response) => {
       error.value = '';
       showSuccess.value = true;
       isScanningPaused.value = true;
+
+      clientData.value = response.props.client;
 
       const alertModal = new bootstrap.Modal(document.getElementById('alert'));
       alertModal.show();
 
       setTimeout(() => {
         alertModal.hide();
-        showSuccess.value = false;
-        isScanningPaused.value = false;
+        isScanningPaused.value = false; 
         decodedString.value = ''
-      }, 2000);
-
+      }, 4000);
     },
     onError: () => {
-      error.value = 'Failed to log. Client does not exist or other error.';
+      error.value = errors.client_id || 'Client not found or other error occurred';
+      showSuccess.value = false;
+      isScanningPaused.value = true;
+
+      clientData.value = null;
+
+      const alertModal = new bootstrap.Modal(document.getElementById('alert'));
+      alertModal.show();
+
+      setTimeout(() => {
+        alertModal.hide();
+        isScanningPaused.value = false;
+        decodedString.value = ''
+      }, 4000);
     }
   });
 }

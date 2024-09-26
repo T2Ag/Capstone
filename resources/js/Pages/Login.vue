@@ -39,7 +39,7 @@ const submit = () => {
                      type="text" 
                      name="username" 
                      placeholder="Enter your username" 
-                     class="border rounded w-full p-1 text-sm placeholder:text-xs placeholder:text-gray-400"
+                     class="border rounded w-full p-2 text-sm placeholder:text-xs placeholder:text-gray-400"
                   >
                   <div class="text-red-500 text-sm mb-1">{{ form.errors.username }}</div>
 
@@ -49,7 +49,7 @@ const submit = () => {
                      type="password" 
                      name="password" 
                      placeholder="Enter your password" 
-                     class="border rounded w-full p-1 text-sm placeholder:text-xs placeholder:text-gray-400"
+                     class="border rounded w-full p-2 text-sm placeholder:text-xs placeholder:text-gray-400"
                   >
                   <div class="text-red-500 text-sm mb-1">{{ form.errors.password }}</div>
 

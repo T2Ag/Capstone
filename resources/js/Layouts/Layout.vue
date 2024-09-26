@@ -38,6 +38,10 @@
             <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.logs}" id="submenu-logs">
                <Link :href="route('logs')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Scan</Link>
             </div>
+
+            <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.logs}" id="submenu-logs">
+               <Link :href="route('logs.list')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Logs List</Link>
+            </div>
          </div>
       
          <div class="clients mt-3 text-gray-700 flex flex-col text-[15px] font-bold">
@@ -50,6 +54,10 @@
       
             <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.clients}" id="submenu-clients">
                <Link :href="route('clients')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Clients List</Link>
+            </div>
+
+            <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.clients}" id="submenu-clients">
+               <Link :href="route('pending')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Pending</Link>
             </div>
          </div>
       

@@ -30,4 +30,14 @@ class Client extends Model
     {
         return $this->belongsTo(Registration::class);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(Log::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,7 +29,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/logs', [LogController::class, 'index'])->name('logs');
+    Route::get('/pending', [LogController::class, 'pending'])->name('pending');
+    Route::post('/transactions', [TransactionController::class, 'createTransaction'])->name('transactions.create');
+    Route::get('/logs/list', [LogController::class, 'list'])->name('logs.list');
     Route::post('/logs', [LogController::class, 'store'])->name('logs.store');
+    Route::post('/logs/manual', [LogController::class, 'manualStore'])->name('logs.manualStore');
+    Route::delete('/logs/{log}',[LogController::class, 'destroy'])->name('logs.destroy');
 });
 
 
