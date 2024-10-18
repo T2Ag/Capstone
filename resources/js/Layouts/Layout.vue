@@ -59,6 +59,10 @@
             <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.clients}" id="submenu-clients">
                <Link :href="route('pending')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Pending</Link>
             </div>
+
+            <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.clients}" id="submenu-clients">
+               <Link :href="route('transactions.index')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Transactions</Link>
+            </div>
          </div>
       
          <div class="users mt-3 text-gray-700 flex flex-col text-[15px] font-bold">

@@ -24,18 +24,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/clients', [ClientController::class, 'index'])->name('clients');
     Route::post('/clients',[ClientController::class, 'store'])->name('clients.store');
     Route::get('/clients/{client}', [ClientController::class, 'view'])->name('clients.view');
+    Route::post('/clients/{client}', [ClientController::class, 'updatePayment'])->name('clients.updatePayment');
     Route::delete('/clients/{client}',[ClientController::class, 'destroy'])->name('clients.destroy');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/logs', [LogController::class, 'index'])->name('logs');
-    Route::get('/pending', [LogController::class, 'pending'])->name('pending');
-    Route::post('/transactions', [TransactionController::class, 'createTransaction'])->name('transactions.create');
     Route::get('/logs/list', [LogController::class, 'list'])->name('logs.list');
     Route::post('/logs', [LogController::class, 'store'])->name('logs.store');
     Route::post('/logs/manual', [LogController::class, 'manualStore'])->name('logs.manualStore');
     Route::delete('/logs/{log}',[LogController::class, 'destroy'])->name('logs.destroy');
+    Route::get('/pending', [LogController::class, 'pending'])->name('pending');
+
 });
 
+Route::middleware('auth')->group(function () {
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::post('/transactions', [TransactionController::class, 'createTransaction'])->name('transactions.create');
+    Route::post('/transactionAndLog', [TransactionController::class, 'createTransactionWithLogs'])->name('transactions.createWithLog');
+
+});
 
     

@@ -9,31 +9,15 @@
               <div class="modal-body text-center py-5">
                 <div class="mb-4">
                   
-                  <p class="text-2xl font-extrabold">
-                    <template v-if="showSuccess && clientData">
-                      <p class="text-success">Success</p>
-                    </template>
-                    <template v-else>
-                      <p class="text-danger">Error</p>
-                    </template>
-                  </p>
-                  <p class="text-lg font-semibold text-gray-700">
-                    <template v-if="showSuccess && clientData">
-                      <p>Welcome</p>
-                    </template>
-                    <template v-else>
-                      <p>Oops!</p>
-                    </template>
-                  </p>
+                  {{ header }}
+                
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-md">
-                  <p class="text-lg font-semibold text-gray-900">
-                    <template v-if="showSuccess && clientData">
-                      {{ clientData.first_name }} {{ clientData.last_name }}
-                    </template>
-                    <template v-else>
-                      {{ error || 'Client doesn\'t exist' }}
-                    </template>
+                  <p>
+
+                    {{ decodedValue }}
+                    {{ client && client.first_name ? client.first_name : 'No Client Data' }}
+                    
                   </p>
                 </div>
               </div>
@@ -67,31 +51,30 @@ import { useForm } from '@inertiajs/vue3';
 import {QrcodeStream} from 'vue3-qrcode-reader';
 import Layout from '@/Layouts/Layout.vue';
 
-const error = ref('');
-const decodedString = ref('');
-const showSuccess = ref(false);
-const isScanningPaused = ref(false);
-const clientData = ref('');
-
 const props = defineProps({
-   logs: Array
+   logs: Array,
+   client: Object,
+   log: Object
 })
+
+const error = ref('');
+const header = ref('');
+const decodedValue = ref('');
+const isScanningPaused = ref(false);
 
 const form = useForm({
   client_id: ''
 });
 
 async function onInit(promise) {
-   error.value = '';
-
-  // show loading indicator
+  error.value = '';
 
   try {
     const { capabilities } = await promise;
 
-    // successfully initialized
-  } catch (error) {
-   if (err.name === 'NotAllowedError') {
+    // If successfully initialized
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
       error.value = 'User denied camera access permission';
     } else if (err.name === 'NotFoundError') {
       error.value = 'No suitable camera device installed';
@@ -107,49 +90,51 @@ async function onInit(promise) {
       error.value = 'An unknown error occurred';
     }
   } finally {
-    // hide loading indicator
+    // Hide loading indicator (if any)
   }
-};
+}
 
 function onDecode(result) {
-  decodedString.value = result;
+  // If no result is found, return early
+  if (!result) return;
+
+  // Assign the decoded value to the client_id field in the form
   form.client_id = result;
 
-  // Submit the form after a successful scan
+  // Post the data to the logs store route
   form.post(route('logs.store'), {
     onSuccess: (response) => {
-      error.value = '';
-      showSuccess.value = true;
-      isScanningPaused.value = true;
+      // Safeguard against null references for log or transaction_id
+      if (response.props.log && response.props.log.transaction_id === null) {
+        header.value = 'Please Pay At the Cashier';
+      } else if (response.props.log) {
+        header.value = 'Payment Successful, Please Proceed';
+      } else {
+        header.value = 'Log data is missing';
+      }
 
-      clientData.value = response.props.client;
-
-      const alertModal = new bootstrap.Modal(document.getElementById('alert'));
-      alertModal.show();
-
-      setTimeout(() => {
-        alertModal.hide();
-        isScanningPaused.value = false; 
-        decodedString.value = ''
-      }, 4000);
+      decodedValue.value = result;
+      showAlertModal();
     },
     onError: () => {
-      error.value = errors.client_id || 'Client not found or other error occurred';
-      showSuccess.value = false;
-      isScanningPaused.value = true;
-
-      clientData.value = null;
-
-      const alertModal = new bootstrap.Modal(document.getElementById('alert'));
-      alertModal.show();
-
-      setTimeout(() => {
-        alertModal.hide();
-        isScanningPaused.value = false;
-        decodedString.value = ''
-      }, 4000);
+      header.value = 'Error';
+      decodedValue.value = 'Client Doesn\'t Exist';
+      showAlertModal();
     }
   });
+}
+
+function showAlertModal() {
+  isScanningPaused.value = true;
+
+  const alertModal = new bootstrap.Modal(document.getElementById('alert'));
+  alertModal.show();
+
+  setTimeout(() => {
+    alertModal.hide();
+    error.value = '';
+    isScanningPaused.value = false;
+  }, 4000);
 }
 
 </script>

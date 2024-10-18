@@ -1,7 +1,10 @@
 <template>
    <Layout>
-      
-      <div class="p-6">
+      <div class="px-2 py-2">
+         <p class="text-[30px] text-gray-600">CLIENTS LIST</p>
+      </div>
+
+      <div class="px-2 py-2">
 
          <div class="flex justify-end my-2">
             <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">
@@ -12,6 +15,45 @@
          <CreateClientModal :users="users" :registrations="registrations" :trainings="trainings" :payment_methods="payment_methods" :roles="roles"/>
 
          <div class="bg-white shadow-md rounded overflow-hidden p-3">
+
+            <!-- Filter by Date -->
+             <div class="flex justify-end pb-2">
+
+               <div class="flex items-center align-middle pr-2">
+                  <input type="checkbox" id="member_filter" v-model="form.member_filter" @change="filterClients" class="m-1">
+                  <label for="member_filter" class="text-gray-500">Members</label>
+               </div>
+
+               <div class="text-center pr-2">
+                  <label for="date_filter" class="text-gray-500">Year</label>
+
+                  <select v-model="form.year_filter" @change="filterClients" class="form-select" name="year_filter">
+                     <option value="all">All Years</option>
+                     <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                  </select>
+
+               </div>
+               <div class="text-center pr-2">
+                  <label for="month_filter" class="text-gray-500">Month</label>
+                  <select v-model="form.month_filter" @change="filterClients" class="form-select" name="month_filter">
+                     <option value="all">All Months</option>
+                     <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
+                  </select>
+               </div>
+               <div class="text-center">
+                  <label for="registration_type" class="text-gray-500">Registration Type</label>
+                  <select v-model="form.registration_type" @change="filterClients" class="form-select" name="registration_type">
+                     <option value="all">All Types</option>
+                     <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
+                           {{ registration.type }}
+                     </option>
+                  </select>
+               </div>
+
+             </div>
+
+
+
             <table class="w-full text-left text-gray-500 bg-white">
                <thead class="text-l text-700 uppercase bg-gray-100">
                   <tr class="text-center">
@@ -27,10 +69,10 @@
                <tbody>
                   <tr v-for="client in clients" :key="client.id" class="text-center ">
                      <td>{{ client.id }}</td>
-                     <td> {{ client.last_name }}, {{ client.first_name }} </td>
+                     <td>  {{ client.first_name }} {{ client.last_name }} </td>
                      <td> {{ client.registration.type }} </td>
                      <td> {{ client.payment_method.type }} </td>
-                     <td> {{ client.date }}</td>
+                     <td> {{ formatDate(client.date) }}</td>
                      <td> {{ isMember(client) }} </td>
 
                      <td>
@@ -79,8 +121,8 @@
 
 import Layout from '@/Layouts/Layout.vue';
 import CreateClientModal from '@/Components/UserModals/CreateClientModal.vue'
-import { useForm } from '@inertiajs/vue3';
-import {ref} from 'vue';
+import { useForm, router } from '@inertiajs/vue3';
+import {ref, computed} from 'vue';
 
 const props = defineProps({
    users: Array,
@@ -88,7 +130,9 @@ const props = defineProps({
    clients: Array,
    registrations: Array, 
    trainings: Array,
-   payment_methods: Array
+   payment_methods: Array,
+   year_filter: String,
+   month_filter: String
  });
 
  function isMember(client) {
@@ -130,4 +174,45 @@ const deleteUser = () => {
       }
    });
 };
+
+// Generate years starting from 2020 to the current year
+const currentYear = new Date().getFullYear();
+const years = computed(() => Array.from({ length: currentYear - 2020 + 1 }, (_, i) => 2020 + i));
+
+//Months
+const months = [
+   { value: '01', label: 'January' },
+   { value: '02', label: 'February' },
+   { value: '03', label: 'March' },
+   { value: '04', label: 'April' },
+   { value: '05', label: 'May' },
+   { value: '06', label: 'June' },
+   { value: '07', label: 'July' },
+   { value: '08', label: 'August' },
+   { value: '09', label: 'September' },
+   { value: '10', label: 'October' },
+   { value: '11', label: 'November' },
+   { value: '12', label: 'December' }
+];
+
+const form = useForm({
+   year_filter: props.year_filter || 'all',
+   month_filter : props.month_filter  || 'all',
+   registration_type : props.registration_type || 'all',
+   member_filter : props.member_filter || false
+})
+
+const filterClients = () => {
+   router.get(route('clients'), { 
+      year_filter: form.year_filter,
+      month_filter: form.month_filter,
+      registration_type: form.registration_type,
+      member_filter : form.member_filter
+   }, {
+      preserveState: true,
+      preserveScroll: true,
+   });
+};
+
+
 </script>

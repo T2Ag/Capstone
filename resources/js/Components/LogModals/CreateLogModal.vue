@@ -33,39 +33,82 @@
        </div>
      </div>
    </div>
- </template>
- 
- <script setup>
- import { ref } from 'vue';
- import { useForm } from '@inertiajs/vue3';
- 
- const props = defineProps({
-    clients: Array
- });
- 
- const form = useForm({
-   client_id: ''
- });
- 
- const errors = ref({});
- 
- const submit = () => {
-   errors.value = {};
-   form.post(route('logs.manualStore'), {
-     onError: (errors) => {
-       errors.value = errors;
-     },
-     onSuccess: () => {
-       form.reset();
-       const modalElement = document.querySelector('#createModal');
-       if (modalElement) {
-         const modal = bootstrap.Modal.getInstance(modalElement);
-         if (modal) {
-           modal.hide();
-         }
-       }
-     }
-   });
-  };
+
+  <!-- Alert Modal -->
+  <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-light shadow-lg rounded-lg">
+        <div class="modal-body text-center py-5">
+          <div class="mb-4">
+            {{ header }}
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-md">
+            <p>
+              {{ alertMessage }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { useForm } from '@inertiajs/vue3';
+
+const props = defineProps({
+  clients: Array
+});
+
+const form = useForm({
+  client_id: ''
+});
+
+const errors = ref({});
+const header = ref('');
+const alertMessage = ref('');
+
+const submit = () => {
+  errors.value = {};
+  form.post(route('logs.manualStore'), {
+    onError: (errors) => {
+      errors.value = errors;
+    },
+    onSuccess: (response) => {
+      form.reset();
+      const createModalElement = document.querySelector('#createModal');
+      if (createModalElement) {
+        const createModal = bootstrap.Modal.getInstance(createModalElement);
+        if (createModal) {
+          createModal.hide();
+        }
+      }
+      
+       // Set header and alert message based on response
+      if (response.props.log && response.props.log.transaction_id === null) {
+        header.value = 'Please Pay At the Cashier';
+        alertMessage.value = `Log created for ${response.props.client.first_name} ${response.props.client.last_name}. Payment required.`;
+      } else if (response.props.log) {
+        header.value = 'Payment Successful, Please Proceed';
+        alertMessage.value = `Log created for ${response.props.client.first_name} ${response.props.client.last_name}. Payment confirmed.`;
+      } else {
+        header.value = 'Log Data is Missing';
+        alertMessage.value = 'An error occurred while creating the log. Please try again.';
+      }
+
+      showAlertModal();
+    }
+  });
+};
+
+const showAlertModal = () => {
+  const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+  alertModal.show();
+
+  setTimeout(() => {
+    alertModal.hide();
+  }, 4000);
+};
  </script>
  

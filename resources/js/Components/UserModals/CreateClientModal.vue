@@ -134,17 +134,6 @@
                       <span class="text-red-500">{{ form.errors.password_confirmation }}</span>
                     </div>
 
-                    <div class="col-md-12 mb-3">
-                      <label for="role" class="form-label">Roles</label>
-                      <div v-for="role in roles" :key="role.id" class="form-check">
-                        <input class="form-check-input" type="radio" :id="'role-' + role.id" :value="role.name" v-model="form.role">
-                        <label class="form-check-label capitalize" :for="'role-' + role.id">
-                          {{ role.name }}
-                        </label>
-                      </div>
-                      <span v-if="form.errors.role" class="text-red-500">{{ form.errors.role }}</span>
-                    </div>
-
                   </div>
                 </div>
               </div>

@@ -40,4 +40,27 @@ class Client extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function scopeFilter($query, array $filters) 
+    {
+        if (isset($filters['year_filter']) && $filters['year_filter'] !== 'all') {
+            $query->whereYear('created_at', $filters['year_filter']);
+        }
+    
+        if (isset($filters['month_filter']) && $filters['month_filter'] !== 'all') {
+            $query->whereMonth('created_at', $filters['month_filter']);
+        }
+
+        if (isset($filters['registration_type']) && $filters['registration_type'] !== 'all') {
+            $query->whereHas('registration', function($q) use ($filters) {
+                $q->where('type', $filters['registration_type']);
+            });
+        }
+
+        if (isset($filters['member_filter']) && $filters['member_filter']) {
+            $query->whereNotNull('user_id');
+        }
+
+        return $query;
+    }
 }
