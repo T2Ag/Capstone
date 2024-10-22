@@ -1,5 +1,8 @@
 <template>
    <Layout>
+      <div class="px-2 py-2">
+         <p class="text-[30px] text-gray-600">USERS LIST</p>
+      </div>
      <div class="p-6">
        <div class="flex justify-end my-2">
          <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">

@@ -16,7 +16,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header flex justify-between">
-              <h5 class="modal-title" id="createModalTitle">Create User</h5>
+              <h5 class="modal-title" id="createModalTitle">Create Log</h5>
               <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -24,13 +24,23 @@
             <form @submit.prevent="submit">
               <div class="modal-body">
                <div class="mb-3">
-                  <label for="create-client_id" class="form-label">Client</label>
-                  <select class="form-control" id="create-client_id" v-model="form.client_id">
+                  <label for="create-client_id" class="form-label">Select Client</label>
+                  <div class="input-group">
+                     <input list="clients_options" class="form-control" id="clients" name="clients" autocomplete="off" type="text" v-model="selectedClientName" @input="updateClientId" placeholder="Search and select a client">
+                     <datalist id="clients_options">
+                        <option v-for="client in clients">
+                           {{ client.first_name }} {{ client.last_name }}
+                        </option>
+                     </datalist>
+                     <input type="hidden" name="client_id" v-model="form.client_id"/>
+                  </div>
+                  
+                  <!-- <select class="form-control" id="create-client_id" v-model="form.client_id">
                      <option value="">Select a Client</option>
                      <option v-for="client in clients" :key="client.id" :value="client.id">
                      {{ client.first_name }} {{ client.last_name }}
                      </option>
-                  </select>
+                  </select> -->
                   <span class="text-red-500">{{ form.errors.client_id }}</span>
                </div>
               </div>
@@ -145,9 +155,12 @@
      form.post(route('logs.manualStore'), {
        onError: (errors) => {
          errors.value = errors;
+         form.reset();
        },
        onSuccess: (response) => {
+
          form.reset();
+
          const createModalElement = document.querySelector('#createModal');
          if (createModalElement) {
            const createModal = bootstrap.Modal.getInstance(createModalElement);
@@ -164,8 +177,9 @@
             header.value = 'Payment Successful, Please Proceed';
             alertMessage.value = `Log created for ${props.createdClient.first_name} ${props.createdClient.last_name}. Payment confirmed.`;
          }
-   
+
          showAlertModal();
+
        }
      });
    };
@@ -212,4 +226,26 @@
          }
       });
    };
-   </script>
+
+// To hold the displayed client name
+const selectedClientName = ref('');
+
+// Update client ID when a name is selected from the datalist
+const updateClientId = () => {
+  const client = props.clients.find(
+    c => `${c.first_name} ${c.last_name}` === selectedClientName.value
+  );
+  
+  if (client) {
+      form.client_id = client.id;
+  } else {
+      form.client_id = '';
+  }
+};
+
+//reseting client name
+const resetSelectedClientName = () => {
+    setSelectedClientName('');
+  };
+
+</script>
