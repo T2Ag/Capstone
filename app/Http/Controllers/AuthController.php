@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -20,7 +22,21 @@ class AuthController extends Controller
 
     public function dashboard()
     {
-        return Inertia::render('Home');
+        $gymVisits = Log::selectRaw(
+            "strftime('%m', date) as month, COUNT(DISTINCT client_id) as total_visits"
+        )
+        ->whereNotNull('transaction_id')
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get();
+    
+        $months = $gymVisits->map(fn($item) => Carbon::createFromFormat('m', $item->month)->format('F'));
+        $totals = $gymVisits->pluck('total_visits'); 
+    
+        return Inertia::render('Home', [
+            'months' => $months,
+            'totals' => $totals,
+        ]);
     }
 
     public function loginPost(Request $request)
