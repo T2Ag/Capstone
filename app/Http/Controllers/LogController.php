@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Log;
+use App\Models\PaymentMethod;
+use App\Models\Registration;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,48 +25,68 @@ class LogController extends Controller
         ]);
     }
 
-    public function pending()
+    public function pending(Request $request)
     {
-        // Retrieve logs with overdue transactions, filtering based on last transaction's end_date
-        // $overdueLogs = Log::with(['client', 'client.registration', 'client.payment_method', 'client.transactions'])
-        // ->whereHas('client', function ($query) {
-        //     $query->whereHas('transactions', function ($transactionQuery) {
-        //         $transactionQuery->whereRaw('logs.date > (
-        //             SELECT MAX(end_date)
-        //             FROM transactions
-        //             WHERE transactions.client_id = logs.client_id
-        //         )');
-        //     });
-        // })
-        // ->orderBy('date', 'asc')
-        // ->get();
     
         // Retrieve logs that don't have any transactions, regardless of payment method type
         $noTransactionLogs = Log::with(['client', 'client.registration', 'client.payment_method', 'client.transactions'])
+            ->filter([
+                'year_filter' => $request->input('year_filter'),
+                'month_filter' => $request->input('month_filter'),
+                'registration_type' => $request->input('registration_type'),
+                'payment_method' => $request->input('payment_method'),
+                // 'member_filter' => $request->boolean('member_filter'),
+                // 'date_filter' => $request->input('date_filter')
+            ])
             ->whereNull('transaction_id')
             ->orderBy('date', 'desc')
             ->get();
-    
-        // Combine the logs
-        // $combinedLogs = $overdueLogs->merge($noTransactionLogs);
-    
+
+        $registrations = Registration::all(); 
+        $paymentMethods = PaymentMethod::all();
+
         return Inertia::render('Clients_/Pending', [
             'logs' => $noTransactionLogs,
+            'registrations' => $registrations,
+            'paymentMethods' => $paymentMethods,
+            'year_filter' => $request->year_filter,
+            'month_filter' => $request->month_filter,
+            'registration_type' => $request->registration_type,
+            'payment_method' => $request->payment_method,
         ]);
     }
     
 
-    public function list()
+    public function list(Request $request)
     {
         $clients = Client::get();
-        $logs = Log::with('client')->orderBy('created_at', 'desc')->get();
+        $logs = Log::with('client', 'client.payment_method')->orderBy('created_at', 'desc')
+        ->filter([
+            'year_filter' => $request->input('year_filter'),
+            'month_filter' => $request->input('month_filter'),
+            'registration_type' => $request->input('registration_type'),
+            'payment_method' => $request->input('payment_method'),
+            // 'member_filter' => $request->boolean('member_filter'),
+            // 'date_filter' => $request->input('date_filter')
+        ])
+        ->paginate(10);
+
+        $registrations = Registration::all(); 
+        $paymentMethods = PaymentMethod::all();
     
         return Inertia::render('Logs_/List', [
             'logs' => $logs,
             'clients' => $clients,
+            'registrations' => $registrations,
+            'paymentMethods' => $paymentMethods,
             'createdLog' => session('createdLog'),
             'createdClient' => session('createdClient'),
-            'success' => session('success')
+            'success' => session('success'),
+            'year_filter' => $request->year_filter,
+            'month_filter' => $request->month_filter,
+            'registration_type' => $request->registration_type,
+            'payment_method' => $request->payment_method,
+
         ]);
     }
 

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Log;
 use App\Models\PaymentMethod;
 use App\Models\Registration;
 use App\Models\Training;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,10 +25,11 @@ class ClientController extends Controller
             'month_filter' => $request->input('month_filter'),
             'registration_type' => $request->input('registration_type'),
             'member_filter' => $request->boolean('member_filter'),
-            // Add more filters here as needed
+            'date_filter' => $request->input('date_filter'),
+            'search' => $request->input('search')
         ])
-        ->get();
-
+        ->paginate(10);
+            
         $users = User::all();
         $trainings = Training::all();
         $registrations = Registration::all(); 
@@ -44,6 +47,8 @@ class ClientController extends Controller
             'month_filter' => $request->month_filter,
             'registration_type' => $request->registration_type,
             'member_filter' => $request->member_filter,
+            'date_filter' => $request->date_filter,
+            'search' => $request->search,
         ]);
     }
 
@@ -93,10 +98,17 @@ class ClientController extends Controller
     {   
         $payment_methods = PaymentMethod::all();
         $client = Client::with(['payment_method', 'transactions', 'user', 'registration', 'training', 'logs'])->findOrFail($id);
+        
+        $logs = Log::with('client')->where('client_id', $id)->paginate(10);
+
+        $transactions = Transaction::with('client')->where('client_id', $id)->paginate(10);
 
         return Inertia::render('Clients_/View', [
             'client' => $client,
-            'payment_methods' => $payment_methods
+            'payment_methods' => $payment_methods,
+            'logs' => $logs,
+            'transactions' => $transactions,
+
         ]);
     }
 
@@ -107,7 +119,9 @@ class ClientController extends Controller
 
         $client->update(['payment_method_id' => $newPaymentMethod->id]);
 
-        return redirect()->back()->with('success', 'Payment method updated successfully.');
+        return redirect()->back()->with([
+            'success' => 'Log created successfully.',
+        ]);
     }
 
     public function destroy(Client $client) 
@@ -115,5 +129,23 @@ class ClientController extends Controller
         $client->delete();
 
         return redirect()->route('clients')->with('success', 'Client Deleted successfully.');
+    }
+
+    public function destroyLog(Log $log)
+    {
+        if ($log->transaction) {
+            $log->transaction->delete();
+        }
+        $log->delete();
+
+        return redirect()->back()->with('success', 'Log Deleted successfully.');
+    }
+
+    public function destroyTransaction(Transaction $transaction)
+    {
+
+        $transaction->delete();
+
+        return redirect()->back()->with('success', 'Transaction Deleted successfully.');
     }
 }

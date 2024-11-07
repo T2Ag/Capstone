@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Client extends Model
 {
@@ -61,6 +62,20 @@ class Client extends Model
             $query->whereNotNull('user_id');
         }
 
+        if (isset($filters['date_filter']) && $filters['date_filter'] !== '') {
+            $query->whereDate('created_at', $filters['date_filter']);
+        }
+
+        if ($filters['search'] ?? false) {
+            $query->where(function ($query) {
+                $search = request('search');
+                $query->where('first_name', 'like', '%' . $search . '%')
+                      ->orWhere('last_name', 'like', '%' . $search . '%')
+                      ->orWhere(DB::raw("first_name || ' ' || last_name"), 'like', '%' . $search . '%');
+            });
+        }
+
         return $query;
     }
+
 }

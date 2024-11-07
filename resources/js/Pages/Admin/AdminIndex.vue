@@ -1,10 +1,9 @@
 <template>
    <Layout>
-      @can('create')
       <div class=" p-3 ">
 
          <div class="pb-4">
-            <p class="text-[30px] text-gray-600">DASHBOARD</p>
+            <p class="text-[30px] text-gray-600">ADMIN DASHBOARD</p>
          </div>
 
          <!-- Summary -->
@@ -123,19 +122,17 @@
             </div>
          </div>
       </div>
-      @endcan
 
-      @can('edit')
-      <div>
+      <!-- <div>
          <p>Another Permission</p>
-      </div>
-      @endcan
+      </div> -->
+
    </Layout>
 </template>
 
 <script setup>
-import Layout from '../Layouts/Layout.vue';
-import ClientsChart from '../Components/Charts/ClientsChart.vue';
+import Layout from '../../Layouts/Layout.vue';
+import ClientsChart from '../../Components/Charts/ClientsChart.vue';
 
 const props = defineProps({
    months: Array,

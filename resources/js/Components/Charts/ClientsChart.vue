@@ -95,6 +95,6 @@ onBeforeUnmount(() => {
 div {
   position: relative;
   height: 400px;
-  width: 600px;
+  width: 900px;
 }
 </style>

@@ -71,20 +71,65 @@
         </div>
       </div>
    
-      <div class="mx-2">
+      <div class="bg-white shadow-md rounded overflow-hidden p-3 m-2">
+
+         <!-- Filter by Date -->
+         <div class="flex justify-end pb-2">
+
+            <div class="text-center pr-2">
+            <label for="date_filter" class="text-gray-500">Year</label>
+
+            <select v-model="filterForm.year_filter" @change="filterLogs" class="form-select" name="year_filter">
+                  <option value="all">All Years</option>
+                  <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+            </select>
+
+            </div>
+            <div class="text-center pr-2">
+            <label for="month_filter" class="text-gray-500">Month</label>
+            <select v-model="filterForm.month_filter" @change="filterLogs" class="form-select" name="month_filter">
+                  <option value="all">All Months</option>
+                  <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
+            </select>
+            </div>
+
+            <div class="text-center pr-2">
+               <label for="registration_type" class="text-gray-500">Registration Type</label>
+               <select v-model="filterForm.registration_type" @change="filterLogs" class="form-select" name="registration_type">
+                     <option value="all">All Types</option>
+                     <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
+                           {{ registration.type }}
+                     </option>
+               </select>
+            </div>
+
+            <div class="text-center pr-2">
+               <label for="payment_method" class="text-gray-500">Payment Type</label>
+               <select v-model="filterForm.payment_method" @change="filterLogs" class="form-select" name="payment_method">
+                     <option value="all">All Types</option>
+                     <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
+                           {{ paymentMethod.type }}
+                     </option>
+               </select>
+            </div>
+
+         </div>
+
          <div class="bg-white shadow-md rounded overflow-hidden p-3">
             <table class="w-full text-left text-gray-500 bg-white">
                <thead class="text-l text-700 uppercase bg-gray-100">
                   <tr class="text-center">
                      <th scope="col" class="lg:px-5 px-3 py-3">CLIENT</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Time</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
                   </tr>
                </thead>
                <tbody>
-                  <tr v-for="log in logs" :key="log.id" class="text-center ">
+                  <tr v-for="log in logs.data" :key="log.id" class="text-center ">
                      <td>{{ log.client.first_name }} {{ log.client.last_name }}</td>
+                     <td>{{ log.client.payment_method.type }}</td>
                      <td>{{ formatDate(log.date) }}</td>
                      <td>{{ formatTime(log.date) }}</td>
                      <td>
@@ -97,6 +142,9 @@
                   </tr>
                </tbody>
             </table>
+
+            <Pagination class="flex mt-4 justify-end" :links="logs.links" />
+
          </div>
    
          <!-- Delete Log Modal -->
@@ -121,131 +169,181 @@
    </Layout>
    </template>
     
-   <script setup>
-   import { ref } from 'vue';
-   import { useForm } from '@inertiajs/vue3';
-   import Layout from '@/Layouts/Layout.vue';
-   
+<script setup>
+import { ref, computed } from 'vue';
+import { useForm, router } from '@inertiajs/vue3';
+import Layout from '@/Layouts/Layout.vue';
+import Pagination from '../../Components/Pagination.vue';
 
-   const props = defineProps({
-      logs: Array,
-      clients: Array,
-      createdLog: Object,
-      createdClient: Object,
-      success: String
-   });
-   
-   const form = useForm({
-     client_id: ''
-   });
-   
-   const deleteForm = useForm({
-      id: null,
-      client_id: '',
-      first_name: '',
-      last_name: '',
-   });
-   
-   const errors = ref({});
-   const header = ref('');
-   const alertMessage = ref('');
-   
-   const submit = () => {
-     errors.value = {};
-     form.post(route('logs.manualStore'), {
-       onError: (errors) => {
-         errors.value = errors;
-         form.reset();
-       },
-       onSuccess: (response) => {
 
-         form.reset();
+const props = defineProps({
+   logs: (Array, Object),
+   clients: Array,
+   createdLog: Object,
+   createdClient: Object,
+   success: String,
+   year_filter: String,
+   month_filter: String,
+   registrations: Array,
+   paymentMethods: Array
+});
 
-         const createModalElement = document.querySelector('#createModal');
-         if (createModalElement) {
-           const createModal = bootstrap.Modal.getInstance(createModalElement);
-           if (createModal) {
-             createModal.hide();
-           }
+const form = useForm({
+   client_id: ''
+});
+
+const deleteForm = useForm({
+   id: null,
+   client_id: '',
+   first_name: '',
+   last_name: '',
+});
+
+const errors = ref({});
+const header = ref('');
+const alertMessage = ref('');
+
+const submit = () => {
+   errors.value = {};
+   form.post(route('logs.manualStore'), {
+      onError: (errors) => {
+      errors.value = errors;
+      form.reset();
+      },
+      onSuccess: (response) => {
+
+      form.reset();
+
+      const createModalElement = document.querySelector('#createModal');
+      if (createModalElement) {
+         const createModal = bootstrap.Modal.getInstance(createModalElement);
+         if (createModal) {
+            createModal.hide();
          }
-         
-         // Set header and alert message based on response
-         if (props.createdLog.transaction_id === null) {
-            header.value = 'Please Pay At the Cashier';
-            alertMessage.value = `Log created for ${props.createdClient.first_name} ${props.createdClient.last_name}. Payment required.`;
-         } else {
-            header.value = 'Payment Successful, Please Proceed';
-            alertMessage.value = `Log created for ${props.createdClient.first_name} ${props.createdClient.last_name}. Payment confirmed.`;
-         }
+      }
+      
+      // Set header and alert message based on response
+      if (props.createdLog.transaction_id === null) {
+         header.value = 'Please Pay At the Cashier';
+         alertMessage.value = `Log created for ${props.createdClient.first_name} ${props.createdClient.last_name}. Payment required.`;
+      } else {
+         header.value = 'Payment Successful, Please Proceed';
+         alertMessage.value = `Log created for ${props.createdClient.first_name} ${props.createdClient.last_name}. Payment confirmed.`;
+      }
 
-         showAlertModal();
+      showAlertModal();
+      resetSelectedClientName();
 
-       }
-     });
-   };
-   
-   const showAlertModal = () => {
-     const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
-     alertModal.show();
-   
-     setTimeout(() => {
-       alertModal.hide();
-     }, 4000);
-   };
-   
-   const openDeleteModal = (log) => {
-      deleteForm.id = log.id;
-      deleteForm.client_id = log.client_id;
-      deleteForm.first_name = log.client.first_name;
-      deleteForm.last_name = log.client.last_name;
-   };
-   
-   function formatDate(dateString) {
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Date(dateString).toLocaleDateString(undefined, options);
-   }
-   
-   function formatTime(dateString) {
-      const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
-      return new Date(dateString).toLocaleTimeString(undefined, options);
-   }
-   
-   const deleteLog = () => {
-      deleteForm.delete(route('logs.destroy', deleteForm.id), {
-         onError: (errors) => {
-            console.error(errors);
-         },
-         onSuccess: () => {
-            const modalElement = document.querySelector('#deleteModal');
-            if(modalElement) {
-               const modal = bootstrap.Modal.getInstance(modalElement);
-               if (modal) {
-                  modal.hide();
-               }
+
+      }
+   });
+};
+
+const showAlertModal = () => {
+   const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+   alertModal.show();
+
+   setTimeout(() => {
+      alertModal.hide();
+   }, 4000);
+
+
+};
+
+const openDeleteModal = (log) => {
+   deleteForm.id = log.id;
+   deleteForm.client_id = log.client_id;
+   deleteForm.first_name = log.client.first_name;
+   deleteForm.last_name = log.client.last_name;
+};
+
+function formatDate(dateString) {
+   const options = { year: 'numeric', month: 'long', day: 'numeric' };
+   return new Date(dateString).toLocaleDateString(undefined, options);
+}
+
+function formatTime(dateString) {
+   const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+   return new Date(dateString).toLocaleTimeString(undefined, options);
+}
+
+const deleteLog = () => {
+   deleteForm.delete(route('logs.destroy', deleteForm.id), {
+      onError: (errors) => {
+         console.error(errors);
+      },
+      onSuccess: () => {
+         const modalElement = document.querySelector('#deleteModal');
+         if(modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+               modal.hide();
             }
          }
-      });
-   };
+      }
+   });
+};
 
 // To hold the displayed client name
 const selectedClientName = ref('');
 
 // Update client ID when a name is selected from the datalist
 const updateClientId = () => {
-  const client = props.clients.find(
-    c => `${c.first_name} ${c.last_name}` === selectedClientName.value
-  );
-  
-  if (client) {
-      form.client_id = client.id;
-  } else {
-      form.client_id = '';
-  }
+const client = props.clients.find(
+   c => `${c.first_name} ${c.last_name}` === selectedClientName.value
+);
+
+if (client) {
+   form.client_id = client.id;
+} else {
+   form.client_id = '';
+}
 };
 
 //reseting client name
 const resetSelectedClientName = () => {
-    setSelectedClientName('');
-  };
+   selectedClientName.value = ''
+};
+
+const currentYear = new Date().getFullYear();
+const years = computed(() => Array.from({ length: currentYear - 2020 + 1 }, (_, i) => 2020 + i));
+
+const months = [
+   { value: '01', label: 'January' },
+   { value: '02', label: 'February' },
+   { value: '03', label: 'March' },
+   { value: '04', label: 'April' },
+   { value: '05', label: 'May' },
+   { value: '06', label: 'June' },
+   { value: '07', label: 'July' },
+   { value: '08', label: 'August' },
+   { value: '09', label: 'September' },
+   { value: '10', label: 'October' },
+   { value: '11', label: 'November' },
+   { value: '12', label: 'December' }
+];
+
+const filterForm = useForm({
+   year_filter: props.year_filter || 'all',
+   month_filter : props.month_filter  || 'all',
+   registration_type : props.registration_type || 'all',
+   payment_method : props.payment_method || 'all',
+   // member_filter : props.member_filter || false,
+   // date_filter : props.date_filter || ''
+})
+
+const filterLogs = () => {
+   router.get(route('logs.list'), { 
+      year_filter: filterForm.year_filter,
+      month_filter: filterForm.month_filter,
+      registration_type: filterForm.registration_type,
+      payment_method: filterForm.payment_method,
+      // member_filter : filterForm.member_filter,
+      // date_filter: filterForm.date_filter
+   }, {
+      preserveState: true,
+      preserveScroll: true,
+   });
+};
 
 </script>

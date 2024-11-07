@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
-            $table->foreignId('transaction_id')->nullable()->constrained();
+            $table->foreignId('transaction_id')->nullable()->constrained()->onDelete('cascade');
             $table->date('date');
             $table->timestamps();
         });

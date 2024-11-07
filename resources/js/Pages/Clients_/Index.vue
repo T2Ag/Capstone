@@ -1,8 +1,22 @@
 <template>
    <Layout>
-      <div class="px-2 py-2">
-         <p class="text-[30px] text-gray-600">CLIENTS LIST</p>
+      <div class="flex justify-between">
+         <div class="px-2 py-2">
+            <p class="text-[30px] text-gray-600">CLIENTS LIST</p>
+         </div>
+         <div class="px-2 py-2">
+            <form @submit.prevent="filterClients">
+               <InputField
+                  type="search"
+                  label=""
+                  icon="search"
+                  placeholder="Search..."
+                  v-model="form.search"
+               />
+            </form>
+         </div>
       </div>
+
 
       <div class="px-2 py-2">
 
@@ -19,9 +33,11 @@
             <!-- Filter by Date -->
              <div class="flex justify-end pb-2">
 
-               <div class="flex items-center align-middle pr-2">
-                  <input type="checkbox" id="member_filter" v-model="form.member_filter" @change="filterClients" class="m-1">
+               <div class="flex flex-col justify-start items-center pr-2">
                   <label for="member_filter" class="text-gray-500">Members</label>
+                  <div class="p-1">
+                     <input type="checkbox" id="member_filter" v-model="form.member_filter" @change="filterClients" class="m-1">
+                  </div>
                </div>
 
                <div class="text-center pr-2">
@@ -40,7 +56,7 @@
                      <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
                   </select>
                </div>
-               <div class="text-center">
+               <div class="text-center pr-2">
                   <label for="registration_type" class="text-gray-500">Registration Type</label>
                   <select v-model="form.registration_type" @change="filterClients" class="form-select" name="registration_type">
                      <option value="all">All Types</option>
@@ -48,6 +64,16 @@
                            {{ registration.type }}
                      </option>
                   </select>
+               </div>
+
+               <div class="text-center">
+                  <label for="day_filter" class="text-gray-500">Day</label>
+                  <input 
+                     type="date" 
+                     v-model="form.date_filter"
+                     class="form-control" 
+                     @change="filterClients"
+                  />
                </div>
 
              </div>
@@ -67,7 +93,7 @@
                   </tr>
                </thead>
                <tbody>
-                  <tr v-for="client in clients" :key="client.id" class="text-center ">
+                  <tr v-for="client in clients.data" :key="client.id" class="text-center ">
                      <td>{{ client.id }}</td>
                      <td>  {{ client.first_name }} {{ client.last_name }} </td>
                      <td> {{ client.registration.type }} </td>
@@ -91,6 +117,9 @@
                   </tr>
                </tbody>
             </table>
+
+            <Pagination class="flex mt-4 justify-end" :links="clients.links" />
+
          </div>
 
       </div>
@@ -121,18 +150,21 @@
 
 import Layout from '@/Layouts/Layout.vue';
 import CreateClientModal from '@/Components/UserModals/CreateClientModal.vue'
+import Pagination from '../../Components/Pagination.vue';
+import InputField from '../../Components/InputField.vue';
 import { useForm, router } from '@inertiajs/vue3';
 import {ref, computed} from 'vue';
 
 const props = defineProps({
    users: Array,
    roles: Array,
-   clients: Array,
+   clients: (Array, Object),
    registrations: Array, 
    trainings: Array,
    payment_methods: Array,
    year_filter: String,
-   month_filter: String
+   month_filter: String,
+   search: String
  });
 
  function isMember(client) {
@@ -175,11 +207,9 @@ const deleteUser = () => {
    });
 };
 
-// Generate years starting from 2020 to the current year
 const currentYear = new Date().getFullYear();
 const years = computed(() => Array.from({ length: currentYear - 2020 + 1 }, (_, i) => 2020 + i));
 
-//Months
 const months = [
    { value: '01', label: 'January' },
    { value: '02', label: 'February' },
@@ -199,7 +229,9 @@ const form = useForm({
    year_filter: props.year_filter || 'all',
    month_filter : props.month_filter  || 'all',
    registration_type : props.registration_type || 'all',
-   member_filter : props.member_filter || false
+   member_filter : props.member_filter || false,
+   date_filter : props.date_filter || '',
+   search : props.search || ''
 })
 
 const filterClients = () => {
@@ -207,7 +239,9 @@ const filterClients = () => {
       year_filter: form.year_filter,
       month_filter: form.month_filter,
       registration_type: form.registration_type,
-      member_filter : form.member_filter
+      member_filter : form.member_filter,
+      date_filter: form.date_filter,
+      search: form.search
    }, {
       preserveState: true,
       preserveScroll: true,

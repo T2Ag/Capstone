@@ -2,19 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Log;
+use App\Models\PaymentMethod;
+use App\Models\Registration;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with('client', 'client.payment_method')->orderBy('created_at', 'desc')->get();
+        $transactions = Transaction::with('client', 'client.payment_method')->orderBy('created_at', 'desc')
+        ->filter([
+            'year_filter' => $request->input('year_filter'),
+            'month_filter' => $request->input('month_filter'),
+            'registration_type' => $request->input('registration_type'),
+            'payment_method' => $request->input('payment_method'),
+            // 'member_filter' => $request->boolean('member_filter'),
+            // 'date_filter' => $request->input('date_filter')
+        ])
+        ->paginate(15);
+
+        $registrations = Registration::all(); 
+        $paymentMethods = PaymentMethod::all();
 
         return Inertia::render('Clients_/Transaction',[
             'transactions' => $transactions,
+            'registrations' => $registrations,
+            'paymentMethods' => $paymentMethods,
+            'year_filter' => $request->year_filter,
+            'month_filter' => $request->month_filter,
+            'registration_type' => $request->registration_type,
+            'payment_method' => $request->payment_method,
         ]);
     }
 
@@ -79,12 +100,14 @@ class TransactionController extends Controller
             'total_amount' => $validatedData['totalAmount'],
         ]);
 
-        Log::create([
+        $log = Log::create([
             'client_id' => $validatedData['client_id'],
             'transaction_id' => $transaction->id,
             'date' => now()
         ]);
 
-        return back()->with('success', 'Transaction Successful.');
+        return redirect()->back()->with([
+            'success' => 'Transaction and Log created successfully.',
+        ]);
     }
 }

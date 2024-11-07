@@ -4,7 +4,51 @@
         <p class="text-[30px] text-gray-600">PENDING PAYMENTS</p>
     </div>
 
-    <div class="px-2 py-2">
+    <div class="bg-white shadow-md rounded overflow-hidden p-3">
+
+      <!-- Filter by Date -->
+      <div class="flex justify-end pb-2">
+
+        <div class="text-center pr-2">
+          <label for="date_filter" class="text-gray-500">Year</label>
+
+          <select v-model="filterForm.year_filter" @change="filterLogs" class="form-select" name="year_filter">
+                <option value="all">All Years</option>
+                <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+          </select>
+        </div>
+
+        <div class="text-center pr-2">
+          <label for="month_filter" class="text-gray-500">Month</label>
+          <select v-model="filterForm.month_filter" @change="filterLogs" class="form-select" name="month_filter">
+                <option value="all">All Months</option>
+                <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
+          </select>
+        </div>
+        
+        <div class="text-center pr-2">
+          <label for="registration_type" class="text-gray-500">Registration Type</label>
+          <select v-model="filterForm.registration_type" @change="filterLogs" class="form-select" name="registration_type">
+                <option value="all">All Types</option>
+                <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
+                      {{ registration.type }}
+                </option>
+          </select>
+        </div>
+
+        <div class="text-center pr-2">
+          <label for="payment_method" class="text-gray-500">Payment Type</label>
+          <select v-model="filterForm.payment_method" @change="filterLogs" class="form-select" name="payment_method">
+                <option value="all">All Types</option>
+                <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
+                      {{ paymentMethod.type }}
+                </option>
+          </select>
+        </div>
+
+      </div>
+      
+
       <div class="bg-white shadow-md rounded overflow-hidden p-3">
         <table class="w-full text-left text-gray-500 bg-white">
             <thead class="text-lg font-semibold uppercase bg-gray-100">
@@ -108,12 +152,16 @@
 
 <script setup>
 import Layout from '@/Layouts/Layout.vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, router } from '@inertiajs/vue3';
 import { ref,computed } from 'vue';
 
 // Define props for the grouped logs
 const props = defineProps({
- logs: Array
+  logs: Array,
+  year_filter: String,
+  month_filter: String,
+  registrations: Array,
+  paymentMethods: Array
 });
 
 const errors = ref({});
@@ -284,5 +332,46 @@ const showAlertModal = () => {
   setTimeout(() => {
     alertModal.hide();
   }, 4000);
+};
+
+const currentYear = new Date().getFullYear();
+const years = computed(() => Array.from({ length: currentYear - 2020 + 1 }, (_, i) => 2020 + i));
+
+const months = [
+   { value: '01', label: 'January' },
+   { value: '02', label: 'February' },
+   { value: '03', label: 'March' },
+   { value: '04', label: 'April' },
+   { value: '05', label: 'May' },
+   { value: '06', label: 'June' },
+   { value: '07', label: 'July' },
+   { value: '08', label: 'August' },
+   { value: '09', label: 'September' },
+   { value: '10', label: 'October' },
+   { value: '11', label: 'November' },
+   { value: '12', label: 'December' }
+];
+
+const filterForm = useForm({
+   year_filter: props.year_filter || 'all',
+   month_filter : props.month_filter  || 'all',
+   registration_type : props.registration_type || 'all',
+   payment_method : props.payment_method || 'all',
+   // member_filter : props.member_filter || false,
+   // date_filter : props.date_filter || ''
+})
+
+const filterLogs = () => {
+   router.get(route('pending'), { 
+      year_filter: filterForm.year_filter,
+      month_filter: filterForm.month_filter,
+      registration_type: filterForm.registration_type,
+      payment_method: filterForm.payment_method,
+      // member_filter : filterForm.member_filter,
+      // date_filter: filterForm.date_filter
+   }, {
+      preserveState: true,
+      preserveScroll: true,
+   });
 };
 </script>
