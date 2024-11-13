@@ -77,6 +77,22 @@
                <Link :href="route('users')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Users</Link>
             </div>
          </div>
+
+         <div class="trainors mt-3 text-gray-700 flex flex-col text-[15px] font-bold">
+            <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded" @click="dropdown('trainors')">
+               <span>TRAINORS</span>
+               <span class="text-md transition-transform duration-300" :class="submenuVisible.trainors ? 'rotate-180' : 'rotate-0'" id="arrow-trainors">
+                  <i class="bi bi-chevron-down"></i>
+               </span>
+            </div>
+      
+            <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.trainors}" id="submenu-trainors">
+               <Link :href="route('coaches.index')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Coaches</Link>
+            </div>
+            <!-- <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.trainors}" id="submenu-trainors">
+               <Link :href="route('trainingTransactions.index')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Coaching Sessions</Link>
+            </div> -->
+         </div>
       </div>
    
       <div class="lg:ml-[300px] mt-[69px] bg-gray-200 min-h-screen transition-all duration-300 ease-in-out" id="container">

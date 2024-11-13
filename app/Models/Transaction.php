@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Transaction extends Model
 {
@@ -41,6 +42,15 @@ class Transaction extends Model
         if (isset($filters['payment_method']) && $filters['payment_method'] !== 'all') {
             $query->whereHas('client.payment_method', function($q) use ($filters) {
                 $q->where('type', $filters['payment_method']);
+            });
+        }
+
+        if ($filters['search'] ?? false) {
+            $query->whereHas('client', function ($query) use ($filters) {
+                $search = $filters['search']; // Get search from filters instead of request()
+                $query->where('first_name', 'like', '%' . $search . '%')
+                      ->orWhere('last_name', 'like', '%' . $search . '%')
+                      ->orWhereRaw("first_name || ' ' || last_name LIKE ?", ['%' . $search . '%']);
             });
         }
 

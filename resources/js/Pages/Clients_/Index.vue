@@ -26,7 +26,7 @@
             </button>
          </div>
 
-         <CreateClientModal :users="users" :registrations="registrations" :trainings="trainings" :payment_methods="payment_methods" :roles="roles"/>
+         <CreateClientModal :users="users" :registrations="registrations" :payment_methods="payment_methods" :roles="roles"/>
 
          <div class="bg-white shadow-md rounded overflow-hidden p-3">
 
@@ -135,7 +135,7 @@
                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-               Are you sure you want to delete clients # - {{ deleteForm.id }} - {{ deleteForm.last_name }}, {{ deleteForm.first_name }} {{ deleteForm.middle_initial }}?
+               Are you sure you want to delete client # - {{ deleteForm.id }} - {{ deleteForm.last_name }}, {{ deleteForm.first_name }} {{ deleteForm.middle_initial }}?
             </div>
             <div class="modal-footer">
                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -160,7 +160,6 @@ const props = defineProps({
    roles: Array,
    clients: (Array, Object),
    registrations: Array, 
-   trainings: Array,
    payment_methods: Array,
    year_filter: String,
    month_filter: String,

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Coach;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,20 @@ class TrainingFactory extends Factory
      */
     public function definition(): array
     {
+        $trainingNames = [
+            'Personal Training',
+            'Group Fitness',
+            'Strength Training',
+            'Cardio Training',
+            'HIIT Workout',
+            'Yoga Class',
+            'CrossFit',
+            'Boxing Training'
+        ];
         return [
-            //
+            'coach_id' => Coach::factory(),
+            'name' => fake()->randomElement($trainingNames),
+            'price' => fake()->randomFloat(2, 500, 5000)
         ];
     }
 }

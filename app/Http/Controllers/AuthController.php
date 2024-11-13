@@ -31,6 +31,39 @@ class AuthController extends Controller
         return Inertia::render('Login');
     }
 
+    public function loginPost(Request $request)
+    {
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        $credentials = $request->only('username', 'password');
+        
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+                
+            if ($user->hasRole('admin')) {
+                return redirect()->intended('dashboard'); 
+            }
+            if ($user->hasRole('trainor')) {
+                return redirect()->intended('trainorDashboard'); 
+            }                 
+            
+        }
+
+        return back()->withErrors([
+            'username' => 'The provided credentials do not match our records.'
+        ])->onlyInput('username');
+    }
+
+    public function logout()
+    {
+        Session::flush();
+        Auth::logout();
+        return redirect()->route('login');
+    }
+
     public function trainorDashboard()
     {
         return Inertia::render('Trainor/TrainorIndex');
@@ -71,38 +104,5 @@ class AuthController extends Controller
             'totalEarningsThisWeek' => $totalEarningsThisWeek,
 
         ]);
-    }
-
-    public function loginPost(Request $request)
-    {
-        $request->validate([
-            'username' => 'required',
-            'password' => 'required'
-        ]);
-
-        $credentials = $request->only('username', 'password');
-        
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-                
-            if ($user->hasRole('admin')) {
-                return redirect()->intended('dashboard'); 
-            }
-            if ($user->hasRole('trainor')) {
-                return redirect()->intended('trainorDashboard'); 
-            }                 
-            
-        }
-
-        return back()->withErrors([
-            'username' => 'The provided credentials do not match our records.'
-        ])->onlyInput('username');
-    }
-
-    public function logout()
-    {
-        Session::flush();
-        Auth::logout();
-        return redirect()->route('login');
     }
 }

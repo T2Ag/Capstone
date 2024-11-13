@@ -1,8 +1,21 @@
 <template>
 
    <Layout>
-      <div class="px-2 py-2">
-         <p class="text-[30px] text-gray-600">TRANSACTIONS LIST</p>
+      <div class="flex justify-between">
+         <div class="px-2 py-2">
+            <p class="text-[30px] text-gray-600">TRANSACTION LIST</p>
+         </div>
+         <div class="px-2 py-2">
+            <form @submit.prevent="filterTransactions" >
+               <InputField
+                  type="search"
+                  label=""
+                  icon="search"
+                  placeholder="Search..."
+                  v-model="filterForm.search"
+               />
+            </form>
+         </div>
       </div>
 
       <div class="bg-white shadow-md rounded overflow-hidden p-3 m-2">
@@ -95,16 +108,17 @@
 
 import Layout from '@/Layouts/Layout.vue';
 import Pagination from '../../Components/Pagination.vue';
-import { computed } from 'vue';
+import InputField from '../../Components/InputField.vue';
 import { useForm, router } from '@inertiajs/vue3';
-
+import {ref, computed} from 'vue';
 
 const props = defineProps({
    transactions: (Array, Object),
    year_filter: String,
    month_filter: String,
    registrations: Array,
-   paymentMethods: Array
+   paymentMethods: Array,
+   search: String
 })
 
 function formatDate(dateString) {
@@ -139,6 +153,7 @@ const filterForm = useForm({
    month_filter : props.month_filter  || 'all',
    registration_type : props.registration_type || 'all',
    payment_method : props.payment_method || 'all',
+   search : props.search || ''
    // member_filter : props.member_filter || false,
    // date_filter : props.date_filter || ''
 })
@@ -149,6 +164,7 @@ const filterTransactions = () => {
       month_filter: filterForm.month_filter,
       registration_type: filterForm.registration_type,
       payment_method: filterForm.payment_method,
+      search: filterForm.search
       // member_filter : filterForm.member_filter,
       // date_filter: filterForm.date_filter
    }, {

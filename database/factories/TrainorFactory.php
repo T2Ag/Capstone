@@ -6,9 +6,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Coach>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Trainor>
  */
-class CoachFactory extends Factory
+class TrainorFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,14 +17,13 @@ class CoachFactory extends Factory
      */
     public function definition(): array
     {
-
         return [
+            'user_id' => User::pluck('id')->random(),
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'middle_initial' => fake()->randomLetter(),
             'gender' => fake()->randomElement(['Male', 'Female']),
-            'address' => fake()->address(),
-            'user_id' => User::factory()
+            'price' => fake()->randomFloat(),
         ];
     }
 }

@@ -24,7 +24,10 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             RegistrationSeeder::class,
             PaymentMethodSeeder::class,
-            ClientSeeder::class
+            CoachSeeder::class,
+            TrainingSeeder::class,
+            ClientSeeder::class,
+            TrainingTransactionSeeder::class
         ]);
     }
 }

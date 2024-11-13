@@ -7,6 +7,7 @@ use App\Models\Log;
 use App\Models\PaymentMethod;
 use App\Models\Registration;
 use App\Models\Training;
+use App\Models\Trainor;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        $clients = Client::with('user', 'registration', 'payment_method', 'training')
+        $clients = Client::with('user', 'registration', 'payment_method')
         ->filter([
             'year_filter' => $request->input('year_filter'),
             'month_filter' => $request->input('month_filter'),
@@ -31,7 +32,6 @@ class ClientController extends Controller
         ->paginate(10);
             
         $users = User::all();
-        $trainings = Training::all();
         $registrations = Registration::all(); 
         $payment_methods = PaymentMethod::all();
         $roles = Role::all();
@@ -39,7 +39,6 @@ class ClientController extends Controller
         return Inertia::render('Clients_/Index', [
             'clients' => $clients,
             'users' => $users,
-            'trainings' => $trainings,
             'registrations' => $registrations,
             'payment_methods' => $payment_methods,
             'roles' => $roles,
@@ -65,7 +64,7 @@ class ClientController extends Controller
             'date' => 'nullable|date',
         ]);
 
-        $validatedUserDate = $request->validate([
+        $validatedUserData = $request->validate([
 
             'username' => 'nullable|string|unique:users,username',
             'password' => 'nullable|string|confirmed|min:8',
@@ -75,8 +74,8 @@ class ClientController extends Controller
         if ($request->has('username') && $request->filled('username')) {
             // Create the user
             $user = User::create([
-                'username' => $validatedUserDate['username'],
-                'password' => Hash::make($validatedUserDate['password']),
+                'username' => $validatedUserData['username'],
+                'password' => Hash::make($validatedUserData['password']),
             ]);
 
             // Assign the role to the user

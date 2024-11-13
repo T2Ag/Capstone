@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coaches', function (Blueprint $table) {
+        Schema::create('trainors', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('middle_initial');
-            $table->string('gender');
-            $table->string('address');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('middle_initial')->nullable();
+            $table->string('gender')->nullable();
+            $table->decimal('price', 8, 2);
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('coaches');
+        Schema::dropIfExists('trainors');
     }
 };

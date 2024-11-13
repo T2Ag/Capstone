@@ -37,6 +37,11 @@ class Client extends Model
         return $this->hasMany(Log::class);
     }
 
+    public function trainingTransaction()
+    {
+        return $this->hasMany(TrainingTransaction::class);
+    }
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class);

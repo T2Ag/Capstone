@@ -289,15 +289,15 @@ const selectedClientName = ref('');
 
 // Update client ID when a name is selected from the datalist
 const updateClientId = () => {
-const client = props.clients.find(
-   c => `${c.first_name} ${c.last_name}` === selectedClientName.value
-);
+   const client = props.clients.find(
+      c => `${c.first_name} ${c.last_name}` === selectedClientName.value
+   );
 
-if (client) {
-   form.client_id = client.id;
-} else {
-   form.client_id = '';
-}
+      if (client) {
+         form.client_id = client.id;
+      } else {
+         form.client_id = '';
+      }
 };
 
 //reseting client name

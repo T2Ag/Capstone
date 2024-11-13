@@ -20,6 +20,7 @@ class TransactionController extends Controller
             'month_filter' => $request->input('month_filter'),
             'registration_type' => $request->input('registration_type'),
             'payment_method' => $request->input('payment_method'),
+            'search' => $request->input('search')
             // 'member_filter' => $request->boolean('member_filter'),
             // 'date_filter' => $request->input('date_filter')
         ])
@@ -36,6 +37,7 @@ class TransactionController extends Controller
             'month_filter' => $request->month_filter,
             'registration_type' => $request->registration_type,
             'payment_method' => $request->payment_method,
+            'search' => $request->search,
         ]);
     }
 

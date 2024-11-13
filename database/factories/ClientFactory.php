@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\PaymentMethod;
 use App\Models\Registration;
 use App\Models\Training;
+use App\Models\Trainor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

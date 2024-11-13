@@ -2,28 +2,25 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Training extends Model
+class Trainor extends Model
 {
+    /** @use HasFactory<\Database\Factories\TrainorFactory> */
     use HasFactory;
 
     protected $guarded = [];
 
-    public function coach()
+    public function user()
     {
-        return $this->belongsTo(Coach::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function clients()
-    {
-        return $this->hasMany(Client::class);
-    }
-
-    public function trainingTransactions()
+    public function trainingTransaction()
     {
         return $this->hasMany(TrainingTransaction::class);
     }
-    
+
 }
