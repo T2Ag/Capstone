@@ -22,10 +22,10 @@ class AuthController extends Controller
             if ($user->hasRole('admin')) {
                 return redirect()->route('dashboard'); // Route for admin
             } elseif ($user->hasRole('trainor')) {
-                return redirect()->route('trainorDashboard'); // Route for trainor
-            } else {
-                return redirect()->route('dashboard'); // Fallback for other roles
-            }
+                return redirect()->route('trainerDashboard'); // Route for trainor
+            }  elseif ($user->hasRole('user')) {
+                return redirect()->route('userDashboard'); // Route for trainor
+            } 
         }
     
         return Inertia::render('Login');
@@ -47,8 +47,11 @@ class AuthController extends Controller
                 return redirect()->intended('dashboard'); 
             }
             if ($user->hasRole('trainor')) {
-                return redirect()->intended('trainorDashboard'); 
-            }                 
+                return redirect()->intended('trainerDashboard'); 
+            }     
+            if ($user->hasRole('user')) {
+                return redirect()->intended('userDashboard'); 
+            }               
             
         }
 
@@ -64,9 +67,14 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    public function trainorDashboard()
+    public function trainerDashboard()
     {
-        return Inertia::render('Trainor/TrainorIndex');
+        return Inertia::render('TrainerPage/TrainerIndex');
+    }
+
+    public function userDashboard()
+    {
+        return Inertia::render('UserPage/UserIndex');
     }
 
     public function dashboard()

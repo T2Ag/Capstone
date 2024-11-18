@@ -24,7 +24,7 @@
       </div>
    
       <div class="p-2.5 mt-3 text-gray-700 flex text-[15px] font-bold rounded px-4 duration-300 cursor-pointer hover:bg-gray-100 hover:text-red-500">
-         <Link :href="route('trainorDashboard')">DASHBOARD</Link>
+         <Link :href="route('trainerDashboard')">DASHBOARD</Link>
       </div>
       
    </div>

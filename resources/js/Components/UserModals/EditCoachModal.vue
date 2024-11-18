@@ -43,13 +43,6 @@
                   <span class="text-red-500">{{ form.errors.gender }}</span>
                 </div>
 
-                <!-- Price -->
-                <div class="col-12 mb-3">
-                  <label :for="`price-${coach.id}`" class="form-label">Price</label>
-                  <input type="number" class="form-control" :id="`price-${coach.id}`" name="price" v-model="form.price" step="0.01" >
-                  <span class="text-red-500">{{ form.errors.price }}</span>
-                </div>
-
               </div>
           </div>
 
@@ -68,10 +61,10 @@ import { ref, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
-coach: {
-   type: Object,
-   required: true
- }
+  coach: {
+    type: Object,
+    required: true
+  }
 });
 
 const form = useForm({
@@ -79,7 +72,6 @@ const form = useForm({
  last_name: props.coach.last_name,
  middle_initial: props.coach.middle_initial,
  gender: props.coach.gender,
- price: props.coach.price
 });
 
 const resetForm = () => {
@@ -87,7 +79,6 @@ const resetForm = () => {
   form.last_name = props.coach.last_name;
   form.middle_initial = props.coach.middle_initial;
   form.gender = props.coach.gender;
-  form.price = props.coach.price;
 };
 
 onMounted(() => {
@@ -102,7 +93,7 @@ const capitalizeMiddleInitial = (event) => {
 };
 
 const submit = () => {
- form.put(route('coachs.update', props.coach.id), {
+ form.put(route('coaches.update', props.coach.id), {
     onSuccess: () => {
       resetForm(); 
       const modalElement = document.querySelector(`#editModal-${props.coach.id}`);

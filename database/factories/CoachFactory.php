@@ -23,7 +23,6 @@ class CoachFactory extends Factory
             'last_name' => fake()->lastName(),
             'middle_initial' => fake()->randomLetter(),
             'gender' => fake()->randomElement(['Male', 'Female']),
-            'address' => fake()->address(),
             'user_id' => User::factory()
         ];
     }

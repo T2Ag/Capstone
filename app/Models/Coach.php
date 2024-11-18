@@ -9,7 +9,7 @@ class Coach extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['first_name', 'last_name', 'gender', 'address', 'user_id'];
+    protected $guarded = [];
 
     public function user()
     {

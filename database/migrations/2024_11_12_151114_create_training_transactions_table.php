@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->date('transaction_date');
+            $table->decimal('total_amount', 8, 2);
             $table->timestamps();
         });
     }

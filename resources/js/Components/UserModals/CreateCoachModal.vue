@@ -45,13 +45,6 @@
                    <span class="text-red-500">{{ form.errors.gender }}</span>
                  </div>
 
-                <!-- Price -->
-                <div class="col-12 mb-3">
-                  <label for="price" class="form-label">Price</label>
-                  <input type="number" class="form-control" id="price" name="price" v-model="form.price" >
-                  <span class="text-red-500">{{ form.errors.price }}</span>
-                </div>
-
                  <div class="pb-2 pt-4">
                      <p class="font-bold text-[15px]">
                         Create Trainer Account
@@ -79,8 +72,6 @@
                      </div>
 
                  </div>
-
-
 
                </div>
 
@@ -113,11 +104,10 @@
    last_name: '',
    middle_initial: '',
    gender: '',
-   price:''
  });
  
  const submit = () => {
-   form.post(route('trainors.store'), {
+   form.post(route('coaches.store'), {
      onSuccess: () => {
        form.reset();
         const modalElement = document.querySelector('#createModal');

@@ -15,12 +15,6 @@ class TrainingTransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        Training::all()->each(function ($training) {
-            // Create 5 active transactions
-            TrainingTransaction::factory(1)->create([
-                'training_id' => $training->id,
-                'client_id' => Client::factory()
-            ]);
-        });
+
     }
 }

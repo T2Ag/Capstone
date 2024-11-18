@@ -4,7 +4,7 @@
    
       <div class="flex justify-between">
          <div class="px-2 py-2">
-            <p class="text-[30px] text-gray-600">TRAINERS LIST</p>
+            <p class="text-[30px] text-gray-600">COACH LIST</p>
          </div>
          <div class="px-2 py-2">
             <!-- <form @submit.prevent="filterClients">

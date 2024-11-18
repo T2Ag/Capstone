@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Client;
 use App\Models\Coach;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
