@@ -54,7 +54,7 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'user_id' => 'nullable|string|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'middle_initial' => 'required|string',

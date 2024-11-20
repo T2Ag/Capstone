@@ -1,7 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
-import { reactive, watch, onMounted } from 'vue';
+import { reactive, watch, onMounted, ref } from 'vue';
 
 const page = usePage();
 
@@ -12,6 +12,13 @@ const submenuVisible = reactive({
   users: false,
   trainors: false
 });
+
+const profileDropdownVisible = ref(false);
+
+// Toggles the dropdown menu
+const toggleDropdown = () => {
+  profileDropdownVisible.value = !profileDropdownVisible.value;
+};
 
 const isActive = (url, exact = false) => {
   return exact ? page.url === url : page.url.includes(url);
@@ -71,7 +78,26 @@ const openSideBar = () => {
       </div>
       <h1 class="topbarlogo font-bold lg:text-white text-red-700 text-[30px] transition-all duration-300 ease-in-out">FLEX</h1>
       <div class="text-sm px-3">
-        <Link :href="route('logout')">Logout</Link>
+
+        <div class="relative">
+          <!-- Toggle Button -->
+          <button
+            @click="toggleDropdown"
+            class="flex items-center px-3 py-2 text-gray-700 border rounded-md hover:bg-gray-100"
+          >
+            <i class="bi bi-person-circle mr-2"></i>
+              <h1>{{ $page.props.auth.user.username }}</h1>
+            <i class="bi bi-chevron-down ml-2"></i>
+          </button>
+          <!-- Dropdown Menu -->
+          <div v-show="profileDropdownVisible" class="absolute right-0 w-40 mt-2 bg-white border border-gray-200 rounded-md shadow-lg" >
+            <Link :href="route('edit')" class="block px-4 py-2 text-black hover:bg-gray-100">Profile</Link>
+            <Link :href="route('logout')" class="block px-4 py-2 text-red-700 hover:bg-gray-100" >
+              Logout
+            </Link>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

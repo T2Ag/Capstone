@@ -20,6 +20,11 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/edit', [UserController::class, 'edit'])->name('edit');
+    Route::put('/edit/{user}', [UserController::class, 'editProfile'])->name('editProfile');
+});
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 });

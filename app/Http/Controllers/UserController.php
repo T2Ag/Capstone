@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +20,40 @@ class UserController extends Controller
             'users' => $users,
             'user_roles' => $roles,
         ]);
+    }
+
+    public function edit(Request $request)
+    {
+
+        return Inertia::render('Edit',[
+            'user' => User::with('client')->find($request->user()->id)
+        ]);
+
+    }
+
+    public function editProfile(Request $request, User $user)
+    {
+        $validatedUserData = $request->validate([
+            'username' => 'required|string|unique:users,username,'.$user->id
+        ]);
+
+        $validatedData = $request->validate(([
+            'client_id' => 'nullable|exists:clients,id',
+        ]));
+    
+        $validatedClientData = $request->validate([
+            'first_name' => 'required|string',
+            'middle_initial' => 'nullable|string',
+            'last_name' => 'required|string',
+        ]);
+    
+        $user->update($validatedUserData);
+    
+        $client = Client::findOrFail($validatedData['client_id']);
+
+        $client->update($validatedClientData);
+    
+        return redirect()->back()->with('success', 'Profile updated successfully');
     }
 
     public function store(Request $request)
