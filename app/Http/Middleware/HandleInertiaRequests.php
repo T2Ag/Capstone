@@ -37,8 +37,24 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'auth.user' => fn () => $request->user()
-                ? $request->user()->only('id', 'username')
+                ? array_merge(
+                    $request->user()->only('id', 'username'),
+                    [
+                        'roles' => $request->user()->getRoleNames(),
+                        'layout' => $this->getUserLayout($request->user())
+                    ]
+                )
                 : null,
         ]);
+    }
+
+    private function getUserLayout($user)
+    {
+        return match(true) {
+            $user->hasRole('admin') => 'Layout',
+            $user->hasRole('trainor') => 'TrainerLayout',
+            $user->hasRole('user') => 'UserLayout',
+            default => 'Layout'
+        };
     }
 }

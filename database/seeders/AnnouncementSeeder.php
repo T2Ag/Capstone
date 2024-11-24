@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Coach;
+use App\Models\Announcement;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CoachSeeder extends Seeder
+class AnnouncementSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Coach::factory()->count(1)->create();
+        Announcement::factory()->count(5)->create();
     }
 }

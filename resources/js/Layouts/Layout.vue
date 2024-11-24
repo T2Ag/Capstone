@@ -92,6 +92,7 @@ const openSideBar = () => {
           <!-- Dropdown Menu -->
           <div v-show="profileDropdownVisible" class="absolute right-0 w-40 mt-2 bg-white border border-gray-200 rounded-md shadow-lg" >
             <Link :href="route('edit')" class="block px-4 py-2 text-black hover:bg-gray-100">Profile</Link>
+            <Link :href="route('changePassword')" class="block px-4 py-2 text-black hover:bg-gray-100">Change Password</Link>
             <Link :href="route('logout')" class="block px-4 py-2 text-red-700 hover:bg-gray-100" >
               Logout
             </Link>
@@ -191,7 +192,14 @@ const openSideBar = () => {
         <Link :href="route('trainingTransactions.index')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Training Transactions</Link>
       </div>
     </div>
+
+    <div class="p-2.5 mt-3 text-gray-700 flex text-[15px] font-bold rounded px-4 duration-300 cursor-pointer hover:bg-gray-100 hover:text-red-500"
+    :class="{'bg-gray-100 text-red-500': isActive('/announcements.index')}">
+      <Link :href="route('announcements.index')">ANNOUNCEMENTS</Link>
+    </div>
+    
   </div>
+
 
   <div class="lg:ml-[300px] mt-[69px] bg-gray-200 min-h-screen transition-all duration-300 ease-in-out" id="container">
     <slot></slot>

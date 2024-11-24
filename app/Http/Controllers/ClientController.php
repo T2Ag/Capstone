@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Log;
 use App\Models\PaymentMethod;
 use App\Models\Registration;
+use App\Models\TodoList;
 use App\Models\Training;
 use App\Models\Trainor;
 use App\Models\Transaction;
@@ -93,6 +94,22 @@ class ClientController extends Controller
         return redirect()->route('clients')->with('success', 'Client created successfully.');
     }
 
+    public function update(Request $request, Client $client)
+    {
+
+        $validatedData = $request->validate([
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'middle_initial' => 'required|string',
+            'gender' => 'required|string',
+            'registration_id' => 'required|exists:registrations,id',
+        ]);
+
+        $client->update($validatedData);
+
+        return redirect()->route('clients')->with('success', 'Client updated successfully.');
+    }
+
     public function view($id)
     {   
         $payment_methods = PaymentMethod::all();
@@ -102,12 +119,14 @@ class ClientController extends Controller
 
         $transactions = Transaction::with('client')->where('client_id', $id)->paginate(10);
 
+        $todos = TodoList::where('client_id', $id)->get();
+
         return Inertia::render('Clients_/View', [
             'client' => $client,
             'payment_methods' => $payment_methods,
             'logs' => $logs,
             'transactions' => $transactions,
-
+            'todos' => $todos
         ]);
     }
 

@@ -123,9 +123,33 @@
          </div>
       </div>
 
-      <!-- <div>
-         <p>Another Permission</p>
-      </div> -->
+      <!-- Announcements Section -->
+      <div class="bg-white mt-4 m-3">
+         <div class="px-3 py-2 border-b-2 border-gray-400">
+            <p class="text-[20px] text-gray-600 font-bold">ANNOUNCEMENTS</p>
+         </div>
+
+         <table class="w-full">
+            <thead class="bg-gray-100">
+               <tr>
+                  <th class="px-4 py-2 text-left text-gray-600">Title</th>
+                  <th class="px-4 py-2 text-left text-gray-600">Date</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr 
+                  v-for="announcement in announcements" 
+                  :key="announcement.id"
+                  class="border-b hover:bg-gray-50"
+               >
+                  <td class="px-4 py-2">{{ announcement.title }}</td>
+                  <td class="px-4 py-2">
+                     {{ formatDate(announcement.created_at) }}
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
 
    </Layout>
 </template>
@@ -142,7 +166,14 @@ const props = defineProps({
    totalEarnings: Number,
    totalLogsThisWeek: Number,
    totalEarningsThisWeek: Number,
+   announcements: Array
 });
 
-console.log('Props in Home.vue:', props);
+const formatDate = (dateString) => {
+   return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric'
+   })
+}
 </script>

@@ -47,6 +47,11 @@ class Client extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function toDoLists()
+    {
+        return $this->hasMany(TodoList::class);
+    }
+
     public function scopeFilter($query, array $filters) 
     {
         if (isset($filters['year_filter']) && $filters['year_filter'] !== 'all') {

@@ -17,6 +17,7 @@
                class="mr-1 mb-1 px-3 py-2 text-sm leading-4 border rounded hover:bg-white "
                :class="{ 'bg-red-600 text-white': link.active }"
                :href="link.url"
+               preserve-scroll
             >
                <span v-html="link.label"></span>
             </Link>

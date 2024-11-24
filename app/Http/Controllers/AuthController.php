@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\Client;
 use App\Models\Log;
 use App\Models\Transaction;
@@ -67,16 +68,6 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    public function trainerDashboard()
-    {
-        return Inertia::render('TrainerPage/TrainerIndex');
-    }
-
-    public function userDashboard()
-    {
-        return Inertia::render('UserPage/UserIndex');
-    }
-
     public function dashboard()
     {
         $gymVisits = Log::selectRaw(
@@ -101,6 +92,8 @@ class AuthController extends Controller
         $totalLogsThisWeek = Log::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->count();
 
         $totalEarningsThisWeek = Transaction::whereBetween('transaction_date', [now()->startOfWeek(), now()->endOfWeek()])->sum('total_amount');
+
+        $announcements = Announcement::orderBy('created_at', 'desc')->get();
     
         return Inertia::render('Admin/AdminIndex', [
             'months' => $months,
@@ -110,7 +103,7 @@ class AuthController extends Controller
             'totalEarnings' => $totalEarnings,
             'totalLogsThisWeek' => $totalLogsThisWeek,
             'totalEarningsThisWeek' => $totalEarningsThisWeek,
-
+            'announcements' => $announcements,
         ]);
     }
 }

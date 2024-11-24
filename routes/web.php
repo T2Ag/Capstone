@@ -1,14 +1,18 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\TodoListController;
+use App\Http\Controllers\TrainerPageController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTransactionController;
 use App\Http\Controllers\TrainorController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserPageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,21 +24,29 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:admin|user|trainor'])->group(function () {
     Route::get('/edit', [UserController::class, 'edit'])->name('edit');
+    Route::get('/editCoach', [UserController::class, 'editCoach'])->name('editCoach');
     Route::put('/edit/{user}', [UserController::class, 'editProfile'])->name('editProfile');
+    Route::put('/editCoach/{user}', [UserController::class, 'editCoachProfile'])->name('editCoachProfile');
+    Route::get('/change-password', [UserController::class, 'changePassword'])->name('changePassword');
+    Route::put('/change-password/{user}', [UserController::class, 'updatePassword'])->name('updatePassword');
+    Route::post('/toDoList', [TodoListController::class, 'store'])->name('toDoList.store');
+    Route::put('toDoList/{todo}', [TodoListController::class, 'update'])->name('toDoList.update');
+});
+
+Route::middleware(['auth', 'role:trainor'])->group(function () {
+    Route::get('/trainerDashboard', [TrainerPageController::class, 'trainerDashboard'])->name('trainerDashboard');
+    Route::get('/trainingList', [TrainerPageController::class, 'trainingList'])->name('trainingList');
+
+});
+
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/userDashboard', [UserPageController::class, 'userDashboard'])->name('userDashboard');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
-});
-
-Route::middleware(['auth', 'role:trainor'])->group(function () {
-    Route::get('/trainerDashboard', [AuthController::class, 'trainerDashboard'])->name('trainerDashboard');
-});
-
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/userDashboard', [AuthController::class, 'userDashboard'])->name('userDashboard');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -49,6 +61,7 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/clients', [ClientController::class, 'index'])->name('clients');
     Route::post('/clients',[ClientController::class, 'store'])->name('clients.store');
     Route::get('/clients/{client}', [ClientController::class, 'view'])->name('clients.view');
+    Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
     Route::post('/clients/{client}', [ClientController::class, 'updatePayment'])->name('clients.updatePayment');
     Route::delete('/clients/{client}',[ClientController::class, 'destroy'])->name('clients.destroy');
     Route::delete('/transaction/{transaction}',[ClientController::class, 'destroyTransaction'])->name('clientTransactions.destroy');
@@ -65,6 +78,11 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'createTransaction'])->name('transactions.create');
     Route::post('/transactionAndLog', [TransactionController::class, 'createTransactionWithLogs'])->name('transactions.createWithLog');
+    // Announcements
+    Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
+    Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'delete'])->name('announcements.delete');
 });
 
 Route::middleware('auth')->group(function () {
