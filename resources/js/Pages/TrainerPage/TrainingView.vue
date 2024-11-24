@@ -1,12 +1,12 @@
 <template>
 
    <TrainerLayout>
-   
-      <Link :href="route('trainings.index')" class="inline-flex items-center hover:text-gray-700">
+      
+      <Link :href="route('trainingList')" class="inline-flex items-center hover:text-gray-700 m-2">
          <i class="bi bi-arrow-left text-lg mr-2"></i>
       </Link>
    
-      <div class="flex justify-between">
+      <div class="flex justify-between mx-2">
    
          <div class="px-2 py-2">
             <p class="text-[30px] text-gray-600">{{ training.name }} - {{ training.coach.first_name }} {{ training.coach.middle_initial }}. {{ training.coach.last_name }} </p>
@@ -23,27 +23,34 @@
    
       <AddClientToTraining :clients="clients" :training="training" />
    
-      <div class="px-2 py-2">
-   
-         <div class="text-[30px] font-semibold">
-            {{ training.coach.first_name }} 
-         </div>
-   
+      <div class="px-2 py-2 mx-2">
          <div>
    
-            <table class="w-full text-left text-gray-500 bg-white">
+            <table class="w-full text-left text-gray-500 bg-white rounded">
                <thead class="text-l text-700 uppercase bg-gray-100">
                   <tr class="text-center">
                      <th scope="col" class="lg:px-5 px-3 py-3">Name</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">Manage To Do List</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
    
                   </tr>
                </thead>
                <tbody>
                   <tr v-for="client in training.clients" :key="client.id" class="text-center ">
-                     <td>
+                     <td class="p-3">
                         {{ client.first_name }} {{ client.middle_initial }} {{ client.last_name }}                     
                      </td>
+
+                     <td>
+                        <Link 
+                           :href="route('clientToDoList', client.id)" 
+                           class="inline-flex items-center px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-150 ease-in-out mx-2"
+                           as="button"
+                        >
+                           To Do List
+                        </Link>
+                     </td>          
+
                      <td>
                         <button class="text-red-600 mx-2" type="button" @click="openDeleteModal(client)" data-bs-toggle="modal" data-bs-target="#deleteModal">
                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
@@ -52,6 +59,7 @@
                         </button>                    
                      </td>
    
+
                   </tr>
                </tbody>
             </table>

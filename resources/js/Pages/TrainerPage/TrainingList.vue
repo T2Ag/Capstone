@@ -4,9 +4,13 @@
          <!-- Header Section -->
          <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-semibold text-gray-800">Training List</h1>
-            <button class="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-800 transition-colors">
+
+            <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">
                Add Training
             </button>
+
+            <AddCoachTraining :coach="coach" />
+
          </div>
 
          <!-- Training Cards Grid -->
@@ -30,7 +34,7 @@
                   
                   <!-- Action Buttons -->
                   <div class="flex justify-end space-x-2 mt-4">
-                     <Link :href="route('trainings.view',  { training: training.id })" class="text-blue-500 text-[20px] ">
+                     <Link :href="route('trainingList.view',  { training: training.id })" class="text-blue-500 text-[20px] ">
                         <i class="bi bi-eye text-xl"></i>
                      </lINK>
                      <button class="text-green-500 hover:text-green-700 transition-colors" :data-bs-toggle="'modal'" :data-bs-target="`#editModal-${training.id}`">
@@ -79,6 +83,7 @@
 <script setup>
 import TrainerLayout from '../../Layouts/TrainerLayout.vue';
 import EditTraining from '../../Components/CoachPageModal/EditTraining.vue';
+import AddCoachTraining from '../../Components/UserModals/AddCoachTraining.vue';
 import { defineProps } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 

@@ -2,16 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
+use App\Models\Client;
 use App\Models\Coach;
+use App\Models\TodoList;
 use App\Models\Training;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TrainerPageController extends Controller
 {
-    public function trainerDashboard()
+    public function trainerDashboard(Request $request)
     {
-        return Inertia::render('TrainerPage/TrainerIndex');
+        $user = $request->user();
+        
+        $totalStudents = Training::whereHas('coach', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->withCount('clients')
+        ->get()
+        ->sum('clients_count');
+
+        $totalTrainings = Training::whereHas('coach', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->count();
+
+        $announcements = Announcement::orderBy('created_at', 'desc')->paginate(3);
+    
+        return Inertia::render('TrainerPage/TrainerIndex', [
+            'totalStudents' => $totalStudents,
+            'totalTrainings' => $totalTrainings,
+            'announcements' => $announcements
+
+        ]);
     }
 
     public function trainingList(Request $request)
@@ -31,6 +54,29 @@ class TrainerPageController extends Controller
         return Inertia::render('TrainerPage/TrainingList',[
             'coach' => $coach,
             'trainings' => $trainings,
+        ]);
+    }
+
+    public function view($id)
+    {
+        $training = Training::with('coach', 'clients')->findORFail($id);
+        $clients = Client::get();
+
+        return Inertia::render('TrainerPage/TrainingView',[
+            'training' => $training,
+            'clients' => $clients
+        ]);
+    }
+
+    public function clientToDoList(Client $client)
+    {
+        $todos = TodoList::where('client_id', $client->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        return Inertia::render('TrainerPage/ToDoList', [
+            'todos' => $todos,
+            'client' => $client
         ]);
     }
 }

@@ -35,7 +35,7 @@ class TrainingController extends Controller
 
         Training::create($validatedData);
 
-        return redirect()->route('trainings.index')->with('success', 'Trainor created successfully.');
+        return back()->with('success', 'Trainor created successfully.');
     }
 
     public function view($id)

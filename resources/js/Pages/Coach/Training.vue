@@ -145,20 +145,20 @@ const openDeleteModal = (training) => {
 };
 
 const deleteTraining = () => {
-   deleteForm.delete(route('trainings.destroy', deleteForm.id), {
-      onError: (errors) => {
-         console.error(errors);
-      },
-      onSuccess: () => {
-         const modalElement = document.querySelector('#deleteModal');
-         if(modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-               modal.hide();
-            }
+deleteForm.delete(route('trainings.destroy', deleteForm.id), {
+   onError: (errors) => {
+      console.error(errors);
+   },
+   onSuccess: () => {
+      const modalElement = document.querySelector('#deleteModal');
+      if(modalElement) {
+         const modal = bootstrap.Modal.getInstance(modalElement);
+         if (modal) {
+            modal.hide();
          }
       }
-   });
+   }
+});
 };
 
 </script>

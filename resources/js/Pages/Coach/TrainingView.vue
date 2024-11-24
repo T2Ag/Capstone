@@ -1,10 +1,9 @@
 <template>
 
-<component :is="layout">
-
-   <button @click=goBack() class="inline-flex items-center hover:text-gray-700">
+<Layout>
+   <Link :href="route('trainings.index')" class="inline-flex items-center hover:text-gray-700">
       <i class="bi bi-arrow-left text-lg mr-2"></i>
-   </button>
+   </Link>
 
    <div class="flex justify-between">
 
@@ -79,7 +78,7 @@
       </div>
    </div>
 
-</component>
+</Layout>
 
 </template>
 
@@ -89,9 +88,6 @@ import AddClientToTraining from '../../Components/UserModals/AddClientToTraining
 import { Link, usePage } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
 import Layout from '../../Layouts/Layout.vue';
-import TrainerLayout from '../../Layouts/TrainerLayout.vue';
-import UserLayout from '../../Layouts/UserLayout.vue';
-import { computed } from 'vue';
 
 const props = defineProps({
    training: Object,
@@ -135,14 +131,4 @@ function goBack() {
    window.history.back();
 }
 
-const layouts = {
- Layout,
- TrainerLayout,
- UserLayout
-}
-
-const layout = computed(() => {
- const userLayout = usePage().props.auth.user?.layout || 'Layout'
- return layouts[userLayout] || Layout
-})
 </script>

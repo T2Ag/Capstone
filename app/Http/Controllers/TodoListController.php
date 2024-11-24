@@ -32,4 +32,10 @@ class TodoListController extends Controller
 
        return back();
    }
+
+   public function destroy(TodoList $todo)
+    {
+        $todo->delete();
+        return back();
+    }
 }

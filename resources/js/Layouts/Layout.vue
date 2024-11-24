@@ -120,7 +120,7 @@ const openSideBar = () => {
 
     <!-- Logs Section -->
     <div class="logs mt-3 text-gray-700 flex flex-col text-[15px] font-bold">
-      <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded mb-2" 
+      <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded " 
       :class="{'bg-gray-100 text-red-500': isActive('/logs')}" @click="dropdown('logs')">
         <span>LOGS</span>
         <span class="text-md transition-transform duration-300" :class="{'rotate-180': submenuVisible.logs}">
@@ -128,7 +128,7 @@ const openSideBar = () => {
         </span>
       </div>
 
-      <div :class="{'hidden': !submenuVisible.logs}" >
+      <div class="mt-1" :class="{'hidden': !submenuVisible.logs}" >
         <Link :href="route('logs')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs', true)}">Scan</Link>
         <Link :href="route('logs.list')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs/list', true)}">Logs List</Link>
       </div>
@@ -149,25 +149,29 @@ const openSideBar = () => {
         </span>
       </div>
 
-      <div :class="{'hidden': !submenuVisible.clients}">
+      <div class="mt-1" :class="{'hidden': !submenuVisible.clients}">
         <Link :href="route('clients')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/clients', true)}">Clients List</Link>
+        <Link :href="route('transactions.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/transactions', true)}">Client Transactions</Link>
         <Link :href="route('pending')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/pending', true)}">Pending</Link>
-        <Link :href="route('transactions.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/transactions', true)}">Transactions</Link>
       </div>
 
     </div>
 
     <!-- Users Section -->
     <div class="users mt-3 text-gray-700 flex flex-col text-[15px] font-bold">
-      <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded" @click="dropdown('users')">
+      <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded" @click="dropdown('users')"
+      :class="{
+      'bg-gray-100 text-red-500': 
+        isActive('/users') 
+      }">
         <span>USERS</span>
         <span class="text-md transition-transform duration-300" :class="{'rotate-180': submenuVisible.users}">
           <i class="bi bi-chevron-down"></i>
         </span>
       </div>
 
-      <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.users}">
-        <Link :href="route('users')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Users</Link>
+      <div class="mt-1" :class="{'hidden': !submenuVisible.users}">
+        <Link :href="route('users')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/users', true)}">Manage Users</Link>
       </div>
     </div>
 

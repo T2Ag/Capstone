@@ -123,7 +123,6 @@ const openSideBar = () => {
       <Link :href="route('trainingList')">MANAGE TRAINING</Link>
     </div>
 
-    
   </div>
 
   <div class="lg:ml-[300px] mt-[69px] bg-gray-200 min-h-screen transition-all duration-300 ease-in-out" id="container">
