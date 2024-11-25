@@ -48,4 +48,26 @@ class TrainingTransaction extends Model
         return $query->where('end_date', '<', now());
     }
 
+    public function scopeFilter($query, array $filters) 
+    {
+        if (isset($filters['year_filter']) && $filters['year_filter'] !== 'all') {
+            $query->whereYear('transaction_date', $filters['year_filter']);
+        }
+    
+        if (isset($filters['month_filter']) && $filters['month_filter'] !== 'all') {
+            $query->whereMonth('transaction_date', $filters['month_filter']);
+        }
+
+        if ($filters['search'] ?? false) {
+            $query->whereHas('client', function ($query) use ($filters) {
+                $search = $filters['search']; // Get search from filters instead of request()
+                $query->where('first_name', 'like', '%' . $search . '%')
+                      ->orWhere('last_name', 'like', '%' . $search . '%')
+                      ->orWhereRaw("first_name || ' ' || last_name LIKE ?", ['%' . $search . '%']);
+            });
+        }
+
+        return $query;
+    }
+
 }

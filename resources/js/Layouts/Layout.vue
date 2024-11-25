@@ -71,7 +71,7 @@ const openSideBar = () => {
 </script>
 
 <template>
-  <div class="fixed top-0 left-0 w-full text-xl border-b h-[69px] bg-white z-10">
+  <div class="fixed top-0 left-0 w-full text-xl border-b h-[69px] bg-white z-10 ">
     <div class="h-full flex justify-between items-center">
       <div class="px-3 text-gray-700 text-2xl flex items-center cursor-pointer" @click="openSideBar">
         <i class="bi bi-list"></i>
@@ -103,18 +103,19 @@ const openSideBar = () => {
     </div>
   </div>
 
-  <div class="sidebar fixed top-0 bottom-0 lg:left-0 left-[-300px] w-[300px] overflow-y-auto text-center bg-white border-r-2 border-gray-300 transition-all duration-300 ease-in-out z-20" >
-    <div class="text-gray-500 text-xl p-2 h-[69px] items-center">
-      <div class="p-2.5 mt-1 flex lg:justify-start justify-between">
-        <i class="bi bi-trophy-fill rounded-md px-2"></i>
+  <div class="sidebar fixed top-0 bottom-0 lg:left-0 left-[-300px] w-[300px] text-center bg-white border-r-2 border-gray-300 transition-all duration-300 ease-in-out z-20" >
+    <div class="text-gray-500 text-xl p-2 h-[69px] items-center border-b">
+      <div class="p-2.5 my-.5 flex lg:justify-center justify-between items-center">
+        <img :src="'/arm.png'" class="max-w-8 max-h-8 align-middle lg:mr-3" alt="">
         <h1 class="font-bold text-red-700 text-[30px]">FLEX</h1>
         <i class="bi bi-list cursor-pointer lg:hidden" @click="openSideBar"></i>
       </div>
-      <hr class="mx-[-1rem] text-gray-600">
+      
     </div>
 
     <div class="p-2.5 mt-3 text-gray-700 flex text-[15px] font-bold rounded px-4 duration-300 cursor-pointer hover:bg-gray-100 hover:text-red-500"
     :class="{'bg-gray-100 text-red-500': isActive('/dashboard')}">
+      <i class="bi bi-speedometer2 mr-3"></i>
       <Link :href="route('dashboard')">DASHBOARD</Link>
     </div>
 
@@ -122,7 +123,11 @@ const openSideBar = () => {
     <div class="logs mt-3 text-gray-700 flex flex-col text-[15px] font-bold">
       <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded " 
       :class="{'bg-gray-100 text-red-500': isActive('/logs')}" @click="dropdown('logs')">
-        <span>LOGS</span>
+        <div>
+          <i class="bi bi-journal-text mr-3"></i>
+          <span>LOGS</span>       
+        </div>
+
         <span class="text-md transition-transform duration-300" :class="{'rotate-180': submenuVisible.logs}">
           <i class="bi bi-chevron-down"></i>
         </span>
@@ -143,7 +148,11 @@ const openSideBar = () => {
         isActive('/pending') || 
         isActive('/transactions')
       }"> 
-        <span>CLIENTS</span>
+        <div>
+          <i class="bi bi-people-fill mr-3"></i>
+          <span>CLIENTS</span>        
+        </div>
+
         <span class="text-md transition-transform duration-300" :class="{'rotate-180': submenuVisible.clients}">
           <i class="bi bi-chevron-down"></i>
         </span>
@@ -164,7 +173,11 @@ const openSideBar = () => {
       'bg-gray-100 text-red-500': 
         isActive('/users') 
       }">
-        <span>USERS</span>
+        <div>
+          <i class="bi bi-person-circle mr-3"></i>
+          <span>USERS</span>        
+        </div>
+
         <span class="text-md transition-transform duration-300" :class="{'rotate-180': submenuVisible.users}">
           <i class="bi bi-chevron-down"></i>
         </span>
@@ -177,35 +190,41 @@ const openSideBar = () => {
 
     <!-- Trainors Section -->
     <div class="trainors mt-3 text-gray-700 flex flex-col text-[15px] font-bold">
-      <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded" @click="dropdown('trainors')">
-        <span>TRAINORS</span>
+      <div class="flex justify-between w-full items-center hover:bg-gray-100 hover:text-red-500 px-4 p-2.5 duration-300 cursor-pointer rounded" @click="dropdown('trainors')"
+      :class="{
+      'bg-gray-100 text-red-500': 
+        isActive('/coaches') || 
+        isActive('/trainings') || 
+        isActive('/trainingTransactions')
+      }">
+        <div>
+          <i class="bi bi-person mr-3"></i>
+          <span>TRAINORS</span>        
+        </div>
+
         <span class="text-md transition-transform duration-300" :class="{'rotate-180': submenuVisible.trainors}">
           <i class="bi bi-chevron-down"></i>
         </span>
       </div>
 
-      <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.trainors}">
-        <Link :href="route('coaches.index')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Coaches</Link>
+      <div class="mt-1" :class="{'hidden': !submenuVisible.trainors}">
+        <Link :href="route('coaches.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/coaches', true)}">Manage Coaches</Link>
+        <Link :href="route('trainings.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/trainings', true)}">Manage Trainings</Link>
+        <Link :href="route('trainingTransactions.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/trainingTransactions', true)}">Manage Training Transactions</Link>
       </div>
 
-      <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.trainors}">
-        <Link :href="route('trainings.index')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Trainings</Link>
-      </div>
-
-      <div class="text-left text-sm font-bold mt-2 w-full mx-auto" :class="{'hidden': !submenuVisible.trainors}">
-        <Link :href="route('trainingTransactions.index')" class="cursor-pointer p-2 duration-300 hover:bg-gray-100 hover:text-red-500 rounded mt-1 ml-5">Manage Training Transactions</Link>
-      </div>
     </div>
 
     <div class="p-2.5 mt-3 text-gray-700 flex text-[15px] font-bold rounded px-4 duration-300 cursor-pointer hover:bg-gray-100 hover:text-red-500"
-    :class="{'bg-gray-100 text-red-500': isActive('/announcements.index')}">
+    :class="{'bg-gray-100 text-red-500': isActive('/announcements')}">
+      <i class="bi bi-megaphone-fill mr-3"></i>
       <Link :href="route('announcements.index')">ANNOUNCEMENTS</Link>
     </div>
     
   </div>
 
 
-  <div class="lg:ml-[300px] mt-[69px] bg-gray-200 min-h-screen transition-all duration-300 ease-in-out" id="container">
-    <slot></slot>
+  <div class="mt-[69px] bg-gradient-to-br from-white to-red-300 transition-all duration-300 ease-in-out min-h-screen lg:ml-[300px] overflow-hidden" id="container">
+      <slot></slot>
   </div>
 </template>

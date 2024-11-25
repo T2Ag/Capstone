@@ -1,6 +1,6 @@
 <template>
    <Layout>
-      <div>
+      <div class="p-3">
 
          <div class="px-2 py-2">
             <p class="text-[30px] text-gray-600">TRAINING LIST</p>
@@ -14,29 +14,32 @@
 
          <AddTraining :coaches="coaches"/>
 
-         <table>
-            <thead>
-               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Coach Name</th>
-               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Training Name</th>
-               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+         <!-- Training Cards Grid -->
+         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-for="training in trainings" :key="training.id" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                
-
-            </thead>
-            <tbody>
-               <tr v-for="training in trainings" :key="training.id">
-                  <td>{{ training.coach.first_name }}</td>
-                  <td>{{ training.name }}</td>
-                  <td>₱ {{ training.price }}</td>
-   
-                  <td>
-                     
-                     <Link :href="route('trainings.view',  { training: training.id })" class="text-blue-500 text-[20px] ">
+               <!-- Card Header -->
+               <div class="p-4 border-b border-gray-200">
+                  <h2 class="text-xl font-semibold text-gray-800">{{ training.name }}</h2>
+                  <p class="text-sm text-gray-600">
+                     Coach: {{ training.coach.first_name }} {{ training.coach.last_name }}
+                  </p>
+               </div>
+               
+               <!-- Card Body -->
+               <div class="p-4">
+                  <div class="mb-4">
+                     <p class="text-2xl font-bold text-red-700">₱{{ training.price }}</p>
+                  </div>
+                  
+                  <!-- Action Buttons -->
+                  <div class="flex justify-end space-x-2 mt-4">
+                     <Link :href="route('trainings.view', { training: training.id })" class="text-blue-500 text-[20px]">
                         <i class="bi bi-plus"></i>
                      </Link>
 
                      <button
-                        class="btn "
+                        class="btn"
                         data-bs-toggle="modal"
                         :data-bs-target="'#trainingListModal' + training.id"
                      >
@@ -54,48 +57,45 @@
                      </button>
 
                      <EditTrainingModal :training="training" :coaches="coaches" :key="`editModal-${training.id}`"/>
+                  </div>
+               </div>
 
-                  </td>
-   
-                  <!-- Clients Modal -->
-                  <div class="modal fade" :id="'trainingListModal' + training.id" tabindex="-1" aria-labelledby="'trainingListModalLabel' + training.id" aria-hidden="true">
-                     <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                           <div class="modal-header">
-                              <h5 class="modal-title" :id="'trainingListModalLabel' + training.id">
-                                 Clients of {{ training.coach.first_name }} {{ training.coach.last_name }}
-                              </h5>
-                              <button
-                                 type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                              ></button>
+               <!-- Clients Modal -->
+               <div class="modal fade" :id="'trainingListModal' + training.id" tabindex="-1" aria-labelledby="'trainingListModalLabel' + training.id" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                     <div class="modal-content">
+                        <div class="modal-header">
+                           <h5 class="modal-title" :id="'trainingListModalLabel' + training.id">
+                              Clients of {{ training.coach.first_name }} {{ training.coach.last_name }}
+                           </h5>
+                           <button
+                              type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                           ></button>
+                        </div>
+                        <div class="modal-body">
+                           <div class="max-h-48 overflow-y-auto border border-gray-300 rounded-md">
+                              <ul class="list-group">
+                                 <li
+                                    v-for="client in training.clients"
+                                    :key="client.id"
+                                    class="list-group-item border-0 text-left"
+                                 >
+                                    {{ client.first_name }} {{ client.middle_initial }}. {{ client.last_name }}
+                                 </li>
+                              </ul>
                            </div>
-                           <div class="modal-body">
-                              <div class="max-h-48 overflow-y-auto border border-gray-300 rounded-md">
-                                 <ul class="list-group">
-                                    <li
-                                       v-for="client in training.clients"
-                                       :key="client.id"
-                                       class="list-group-item border-0 text-left"
-                                    >
-                                       {{ client.first_name }} {{ client.middle_initial }}. {{ client.last_name }}
-                                    </li>
-                                 </ul>
-                              </div>
-                           </div>
-                           <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                 Close
-                              </button>
-                           </div>
+                        </div>
+                        <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                              Close
+                           </button>
                         </div>
                      </div>
                   </div>
-   
-               </tr>
-            </tbody>
-         </table>
-
-         
+               </div>
+            </div>
+            
+         </div>
 
          <!-- Delete Log Modal -->
          <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
@@ -119,7 +119,7 @@
       </div>
 
    </Layout>
-   </template>
+</template>
    
 <script setup>
 import Layout from '../../Layouts/Layout.vue';

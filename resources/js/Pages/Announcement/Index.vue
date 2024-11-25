@@ -191,7 +191,9 @@ const deleteAnnouncement = () => {
                modal.hide();
             }
          }
-      }
+      },
+      preserveScroll: true
+
    });
 };
 

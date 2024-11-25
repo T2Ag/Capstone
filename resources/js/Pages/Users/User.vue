@@ -1,12 +1,25 @@
 <template>
    <Layout>
-      <div class="px-2 py-2">
-         <p class="text-[30px] text-gray-600">USERS LIST</p>
+      <div class="flex justify-between">
+        <div class="px-2 py-2">
+          <p class="text-[30px] text-gray-600">USER LIST</p>
+        </div>
+          <div class="px-2 py-2">
+            <form @submit.prevent="filterUsers">
+                <InputField
+                  type="search"
+                  label=""
+                  icon="search"
+                  placeholder="Search..."
+                  v-model="form.search"
+                />
+            </form>
+          </div>
       </div>
      <div class="p-6">
        <div class="flex justify-end my-2">
          <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">
-           Add User
+           Register User
          </button>
        </div>
  
@@ -23,7 +36,7 @@
              </tr>
            </thead>
            <tbody>
-             <tr v-for="user in users" :key="user.id" class="text-center">
+             <tr v-for="user in users.data" :key="user.id" class="text-center">
                <td>{{ user.id }}</td>
                <td>{{ user.username }}</td>
                <td class="capitalize">
@@ -33,11 +46,11 @@
                  <span v-else>No roles assigned</span>
                </td>
                <td>
-                 <button class="text-green-600 mx-2" type="button" @click="openEditModal(user)" :data-bs-toggle="'modal'" :data-bs-target="'#editModal'">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <button class="text-green-600 mx-2" type="button" @click="openEditModal(user)" data-bs-toggle="modal" data-bs-target="#editModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                         <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                     </svg>
+                    </svg>
                   </button>
  
                  <button class="text-red-600 mx-2" type="button" @click="openDeleteModal(user)" data-bs-toggle="modal" data-bs-target="#deleteModal">
@@ -46,53 +59,55 @@
                      </svg>  
                  </button>
  
-                 <!-- Edit User Modal -->
+                <!-- Edit Modal -->
                  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalTitle" aria-hidden="true">
-                   <div class="modal-dialog modal-dialog-centered">
-                     <div class="modal-content">
-                       <div class="modal-header">
-                         <h5 class="modal-title" id="editModalTitle">Edit User</h5>
-                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                       </div>
-                       <form @submit.prevent="update" class="text-left">
-                           <div class="modal-body">
-                              <div class="mb-3">
-                                 <label for="username" class="form-label">Username</label>
-                                 <input type="text" class="form-control" id="username" name="username" v-model="editForm.username">
-                                 <span class="text-red-500">{{ editForm.errors.username }}</span>
-                              </div>
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editModalTitle">Edit User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form @submit.prevent="update" class="text-left">
+                        <div class="modal-body">
+                          <!-- Username -->
+                          <div class="mb-3">
+                            <label :for="'username-' + user.id" class="form-label">Username</label>
+                            <input type="text" class="form-control" :id="'username-' + user.id" name="username" v-model="editForm.username" />
+                            <span class="text-red-500">{{ editForm.errors.username }}</span>
+                          </div>
 
-                              <div class="mb-3">
-                                 <label for="password" class="form-label">Password</label>
-                                 <input type="password" class="form-control" id="password" name="password" v-model="editForm.password">
-                                 <span class="text-red-500">{{ editForm.errors.password }}</span>
-                              </div>
+                          <!-- Password -->
+                          <div class="mb-3">
+                            <label :for="'password-' + user.id" class="form-label">Password</label>
+                            <input type="password" class="form-control" :id="'password-' + user.id" name="password" v-model="editForm.password" />
+                            <span class="text-red-500">{{ editForm.errors.password }}</span>
+                          </div>
 
-                              <div class="mb-3">
-                                 <label for="password_confirmation" class="form-label">Confirm Password</label>
-                                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" v-model="editForm.password_confirmation">
-                                 <span class="text-red-500">{{ editForm.errors.password_confirmation }}</span>
-                              </div>
+                          <!-- Confirm Password -->
+                          <div class="mb-3">
+                            <label :for="'password_confirmation-' + user.id" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" :id="'password_confirmation-' + user.id" name="password_confirmation" v-model="editForm.password_confirmation" />
+                            <span class="text-red-500">{{ editForm.errors.password_confirmation }}</span>
+                          </div>
 
-                              <div class="mb-3">
-                                 <label for="role" class="form-label">Roles</label>
-                                 <div v-for="role in user_roles" :key="role.id" class="form-check">
-                                    <input class="form-check-input" type="radio" :id="'role-' + role.id" :value="role.name" v-model="editForm.role">
-                                    <label class="form-check-label capitalize" :for="'role-' + role.id">
-                                       {{ role.name }}
-                                    </label>
-                                 </div>
-                                 <span v-if="editForm.errors.role" class="text-red-500">{{ editForm.errors.role }}</span>
-                              </div>
-                           </div>
-                           <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary">Update User</button>
-                           </div>
-                        </form>
-                     </div>
-                   </div>
-                 </div>
+                          <!-- Role -->
+                          <div class="mb-3">
+                            <label class="form-label">Roles</label>
+                            <div v-for="role in user_roles" :key="role.id" class="form-check">
+                              <input class="form-check-input" type="radio" :id="'role-' + user.id + '-' + role.id" :value="role.name" v-model="editForm.role" />
+                              <label class="form-check-label capitalize" :for="'role-' + user.id + '-' + role.id">{{ role.name }}</label>
+                            </div>
+                            <span v-if="editForm.errors.role" class="text-red-500">{{ editForm.errors.role }}</span>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Update User</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
 
                   <!-- Delete User Modal -->
                   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
@@ -117,6 +132,8 @@
              </tr>
            </tbody>
          </table>
+
+         <Pagination class="flex mt-4 justify-end" :links="users.links"/>
        </div>
      </div>
    </Layout>
@@ -124,13 +141,16 @@
  
  <script setup>
  import { ref } from 'vue';
- import { useForm } from '@inertiajs/vue3';
+ import { useForm, router } from '@inertiajs/vue3';
  import Layout from '@/Layouts/Layout.vue';
  import CreateUserModal from '@/Components/UserModals/CreateUserModal.vue';
+ import InputField from '../../Components/InputField.vue';
+ import Pagination from '../../Components/Pagination.vue';
  
  const props = defineProps({
-   users: Array,
-   user_roles: Array
+   users: (Array,Object),
+   user_roles: Array,
+   search: String
  });
  
  // Edit Form
@@ -159,7 +179,7 @@
      },
      onSuccess: () => {
        editForm.reset();
-       const modalElement = document.querySelector('#editModal');
+       const modalElement = document.querySelector("#editModal");
        if (modalElement) {
          const modal = bootstrap.Modal.getInstance(modalElement);
          if (modal) {
@@ -197,4 +217,17 @@
      }
    });
  };
+
+const form = useForm({
+  search : props.search || ''
+})
+
+const filterUsers = () => {
+   router.get(route('users'), { 
+      search: form.search
+   }, {
+      preserveState: true,
+      preserveScroll: true,
+   });
+};
  </script>

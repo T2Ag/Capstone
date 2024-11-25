@@ -7,7 +7,7 @@
             <p class="text-[30px] text-gray-600">COACH LIST</p>
          </div>
          <div class="px-2 py-2">
-            <!-- <form @submit.prevent="filterClients">
+            <form @submit.prevent="filterCoaches">
                <InputField
                   type="search"
                   label=""
@@ -15,7 +15,7 @@
                   placeholder="Search..."
                   v-model="form.search"
                />
-            </form> -->
+            </form>
          </div>
          
       </div>
@@ -97,12 +97,14 @@
    import Layout from '@/Layouts/Layout.vue';
    import CreateCoachModal from '../../Components/UserModals/CreateCoachModal.vue';
    import EditCoachModal from '../../Components/UserModals/EditCoachModal.vue';
+   import InputField from '../../Components/InputField.vue';
    import Pagination from '../../Components/Pagination.vue';
    import { useForm, router } from '@inertiajs/vue3';
    import {ref, computed} from 'vue';
    
    const props = defineProps({
-      coaches: (Array, Object)
+      coaches: (Array, Object),
+      search: String
    })
    
    const deleteForm = useForm({
@@ -133,6 +135,19 @@
                }
             }
          }
+      });
+   };
+
+   const form = useForm({
+      search : props.search || ''
+   })
+
+   const filterCoaches = () => {
+      router.get(route('coaches.index'), { 
+         search: form.search
+      }, {
+         preserveState: true,
+         preserveScroll: true,
       });
    };
    

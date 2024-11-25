@@ -1,152 +1,189 @@
 <template>
   <Layout>
-    <div class="px-2 py-2">
-        <p class="text-[30px] text-gray-600">PENDING PAYMENTS</p>
-    </div>
-
-    <div class="bg-white shadow-md rounded overflow-hidden p-3">
-
-      <!-- Filter by Date -->
-      <div class="flex justify-end pb-2">
-
-        <div class="text-center pr-2">
-          <label for="date_filter" class="text-gray-500">Year</label>
-
-          <select v-model="filterForm.year_filter" @change="filterLogs" class="form-select" name="year_filter">
-                <option value="all">All Years</option>
-                <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-          </select>
-        </div>
-
-        <div class="text-center pr-2">
-          <label for="month_filter" class="text-gray-500">Month</label>
-          <select v-model="filterForm.month_filter" @change="filterLogs" class="form-select" name="month_filter">
-                <option value="all">All Months</option>
-                <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
-          </select>
-        </div>
-        
-        <div class="text-center pr-2">
-          <label for="registration_type" class="text-gray-500">Registration Type</label>
-          <select v-model="filterForm.registration_type" @change="filterLogs" class="form-select" name="registration_type">
-                <option value="all">All Types</option>
-                <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
-                      {{ registration.type }}
-                </option>
-          </select>
-        </div>
-
-        <div class="text-center pr-2">
-          <label for="payment_method" class="text-gray-500">Payment Type</label>
-          <select v-model="filterForm.payment_method" @change="filterLogs" class="form-select" name="payment_method">
-                <option value="all">All Types</option>
-                <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
-                      {{ paymentMethod.type }}
-                </option>
-          </select>
-        </div>
-
+    <div class="p-4">
+      <div class="">
+          <p class="text-3xl mb-5 font-bold text-gray-900 ">Pending Payments</p>
       </div>
-      
 
       <div class="bg-white shadow-md rounded overflow-hidden p-3">
-        <table class="w-full text-left text-gray-500 bg-white">
-            <thead class="text-lg font-semibold uppercase bg-gray-100">
-              <tr class="text-center">
-                  <th scope="col" class="lg:px-5 px-3 py-3">Client Name</th>
-                  <th scope="col" class="lg:px-5 px-3 py-3">Registration Type</th>
-                  <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
-                  <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
-                  <th scope="col" class="lg:px-5 px-3 py-3">Overdue</th>
-                  <th scope="col" class="lg:px-5 px-3 py-3">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="log in allLogs" :key="log.id" class="text-center border-b hover:bg-gray-50">
-                  <td class="lg:px-5 px-3 py-3">{{ log.client.first_name }} {{ log.client.last_name }}</td>
-                  <td class="lg:px-5 px-3 py-3">{{ log.client.registration.type }}</td>
-                  <td class="lg:px-5 px-3 py-3">{{ log.client.payment_method.type }}</td>
-                  <td class="lg:px-5 px-3 py-3 ">
-                      <div class="flex flex-col">
-                        <div>{{ formatDate(log.date) }}</div>
-                        <div>{{ formatTime(log.date) }}</div>
-                      </div>
+
+        <!-- Filter Section -->
+        <div class="flex justify-end pb-4 space-x-4">
+          <div class="relative">
+              <label class="block text-xs text-gray-600 mb-1">Year</label>
+              <div class="relative">
+                <select 
+                    v-model="filterForm.year_filter" 
+                    @change="filterTransactions" 
+                    class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                >
+                    <option value="all">All Years</option>
+                    <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+              </div>
+          </div>
+
+          <div class="relative">
+              <label class="block text-xs text-gray-600 mb-1">Month</label>
+              <div class="relative">
+                <select 
+                    v-model="filterForm.month_filter" 
+                    @change="filterTransactions" 
+                    class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                >
+                    <option value="all">All Months</option>
+                    <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+              </div>
+          </div>
+
+          <div class="relative">
+              <label class="block text-xs text-gray-600 mb-1">Registration Type</label>
+              <div class="relative">
+                <select 
+                    v-model="filterForm.registration_type" 
+                    @change="filterTransactions" 
+                    class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                >
+                    <option value="all">All Types</option>
+                    <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
+                      {{ registration.type }}
+                    </option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+              </div>
+          </div>
+
+          <div class="relative">
+              <label class="block text-xs text-gray-600 mb-1">Payment Type</label>
+              <div class="relative">
+                <select 
+                    v-model="filterForm.payment_method" 
+                    @change="filterTransactions" 
+                    class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                >
+                    <option value="all">All Types</option>
+                    <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
+                      {{ paymentMethod.type }}
+                    </option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+              </div>
+          </div>
+        </div>   
+
+        
+
+        <div class="bg-white shadow-md rounded overflow-hidden p-3">
+          <table class="w-full text-left text-gray-500 bg-white">
+              <thead class="text-lg font-semibold uppercase bg-gray-100">
+                <tr class="text-center">
+                    <th scope="col" class="lg:px-5 px-3 py-3">Client Name</th>
+                    <th scope="col" class="lg:px-5 px-3 py-3">Registration Type</th>
+                    <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
+                    <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
+                    <th scope="col" class="lg:px-5 px-3 py-3">Overdue</th>
+                    <th scope="col" class="lg:px-5 px-3 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="log in allLogs" :key="log.id" class="text-center border-b hover:bg-gray-50">
+                    <td class="lg:px-5 px-3 py-3">{{ log.client.first_name }} {{ log.client.last_name }}</td>
+                    <td class="lg:px-5 px-3 py-3">{{ log.client.registration.type }}</td>
+                    <td class="lg:px-5 px-3 py-3">{{ log.client.payment_method.type }}</td>
+                    <td class="lg:px-5 px-3 py-3 ">
+                        <div class="flex flex-col">
+                          <div>{{ formatDate(log.date) }}</div>
+                          <div>{{ formatTime(log.date) }}</div>
+                        </div>
+                      </td>
+                    <td class="lg:px-5 px-3 py-3">{{ calculateOverdueDays(log.client.transactions, log.client.payment_method.type) }}</td>
+                    <td class="lg:px-5 px-3 py-3">
+                      <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#transactionModal" @click="resetTransactionForm; openTransactionForm(log) ">
+                          Pay
+                      </button>
                     </td>
-                  <td class="lg:px-5 px-3 py-3">{{ calculateOverdueDays(log.client.transactions, log.client.payment_method.type) }}</td>
-                  <td class="lg:px-5 px-3 py-3">
-                    <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#transactionModal" @click="resetTransactionForm; openTransactionForm(log) ">
-                        Pay
-                    </button>
-                  </td>
-              </tr>
-            </tbody>
-        </table>
+                </tr>
+              </tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
 
-    <!-- Transaction Modal -->
-    <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalTitle" aria-hidden="true">
+      <!-- Transaction Modal -->
+      <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="transactionModalTitle">Transaction</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="clientName" class="form-label"><strong>Client:</strong></label>
+                      <div class="flex">
+                        <p class="pr-1"> {{ transactionForm.first_name }} </p>
+                        <p> {{ transactionForm.last_name }} </p>
+                      </div>
+                  </div>
+                  <div class="mb-3">
+                      <label for="registrationType" class="form-label"><strong>Registration:</strong></label>
+                      <p> {{ transactionForm.registration }} </p>
+                  </div>
+                  <div class="mb-3">
+                      <label for="paymentMethod" class="form-label"><strong>Payment Method:</strong></label>
+                      <p> {{ transactionForm.payment_method }} </p>
+                  </div>
+                  <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
+                      <label for="startDate" class="form-label"><strong>Start Date:</strong></label>
+                      <input type="date" id="startDate" class="form-control" v-model="transactionForm.startDate">
+                  </div>
+                  <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
+                      <label for="endDate" class="form-label"><strong>End Date:</strong></label>
+                      <input type="date" id="endDate" class="form-control" v-model="transactionForm.endDate">
+                  </div>
+                  <div class="mb-3">
+                      <label for="totalAmount" class="form-label"><strong>Total Amount:</strong></label>
+                      <input type="number" id="totalAmount" class="form-control" v-model="transactionForm.totalAmount" placeholder="Total Amount">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+                  <button type="button" class="btn btn-danger" @click="submit">Pay</button>
+                </div>
+            </div>
+          </div>
+      </div>
+
+      <!-- Alert Modal -->
+      <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="transactionModalTitle">Transaction</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+          <div class="modal-content bg-light shadow-lg rounded-lg">
+            <div class="modal-body text-center py-5">
+              <div class="mb-4">
+                {{ header }}
               </div>
-              <div class="modal-body">
-                <div class="mb-3">
-                  <label for="clientName" class="form-label"><strong>Client:</strong></label>
-                    <div class="flex">
-                      <p class="pr-1"> {{ transactionForm.first_name }} </p>
-                      <p> {{ transactionForm.last_name }} </p>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="registrationType" class="form-label"><strong>Registration:</strong></label>
-                    <p> {{ transactionForm.registration }} </p>
-                </div>
-                <div class="mb-3">
-                    <label for="paymentMethod" class="form-label"><strong>Payment Method:</strong></label>
-                    <p> {{ transactionForm.payment_method }} </p>
-                </div>
-                <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
-                    <label for="startDate" class="form-label"><strong>Start Date:</strong></label>
-                    <input type="date" id="startDate" class="form-control" v-model="transactionForm.startDate">
-                </div>
-                <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
-                    <label for="endDate" class="form-label"><strong>End Date:</strong></label>
-                    <input type="date" id="endDate" class="form-control" v-model="transactionForm.endDate">
-                </div>
-                <div class="mb-3">
-                    <label for="totalAmount" class="form-label"><strong>Total Amount:</strong></label>
-                    <input type="number" id="totalAmount" class="form-control" v-model="transactionForm.totalAmount" placeholder="Total Amount">
-                </div>
+              <div class="bg-white p-4 rounded-lg shadow-md">
+                <p>
+                  {{ alertMessage }}
+                </p>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
-                <button type="button" class="btn btn-danger" @click="submit">Pay</button>
-              </div>
-          </div>
-        </div>
-    </div>
-
-    <!-- Alert Modal -->
-    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-light shadow-lg rounded-lg">
-          <div class="modal-body text-center py-5">
-            <div class="mb-4">
-              {{ header }}
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow-md">
-              <p>
-                {{ alertMessage }}
-              </p>
             </div>
           </div>
         </div>
-      </div>
+      </div>  
     </div>
+    
  </Layout>
 </template>
 

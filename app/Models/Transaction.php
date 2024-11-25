@@ -23,6 +23,13 @@ class Transaction extends Model
         return $this->hasMany(Log::class);
     }
 
+    public function isActive()
+    {
+        $today = now()->startOfDay();
+        return $today->between($this->start_date, $this->end_date);
+    }
+
+
     public function scopeFilter($query, array $filters) 
     {
         if (isset($filters['year_filter']) && $filters['year_filter'] !== 'all') {

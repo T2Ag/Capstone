@@ -3,7 +3,7 @@
      <div class="modal-dialog modal-dialog-centered" role="document">
        <div class="modal-content">
          <div class="modal-header flex justify-between">
-           <h5 class="modal-title" id="createModalTitle">Create User</h5>
+           <h5 class="modal-title" id="createModalTitle">Register a User</h5>
            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
              <span aria-hidden="true">&times;</span>
            </button>

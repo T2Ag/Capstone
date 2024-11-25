@@ -11,12 +11,28 @@ use Inertia\Inertia;
 
 class TrainingTransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $trainingTransactions = TrainingTransaction::with('training','training.coach', 'client')->get();
+        $trainingTransactions = TrainingTransaction::with('training','training.coach', 'client')
+        ->filter([
+            'year_filter' => $request->input('year_filter'),
+            'month_filter' => $request->input('month_filter'),
+            'search' => $request->input('search')
+        ])
+        ->paginate(10);
+
+        $totalEarnings = TrainingTransaction::filter([
+            'year_filter' => $request->input('year_filter'),
+            'month_filter' => $request->input('month_filter'),
+            'search' => $request->input('search')
+        ])->sum('total_amount');
 
         return Inertia::render('Coach/TrainingTransaction',[
-            'trainingTransactions' => $trainingTransactions
+            'trainingTransactions' => $trainingTransactions,
+            'year_filter' => $request->year_filter,
+            'month_filter' => $request->month_filter,
+            'search' => $request->search,
+            'totalEarnings' => $totalEarnings
         ]);
     }
 

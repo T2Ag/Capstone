@@ -5,10 +5,46 @@
          <div class="px-2 py-2">
             <p class="text-[30px] text-gray-600">TRAINING TRANSACTION LIST</p>
          </div>
-
+         <div class="px-2 py-2">
+            <form @submit.prevent="filterTransactions" >
+               <InputField
+                  type="search"
+                  label=""
+                  icon="search"
+                  placeholder="Search..."
+                  v-model="filterForm.search"
+               />
+            </form>
+         </div>
       </div>
 
       <div class="bg-white shadow-md rounded overflow-hidden p-3 m-2">
+
+         <div class="flex justify-between align-middle pb-2">
+
+            <div class="flex items-center justify-between p-4 rounded-lg shadow-sm">
+               <p class="text-xl font-semibold">Total Earnings:</p>
+               <p class="text-xl font-bold ml-5 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-400">₱ {{ roundOff(totalEarnings) }}</p>
+            </div>
+
+            <div class="flex">
+               <div class="text-center pr-2">
+                  <label for="date_filter" class="text-gray-500">Year</label>
+
+                  <select v-model="filterForm.year_filter" @change="filterTransactions" class="form-select" name="year_filter">
+                        <option value="all">All Years</option>
+                        <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                  </select>
+               </div>
+               <div class="text-center pr-2">
+                  <label for="month_filter" class="text-gray-500">Month</label>
+                  <select v-model="filterForm.month_filter" @change="filterTransactions" class="form-select" name="month_filter">
+                        <option value="all">All Months</option>
+                        <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
+                  </select>
+               </div>               
+            </div>
+         </div>
 
          <div class="bg-white shadow-md rounded overflow-hidden p-3">
             <table class="w-full text-left text-gray-500 bg-white">
@@ -28,7 +64,7 @@
                </thead>
                <tbody>
 
-                  <tr v-for="transaction in trainingTransactions" :key="transaction.id" class="text-center lg:text-[15px] text-[7px]">
+                  <tr v-for="transaction in trainingTransactions.data" :key="transaction.id" class="text-center lg:text-[15px] text-[7px]">
 
                      <td>{{ transaction.id }}</td>
                      <td>{{ transaction.client.first_name }} {{ transaction.client.middle_initial }} {{ transaction.client.last_name }}</td>
@@ -49,7 +85,7 @@
                </tbody>
             </table>
 
-            <!-- <Pagination class="flex mt-4 justify-end" :links="transactions.links" /> -->
+            <Pagination class="flex mt-4 justify-end" :links="trainingTransactions.links" />
 
          </div>
       </div>
@@ -89,7 +125,11 @@ import { useForm, router } from '@inertiajs/vue3';
 import {ref, computed} from 'vue';
 
 const props = defineProps({
-   trainingTransactions: Array
+   trainingTransactions: (Array,Object),
+   year_filter: String,
+   month_filter: String,
+   search: String,
+   totalEarnings: Number
 })
 
 function formatDate(dateString) {
@@ -126,4 +166,42 @@ const deleteTraining = () => {
    });
 };
 
+const roundOff = (value) => {
+   return (Math.round(value * 100) / 100).toFixed(2);
+};
+
+const currentYear = new Date().getFullYear();
+const years = computed(() => Array.from({ length: currentYear - 2020 + 1 }, (_, i) => 2020 + i));
+
+const months = [
+   { value: '01', label: 'January' },
+   { value: '02', label: 'February' },
+   { value: '03', label: 'March' },
+   { value: '04', label: 'April' },
+   { value: '05', label: 'May' },
+   { value: '06', label: 'June' },
+   { value: '07', label: 'July' },
+   { value: '08', label: 'August' },
+   { value: '09', label: 'September' },
+   { value: '10', label: 'October' },
+   { value: '11', label: 'November' },
+   { value: '12', label: 'December' }
+];
+
+const filterForm = useForm({
+   year_filter: props.year_filter || 'all',
+   month_filter : props.month_filter  || 'all',
+   search : props.search || ''
+})
+
+const filterTransactions = () => {
+   router.get(route('trainingTransactions.index'), { 
+      year_filter: filterForm.year_filter,
+      month_filter: filterForm.month_filter,
+      search: filterForm.search
+   }, {
+      preserveState: true,
+      preserveScroll: true,
+   });
+};
 </script>

@@ -10,12 +10,17 @@ use Inertia\Inertia;
 
 class CoachController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $coaches = Coach::with('user')->paginate(15);
+        $coaches = Coach::with('user')
+        ->filter([
+            'search' => $request->input('search')
+        ])
+        ->paginate(15);
      
         return Inertia::render('Coach/List',[
             'coaches' => $coaches,
+            'search' => $request->search,
         ]);
     }
 

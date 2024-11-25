@@ -13,14 +13,19 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         
-        $users = User::with('roles')->get();
+        $users = User::with('roles')
+        ->filter([
+            'search' => $request->input('search')
+        ])
+        ->paginate(10);
         $roles = Role::all();
     
         return Inertia::render('Users/User', [
             'users' => $users,
             'user_roles' => $roles,
+            'search' => $request->search,
         ]);
     }
 

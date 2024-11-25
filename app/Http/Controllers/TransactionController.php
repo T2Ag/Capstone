@@ -26,6 +26,14 @@ class TransactionController extends Controller
         ])
         ->paginate(15);
 
+        $totalEarnings = Transaction::filter([
+            'year_filter' => $request->input('year_filter'),
+            'month_filter' => $request->input('month_filter'),
+            'registration_type' => $request->input('registration_type'),
+            'payment_method' => $request->input('payment_method'),
+            'search' => $request->input('search')
+        ])->sum('total_amount');
+
         $registrations = Registration::all(); 
         $paymentMethods = PaymentMethod::all();
 
@@ -38,6 +46,7 @@ class TransactionController extends Controller
             'registration_type' => $request->registration_type,
             'payment_method' => $request->payment_method,
             'search' => $request->search,
+            'totalEarnings' => $totalEarnings,
         ]);
     }
 

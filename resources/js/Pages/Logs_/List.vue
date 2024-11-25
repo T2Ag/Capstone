@@ -1,28 +1,37 @@
 <template>
-   <Layout>
-      <div class="px-2 py-2">
-         <p class="text-[30px] text-gray-600">LOGS LIST</p>
-      </div>
+<Layout>
+
+   <div class="p-3">
+
+      <h1 class="text-3xl font-bold text-gray-900 ">
+         Logs List
+      </h1>
+
    
       <!-- Button for the modal -->
-      <div class="flex justify-end my-2 mx-2">
-         <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">
+      <div class="flex justify-end my-4 mx-2">
+         <button
+            type="button"
+            class="rounded px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold shadow-md "
+            data-bs-toggle="modal"
+            data-bs-target="#createModal"
+         >
             Add Log
          </button>
       </div>
    
       <!-- Create Log Modal -->
       <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+         <div class="modal-content">
             <div class="modal-header flex justify-between">
-              <h5 class="modal-title" id="createModalTitle">Create Log</h5>
-              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+            <h5 class="modal-title" id="createModalTitle">Create Log</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
             </div>
             <form @submit.prevent="submit">
-              <div class="modal-body">
+            <div class="modal-body">
                <div class="mb-3">
                   <label for="create-client_id" class="form-label">Select Client</label>
                   <div class="input-group">
@@ -34,118 +43,165 @@
                      </datalist>
                      <input type="hidden" name="client_id" v-model="form.client_id"/>
                   </div>
-                  
-                  <!-- <select class="form-control" id="create-client_id" v-model="form.client_id">
-                     <option value="">Select a Client</option>
-                     <option v-for="client in clients" :key="client.id" :value="client.id">
-                     {{ client.first_name }} {{ client.last_name }}
-                     </option>
-                  </select> -->
                   <span class="text-red-500">{{ form.errors.client_id }}</span>
                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Create Log</button>
-              </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               <button type="submit" class="btn btn-primary">Create Log</button>
+            </div>
             </form>
-          </div>
-        </div>
+         </div>
+      </div>
       </div>
    
       <!-- Alert Modal -->
       <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content bg-light shadow-lg rounded-lg">
+      <div class="modal-dialog modal-dialog-centered">
+         <div class="modal-content bg-light shadow-lg rounded-lg">
             <div class="modal-body text-center py-5">
-              <div class="mb-4">
-                {{ header }}
-              </div>
-              <div class="bg-white p-4 rounded-lg shadow-md">
-                <p>
-                  {{ alertMessage }}
-                </p>
-              </div>
+            <div class="mb-4">
+               {{ header }}
             </div>
-          </div>
-        </div>
+            <div class="bg-white p-4 rounded-lg shadow-md">
+               <p>
+                  {{ alertMessage }}
+               </p>
+            </div>
+            </div>
+         </div>
+      </div>
       </div>
    
       <div class="bg-white shadow-md rounded overflow-hidden p-3 m-2">
 
          <!-- Filter by Date -->
-         <div class="flex justify-end pb-2">
-
-            <div class="text-center pr-2">
-            <label for="date_filter" class="text-gray-500">Year</label>
-
-            <select v-model="filterForm.year_filter" @change="filterLogs" class="form-select" name="year_filter">
-                  <option value="all">All Years</option>
-                  <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-            </select>
-
+         <div class="flex justify-end pb-4 space-x-4">
+            <div class="relative">
+               <label class="block text-xs text-gray-600 mb-1">Year</label>
+               <div class="relative">
+                  <select 
+                     v-model="filterForm.year_filter" 
+                     @change="filterLogs" 
+                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                  >
+                     <option value="all">All Years</option>
+                     <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                     <i class="bi bi-chevron-down"></i>
+                  </div>
+               </div>
             </div>
-            <div class="text-center pr-2">
-            <label for="month_filter" class="text-gray-500">Month</label>
-            <select v-model="filterForm.month_filter" @change="filterLogs" class="form-select" name="month_filter">
-                  <option value="all">All Months</option>
-                  <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
-            </select>
+
+            <div class="relative">
+               <label class="block text-xs text-gray-600 mb-1">Month</label>
+               <div class="relative">
+                  <select 
+                     v-model="filterForm.month_filter" 
+                     @change="filterLogs" 
+                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                  >
+                     <option value="all">All Months</option>
+                     <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                     <i class="bi bi-chevron-down"></i>
+                  </div>
+               </div>
             </div>
 
-            <div class="text-center pr-2">
-               <label for="registration_type" class="text-gray-500">Registration Type</label>
-               <select v-model="filterForm.registration_type" @change="filterLogs" class="form-select" name="registration_type">
+            <div class="relative">
+               <label class="block text-xs text-gray-600 mb-1">Registration Type</label>
+               <div class="relative">
+                  <select 
+                     v-model="filterForm.registration_type" 
+                     @change="filterLogs" 
+                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                  >
                      <option value="all">All Types</option>
                      <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
-                           {{ registration.type }}
+                        {{ registration.type }}
                      </option>
-               </select>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                     <i class="bi bi-chevron-down"></i>
+                  </div>
+               </div>
             </div>
 
-            <div class="text-center pr-2">
-               <label for="payment_method" class="text-gray-500">Payment Type</label>
-               <select v-model="filterForm.payment_method" @change="filterLogs" class="form-select" name="payment_method">
+            <div class="relative">
+               <label class="block text-xs text-gray-600 mb-1">Payment Type</label>
+               <div class="relative">
+                  <select 
+                     v-model="filterForm.payment_method" 
+                     @change="filterLogs" 
+                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                  >
                      <option value="all">All Types</option>
                      <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
-                           {{ paymentMethod.type }}
+                        {{ paymentMethod.type }}
                      </option>
-               </select>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                     <i class="bi bi-chevron-down"></i>
+                  </div>
+               </div>
             </div>
-
          </div>
 
-         <div class="bg-white shadow-md rounded overflow-hidden p-3">
-            <table class="w-full text-left text-gray-500 bg-white">
-               <thead class="text-l text-700 uppercase bg-gray-100">
-                  <tr class="text-center">
-                     <th scope="col" class="lg:px-5 px-3 py-3">CLIENT</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Time</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr v-for="log in logs.data" :key="log.id" class="text-center ">
-                     <td>{{ log.client.first_name }} {{ log.client.last_name }}</td>
-                     <td>{{ log.client.payment_method.type }}</td>
-                     <td>{{ formatDate(log.date) }}</td>
-                     <td>{{ formatTime(log.date) }}</td>
-                     <td>
-                        <button class="text-red-600 mx-2" type="button" @click="openDeleteModal(log)" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                              <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                           </svg>  
-                        </button>
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
+         
+         <table class="w-full text-left text-gray-600">
+            <thead class="text-sm font-semibold uppercase bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700">
+               <tr class="text-center">
+               <th scope="col" class="lg:px-5 px-3 py-3">CLIENT</th>
+               <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
+               <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
+               <th scope="col" class="lg:px-5 px-3 py-3">Time</th>
+               <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr
+               v-for="log in logs.data"
+               :key="log.id"
+               class="text-center bg-white hover:bg-gray-50 transition-colors duration-200"
+               >
+               <td class="py-2 px-3">{{ log.client.first_name }} {{ log.client.last_name }}</td>
+               <td class="py-2 px-3">{{ log.client.payment_method.type }}</td>
+               <td class="py-2 px-3">{{ formatDate(log.date) }}</td>
+               <td class="py-2 px-3">{{ formatTime(log.date) }}</td>
+               <td class="py-2 px-3">
+                  <button
+                     class="text-red-600 hover:text-red-800 mx-2 transition-colors duration-300"
+                     type="button"
+                     @click="openDeleteModal(log)"
+                     data-bs-toggle="modal"
+                     data-bs-target="#deleteModal"
+                  >
+                     <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-trash3"
+                        viewBox="0 0 16 16"
+                     >
+                     <path
+                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"
+                     />
+                     </svg>
+                  </button>
+               </td>
+               </tr>
+            </tbody>
+         </table>
 
-            <Pagination class="flex mt-4 justify-end" :links="logs.links" />
-
+         <!-- Pagination -->
+         <div class="flex mt-4 justify-end">
+            <Pagination class="flex space-x-2" :links="logs.links" />
          </div>
+         
    
          <!-- Delete Log Modal -->
          <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
@@ -165,9 +221,11 @@
                </div>
             </div>
          </div>
-      </div>
-   </Layout>
-   </template>
+      </div>  
+   </div>
+     
+</Layout>
+</template>
     
 <script setup>
 import { ref, computed } from 'vue';

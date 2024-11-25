@@ -79,21 +79,25 @@ class AuthController extends Controller
         ->get();
     
         $months = $gymVisits->map(fn($item) => Carbon::createFromFormat('m', $item->month)->format('F'));
-
         $totals = $gymVisits->pluck('total_visits');
-        
+    
         $totalClients = Client::count();
-
         $totalMembers = Client::whereNotNull('user_id')->count();
-        
+    
         $totalEarnings = Transaction::sum('total_amount');
-
+    
         // Calculate total number of logs for the current week
         $totalLogsThisWeek = Log::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->count();
-
+    
         $totalEarningsThisWeek = Transaction::whereBetween('transaction_date', [now()->startOfWeek(), now()->endOfWeek()])->sum('total_amount');
-
-        $announcements = Announcement::orderBy('created_at', 'desc')->get();
+    
+        // Get the first announcement (oldest)
+        $firstAnnouncement = Announcement::orderBy('created_at', 'desc')->first();
+    
+        // Get all announcements except the first one
+        $announcements = Announcement::where('id', '!=', optional($firstAnnouncement)->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
     
         return Inertia::render('Admin/AdminIndex', [
             'months' => $months,
@@ -103,6 +107,7 @@ class AuthController extends Controller
             'totalEarnings' => $totalEarnings,
             'totalLogsThisWeek' => $totalLogsThisWeek,
             'totalEarningsThisWeek' => $totalEarningsThisWeek,
+            'firstAnnouncement' => $firstAnnouncement,
             'announcements' => $announcements,
         ]);
     }
