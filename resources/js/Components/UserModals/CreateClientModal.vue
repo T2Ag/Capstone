@@ -125,7 +125,6 @@
                     <div class="col-md-6 mb-3">
                       <label for="password" class="form-label">Password</label>
                       <input type="password" class="form-control" id="password" name="password" v-model="form.password">
-                      <span class="text-red-500">{{ form.errors.password }}</span>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -133,6 +132,10 @@
                       <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" v-model="form.password_confirmation">
                       <span class="text-red-500">{{ form.errors.password_confirmation }}</span>
                     </div>
+                    <div class="col-md-12 mb-3">
+                      <span class="text-red-500">{{ form.errors.password }}</span>
+                    </div>
+
 
                   </div>
                 </div>

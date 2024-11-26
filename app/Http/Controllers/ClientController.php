@@ -66,11 +66,17 @@ class ClientController extends Controller
         ]);
 
         $validatedUserData = $request->validate([
-
             'username' => 'nullable|string|unique:users,username',
-            'password' => 'nullable|string|confirmed|min:8',
+            'password' => [
+                'nullable',
+                'string',
+                'confirmed',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+            ],
+        ], [
+            'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).'
         ]);
-    
 
         if ($request->has('username') && $request->filled('username')) {
             // Create the user
@@ -90,7 +96,7 @@ class ClientController extends Controller
 
         // Create the client
         Client::create($validatedData);
-    
+
         return redirect()->route('clients')->with('success', 'Client created successfully.');
     }
 

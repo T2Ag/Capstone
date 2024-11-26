@@ -1,145 +1,257 @@
 <template>
   <Layout>
-     <!-- Background Container -->
-     <div class="bg-container min-h-screen overflow-hidden "> 
-         
-       <!-- Alert Modal -->
-       <div class="modal fade" id="alert" tabindex="-1" aria-labelledby="alertTitle" aria-hidden="true">
-         <div class="modal-dialog modal-dialog-centered">
-           <div class="modal-content bg-light shadow-lg rounded-lg">
-             <div class="modal-body text-center py-5">
-               <div class="mb-4">
-                  {{ header }}
-               </div>
-               <div class="bg-white p-4 rounded-lg shadow-md">
-                 <p>
-                   {{ decodedValue }}
-                   {{ client && client.first_name ? client.first_name : 'No Client Data' }}
-                 </p>
-               </div>
-             </div>
-           </div>
-         </div>
-       </div>
+    <div class="bg-container min-h-screen overflow-hidden relative">
+      <!-- Error Display -->
+      <div v-if="error" class="absolute top-4 left-0 right-0 z-50 px-4">
+        <div class="bg-red-500 text-white p-3 rounded-lg text-center">
+          {{ error }}
+        </div>
+      </div>
 
-       <p>{{ error }}</p>
-       
-       <!-- Camera Container -->
-       <div class="lg:pt-[10rem] pt-[8rem]">
-           <div class="camera-container mx-auto items-center" v-if="!isScanningPaused">
-             <qrcode-stream @init="onInit" @decode="onDecode" class="border border-b-2"></qrcode-stream>
-           </div>
-       </div>
+      <!-- Scan Result Popup -->
+      <div 
+        v-if="scanResult" 
+        :class="[
+          'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4',
+          isClosing ? 'animate-fade-out' : 'animate-fade-in'
+        ]"
+      >
+        <div 
+          :class="[
+            'bg-white rounded-2xl shadow-2xl max-w-xl w-full p-8 text-center',
+            isClosing ? 'animate-pop-out' : 'animate-pop-in'
+          ]"
+        >
+          <div class="text-2xl font-bold mb-6 text-gray-800">
+            {{ header }}
+          </div>
+          <div class="bg-gray-100 p-6 rounded-xl">
+            <p class="text-gray-800 text-xl">
+              {{ client ? 
+                `${client.first_name} ${client.middle_initial || ''} ${client.last_name}`.trim() 
+                : 'Client Not Found' 
+              }}
+            </p>
+          </div>
+        </div>
+      </div>
 
-     </div>
-
-     <form @submit.prevent="submit">
-       <input type="hidden" name="client_id" v-model="form.client_id">
-     </form>
-
+      <!-- Camera Container -->
+      <div class="lg:pt-[10rem] pt-[8rem] flex justify-center">
+        <div id="reader-container" class="w-full max-w-md">
+          <div id="reader" class="w-full h-[337px] border border-gray-300 rounded-lg"></div>
+        </div>
+      </div>
+    </div>
   </Layout>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
-import { QrcodeStream } from 'vue3-qrcode-reader';
-import Layout from '@/Layouts/Layout.vue';
-
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { Html5Qrcode } from 'html5-qrcode'
+import { useForm } from '@inertiajs/vue3'
+import Layout from '@/Layouts/Layout.vue'
 
 const props = defineProps({
   logs: Array,
   client: Object,
   log: Object
-});
+})
 
-const error = ref('');
-const header = ref('');
-const decodedValue = ref('');
-const isScanningPaused = ref(false);
+// Reactive variables
+const error = ref('')
+const header = ref('')
+const scanResult = ref(null)
+let html5QrCode = null
 
+// Inertia form
 const form = useForm({
- client_id: ''
-});
+  client_id: ''
+})
 
-async function onInit(promise) {
- error.value = '';
- try {
-   const { capabilities } = await promise;
- } catch (err) {
-   error.value = handleCameraError(err);
- }
-}
-
+// Camera error handler
 function handleCameraError(err) {
- const errors = {
-   NotAllowedError: 'User denied camera access permission',
-   NotFoundError: 'No suitable camera device installed',
-   NotSupportedError: 'Page is not served over HTTPS (or localhost)',
-   NotReadableError: 'Camera may be already in use',
-   OverconstrainedError: 'Requested front camera is unavailable',
-   StreamApiNotSupportedError: 'Browser lacks required features'
- };
- return errors[err.name] || 'An unknown error occurred';
+  const errors = {
+    NotAllowedError: 'User denied camera access permission',
+    NotFoundError: 'No suitable camera device installed',
+    NotSupportedError: 'Page is not served over HTTPS (or localhost)',
+    NotReadableError: 'Camera may be already in use',
+    OverconstrainedError: 'Requested front camera is unavailable',
+    StreamApiNotSupportedError: 'Browser lacks required features'
+  }
+  return errors[err.name] || 'An unknown error occurred'
 }
 
-function onDecode(result) {
- if (!result) return;
+// Initialize scanner function
+const initializeScanner = async () => {
+  // Ensure previous scanner is stopped
+  if (html5QrCode) {
+    try {
+      await html5QrCode.stop()
+    } catch (stopError) {
+      console.warn('Error stopping previous scanner:', stopError)
+    }
+  }
 
- form.client_id = result;
+  // Ensure reader container exists
+  const readerContainer = document.getElementById('reader')
+  if (!readerContainer) {
+    error.value = 'Scanner container not found'
+    return
+  }
 
- form.post(route('logs.store'), {
-   onSuccess: (response) => {
-     header.value = response.props.log?.transaction_id === null 
-       ? 'Please Pay At the Cashier' 
-       : 'Payment Successful, Please Proceed';
-     decodedValue.value = result;
-     showAlertModal();
-   },
-   onError: () => {
-     header.value = 'Error';
-     decodedValue.value = 'Client Doesn\'t Exist';
-     showAlertModal();
-   }
- });
+  // Create new scanner instance
+  try {
+    html5QrCode = new Html5Qrcode('reader')
+    
+    // Scanner configuration
+    const config = { 
+      fps: 10, 
+      qrbox: { 
+        width: 250, 
+        height: 250 
+      } 
+    }
+    
+    // Start scanning
+    await html5QrCode.start(
+      { facingMode: "environment" }, 
+      config, 
+      onScanSuccess
+    )
+  } catch (err) {
+    error.value = handleCameraError(err)
+    console.error('Scanner initialization error:', err)
+  }
 }
 
-function showAlertModal() {
- isScanningPaused.value = true;
- const alertModal = new bootstrap.Modal(document.getElementById('alert'));
- alertModal.show();
+const isClosing = ref(false)
 
- setTimeout(() => {
-   alertModal.hide();
-   error.value = '';
-   isScanningPaused.value = false;
- }, 4000);
+const onScanSuccess = (decodedText, decodedResult) => {
+  html5QrCode.pause(true)
+  
+  form.client_id = decodedText
+  
+  form.post(route('logs.store'), {
+    onSuccess: (response) => {
+      // Set header based on transaction status
+      header.value = response.props.log?.transaction_id === null 
+        ? 'Payment Required, Please Pay At the Cashier' 
+        : 'Payment Successful, Please Proceed'
+      
+      scanResult.value = true
+
+      // Auto-close after 2 seconds
+      setTimeout(() => {
+        isClosing.value = true
+      }, 4700)
+
+      // Remove popup completely after animation
+      setTimeout(() => {
+        scanResult.value = null
+        isClosing.value = false
+        initializeScanner()
+      }, 5000)
+    },
+    onError: () => {
+      header.value = 'Error'
+      scanResult.value = true
+
+      // Auto-close after 2 seconds
+      setTimeout(() => {
+        isClosing.value = true
+      }, 4700)
+
+      // Remove popup completely after animation
+      setTimeout(() => {
+        scanResult.value = null
+        isClosing.value = false
+        initializeScanner()
+      }, 5000)
+    }
+  })
 }
+
+// Lifecycle hooks
+onMounted(() => {
+  initializeScanner()
+})
+
+// Cleanup on component unmount
+onBeforeUnmount(() => {
+  // Stop scanner
+  if (html5QrCode) {
+    html5QrCode.stop().catch(err => {
+      console.error("Error stopping QR scanner:", err)
+    })
+  }
+})
 </script>
 
 <style scoped>
-/* Background container with fixed image and blur effect */
 .bg-container {
   background: url('gym.jpeg') no-repeat center center/cover;
   background-attachment: fixed;
-
 }
 
-/* Camera container styling */
-.camera-container {
- position: relative;
- width: 300px;
- height: 300px;
- z-index: 1; /* Ensure the camera is above the blurred background */
+#reader {
+  max-width: 100x;
+  background-color: rgba(255,255,255,0.1);
 }
 
-.camera-container qrcode-stream {
- width: 100%;
- height: 100%;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Ensure the modal content is above the blurred background */
-.modal-content {
- z-index: 2;
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes popIn {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.7); 
+  }
+  70% { 
+    opacity: 0.7; 
+    transform: scale(1.03); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+@keyframes popOut {
+  0% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  30% { 
+    opacity: 0.7; 
+    transform: scale(1.03); 
+  }
+  100% { 
+    opacity: 0; 
+    transform: scale(0.7); 
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-in;
+}
+
+.animate-pop-in {
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-pop-out {
+  animation: popOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 </style>

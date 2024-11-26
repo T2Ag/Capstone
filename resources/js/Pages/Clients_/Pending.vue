@@ -14,7 +14,7 @@
               <div class="relative">
                 <select 
                     v-model="filterForm.year_filter" 
-                    @change="filterTransactions" 
+                    @change="filterLogs" 
                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
                 >
                     <option value="all">All Years</option>
@@ -31,7 +31,7 @@
               <div class="relative">
                 <select 
                     v-model="filterForm.month_filter" 
-                    @change="filterTransactions" 
+                    @change="filterLogs" 
                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
                 >
                     <option value="all">All Months</option>
@@ -48,7 +48,7 @@
               <div class="relative">
                 <select 
                     v-model="filterForm.registration_type" 
-                    @change="filterTransactions" 
+                    @change="filterLogs" 
                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
                 >
                     <option value="all">All Types</option>
@@ -67,7 +67,7 @@
               <div class="relative">
                 <select 
                     v-model="filterForm.payment_method" 
-                    @change="filterTransactions" 
+                    @change="filterLogs" 
                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
                 >
                     <option value="all">All Types</option>
@@ -198,7 +198,11 @@ const props = defineProps({
   year_filter: String,
   month_filter: String,
   registrations: Array,
-  paymentMethods: Array
+  paymentMethods: Array,
+  year_filter: String,
+  month_filter: String,
+  registrations: Array,
+  paymentMethods: Array,
 });
 
 const errors = ref({});
