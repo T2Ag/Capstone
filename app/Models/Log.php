@@ -21,6 +21,11 @@ class Log extends Model
         return $this->belongsTo(Transaction::class);
     }
 
+    public function payment_method()
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
     public function scopeFilter($query, array $filters) 
     {
         if (isset($filters['year_filter']) && $filters['year_filter'] !== 'all') {
@@ -38,7 +43,7 @@ class Log extends Model
         }
 
         if (isset($filters['payment_method']) && $filters['payment_method'] !== 'all') {
-            $query->whereHas('client.payment_method', function($q) use ($filters) {
+            $query->whereHas('payment_method', function($q) use ($filters) {
                 $q->where('type', $filters['payment_method']);
             });
         }

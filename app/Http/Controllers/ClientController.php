@@ -21,7 +21,7 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        $clients = Client::with('user', 'registration', 'payment_method',)
+        $clients = Client::with('user', 'registration', 'payment_method', 'transactions.payment_method')
         ->filter([
             'year_filter' => $request->input('year_filter'),
             'month_filter' => $request->input('month_filter'),
@@ -36,11 +36,12 @@ class ClientController extends Controller
         // Add the first active transaction for each client
         $clients->transform(function ($client) {
             $client->first_active_transaction = $client->transactions()
-                ->where('start_date', '<=', now()->startOfDay())
-                ->where('end_date', '>=', now()->startOfDay())
-                ->first();
+            ->where('start_date', '<=', now()->startOfDay())
+            ->where('end_date', '>=', now()->startOfDay())
+            ->first();
             return $client;
         });
+
             
         $users = User::all();
         $registrations = Registration::all(); 
@@ -150,7 +151,7 @@ class ClientController extends Controller
 
         $client->setAttribute('isMonthlyActive', $client->isMonthlyActive());
         
-        $logs = Log::with('client')->where('client_id', $id)->paginate(10);
+        $logs = Log::with('client','payment_method')->where('client_id', $id)->paginate(10);
 
         $transactions = Transaction::with('client')->where('client_id', $id)->paginate(10);
 
@@ -159,9 +160,20 @@ class ClientController extends Controller
         $users = User::all();
 
         $latestMonthlyTransaction = $client->transactions()
+        ->whereHas('payment_method', function ($query) {
+            $query->where('type', 'monthly');
+        })
         ->whereNotNull('start_date')
         ->whereNotNull('end_date')
         ->latest('transaction_date')
+        ->first();
+
+        $firstUnpaidMonthlyLog = $client->logs()
+        ->whereHas('payment_method', function ($query) {
+            $query->where('type', 'monthly');
+        })
+        ->whereNull('transaction_id')
+        ->oldest()
         ->first();
 
         return Inertia::render('Clients_/View', [
@@ -172,6 +184,7 @@ class ClientController extends Controller
             'transactions' => $transactions,
             'todos' => $todos,
             'latestMonthlyTransaction' => $latestMonthlyTransaction,
+            'firstUnpaidMonthlyLog' => $firstUnpaidMonthlyLog
         ]);
     }
 

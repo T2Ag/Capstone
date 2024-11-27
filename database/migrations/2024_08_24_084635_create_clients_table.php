@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('middle_initial')->nullable();
             $table->string('gender')->nullable();
             $table->foreignId('training_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('registration_id')->constrained()->onDelete('set null');
-            $table->foreignId('payment_method_id')->constrained()->onDelete('set null');
+            $table->foreignId('registration_id')->constrained()->onDelete('cascade');
+            $table->foreignId('payment_method_id')->constrained()->onDelete('cascade');
             $table->date('date');
             $table->timestamps();
         });

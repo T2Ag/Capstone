@@ -18,6 +18,10 @@ class Transaction extends Model
         return $this->belongsTo(Client::class);
     }
 
+    public function payment_method(){
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
     public function logs()
     {
         return $this->hasMany(Log::class);

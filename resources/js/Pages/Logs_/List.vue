@@ -156,6 +156,7 @@
                <tr class="text-center">
                <th scope="col" class="lg:px-5 px-3 py-3">CLIENT</th>
                <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
+               <th scope="col" class="lg:px-5 px-3 py-3">Status</th>
                <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
                <th scope="col" class="lg:px-5 px-3 py-3">Time</th>
                <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
@@ -167,8 +168,9 @@
                :key="log.id"
                class="text-center bg-white hover:bg-gray-50 transition-colors duration-200"
                >
-               <td class="py-2 px-3">{{ log.client.first_name }} {{ log.client.last_name }}</td>
-               <td class="py-2 px-3">{{ log.client.payment_method.type }}</td>
+               <td class="py-2 px-3">{{ log.client.first_name }} {{ log.client.middle_initial + '.' }} {{ log.client.last_name }}</td>
+               <td class="py-2 px-3">{{ log.payment_method ? log.payment_method.type: '' }}</td>
+               <td class="py-2 px-3">{{ log && log.transaction_id ? "Paid" : "Unpaid" }}</td>
                <td class="py-2 px-3">{{ formatDate(log.date) }}</td>
                <td class="py-2 px-3">{{ formatTime(log.date) }}</td>
                <td class="py-2 px-3">

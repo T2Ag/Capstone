@@ -25,7 +25,7 @@
                   <div class="flex my-auto align-middle">
                      <p class="text-[20px]">Expire on: 
                         <span class="font-bold">
-                           {{ latestMonthlyTransaction && latestMonthlyTransaction.end_date ? formatDate(latestMonthlyTransaction.end_date) : '-' }}
+                           {{ latestMonthlyTransaction && latestMonthlyTransaction.end_date ? formatWordMonthDate(latestMonthlyTransaction.end_date) : '-' }}
                         </span>
                      </p>
                   </div>
@@ -132,6 +132,8 @@
                   <thead class="text-l text-700 uppercase bg-gray-100">
                      <tr class="text-center">
                      <th scope="col" class="lg:px-5 px-3 py-3">Log ID</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">Status</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Time</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">...</th>
@@ -140,10 +142,12 @@
                   <tbody>
                      <tr v-for="log in logs.data" :key="log.id" class="text-center">
                         <td>{{ log.id }}</td>
+                        <td class="py-2 px-3">{{ log.payment_method ? log.payment_method.type: '' }}</td>
+                        <td class="py-2 px-3">{{ log && log.transaction_id ? "Paid" : "Unpaid" }}</td>
                         <td>{{ formatDate(log.date) }}</td>
                         <td>{{ formatTime(log.date) }}</td>
                         <td>
-                           <button class="text-red-600 mx-2" type="button" @click="openLogDeleteModal(log)" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                           <button class="text-red-600 mx-2" type="button" @click="openLogDeleteModal(log)" data-bs-toggle="modal" data-bs-target="#deleteLogModal">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
                               <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
                               </svg>
@@ -296,11 +300,11 @@
          </div>
 
          <!-- Delete Log Modal -->
-         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+         <div class="modal fade" id="deleteLogModal" tabindex="-1" aria-labelledby="deleteLogModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                <div class="modal-content">
                   <div class="modal-header">
-                     <h5 class="modal-title" id="deleteModalTitle">Delete Log</h5>
+                     <h5 class="modal-title" id="deleteLogModalTitle">Delete Log</h5>
                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
@@ -376,7 +380,8 @@ const props = defineProps({
    logs: (Array, Object),
    transactions: (Array, Object),
    todos: Array,
-   latestMonthlyTransaction: Object
+   latestMonthlyTransaction: Object,
+   firstUnpaidMonthlyLog: Object
  });
 
 const transactionForm = useForm({
@@ -395,7 +400,7 @@ const header = ref('');
 const alertMessage = ref('');
 
 // Populate the transaction form based on the selected log
-const openTransactionForm = (client) => {
+const openTransactionForm = (client, firstUnpaidMonthlyLog) => {
   transactionForm.client_id = client.id;
   transactionForm.first_name = client.first_name;
   transactionForm.last_name = client.last_name;
@@ -438,7 +443,11 @@ const openTransactionForm = (client) => {
       transactionForm.totalAmount = basePrice;
 
     if (paymentMethodType === 'monthly') {
-      const startDate = new Date();
+
+      const startDate = firstUnpaidMonthlyLog ? new Date(firstUnpaidMonthlyLog.date) : new Date();
+
+      console.log(startDate)
+
       transactionForm.startDate = startDate.toISOString().split('T')[0];
 
       const endDate = new Date(startDate);
@@ -527,6 +536,11 @@ function formatDate(dateString) {
    return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
+function formatWordMonthDate(dateString) {
+   const options = { year: 'numeric', month: 'long', day: 'numeric' };
+   return new Date(dateString).toLocaleDateString(undefined, options);
+}
+
 function formatTime(dateString) {
    const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
    return new Date(dateString).toLocaleTimeString(undefined, options);
@@ -552,7 +566,7 @@ const deleteLog = () => {
          console.error(errors);
       },
       onSuccess: () => {
-         const modalElement = document.querySelector('#deleteModal');
+         const modalElement = document.querySelector('#deleteLogModal');
          if(modalElement) {
             const modal = bootstrap.Modal.getInstance(modalElement);
             if (modal) {

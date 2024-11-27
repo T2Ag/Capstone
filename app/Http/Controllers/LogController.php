@@ -25,33 +25,22 @@ class LogController extends Controller
         ]);
     }
 
-    // public function index()
-    // {
-    //     $clients = Client::get();
-    //     $logs = Log::with('client')->get();
-
-    //     return view('scanner', [
-    //         'logs' => $logs,
-    //         'clients' => $clients,
-    //     ]);
-    // }
-
     public function pending(Request $request)
     {
     
         // Retrieve logs that don't have any transactions, regardless of payment method type
-        $noTransactionLogs = Log::with(['client', 'client.registration', 'client.payment_method', 'client.transactions'])
-            ->filter([
-                'year_filter' => $request->input('year_filter'),
-                'month_filter' => $request->input('month_filter'),
-                'registration_type' => $request->input('registration_type'),
-                'payment_method' => $request->input('payment_method'),
-                // 'member_filter' => $request->boolean('member_filter'),
-                // 'date_filter' => $request->input('date_filter')
-            ])
-            ->whereNull('transaction_id')
-            ->orderBy('date', 'desc')
-            ->get();
+        $noTransactionLogs = Log::with(['client', 'client.registration', 'client.payment_method', 'client.transactions', 'payment_method'])
+        ->filter([
+            'year_filter' => $request->input('year_filter'),
+            'month_filter' => $request->input('month_filter'),
+            'registration_type' => $request->input('registration_type'),
+            'payment_method' => $request->input('payment_method'),
+            // 'member_filter' => $request->boolean('member_filter'),
+            // 'date_filter' => $request->input('date_filter')
+        ])
+        ->whereNull('transaction_id')
+        ->orderBy('date', 'desc')
+        ->get();
 
         $registrations = Registration::all(); 
         $paymentMethods = PaymentMethod::all();
@@ -71,7 +60,7 @@ class LogController extends Controller
     public function list(Request $request)
     {
         $clients = Client::get();
-        $logs = Log::with('client', 'client.payment_method')->orderBy('created_at', 'desc')
+        $logs = Log::with('client', 'client.payment_method', 'payment_method')->orderBy('created_at', 'desc')
         ->filter([
             'year_filter' => $request->input('year_filter'),
             'month_filter' => $request->input('month_filter'),
@@ -112,6 +101,8 @@ class LogController extends Controller
         $client = Client::with('payment_method')->find($request->client_id);
 
         $validatedData['date'] = now();
+
+        $validatedData['payment_method_id'] = $client->payment_method_id;
 
         $latestTransaction = Transaction::where('client_id', $validatedData['client_id'])
         ->latest('transaction_date')
@@ -178,7 +169,10 @@ class LogController extends Controller
         ]);
     
         $validatedData['date'] = now();
-    
+        $client = Client::find($validatedData['client_id']);
+
+        $validatedData['payment_method_id'] = $client->payment_method_id;
+
         $latestTransaction = Transaction::where('client_id', $validatedData['client_id'])
             ->latest('transaction_date')
             ->first();
@@ -194,7 +188,7 @@ class LogController extends Controller
         
         $log = Log::create($validatedData);
         
-        $client = Client::find($validatedData['client_id']);
+        
         $log = Log::with('client', 'client.payment_method')->find($log->id);
     
         return redirect()->route('logs.list')->with([

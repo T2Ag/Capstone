@@ -63,6 +63,10 @@ class TransactionController extends Controller
 
         $client = Client::findOrFail($validatedData['client_id']);
 
+        $log = Log::findOrFail($validatedData['log_id']);
+
+        $validatedData['payment_method_id'] = $log->payment_method_id;
+
         $description = match($client->payment_method->type) {
             'monthly' => 'Monthly Payment',
             'walk-in' => 'Walk-in Payment',
@@ -79,35 +83,22 @@ class TransactionController extends Controller
             'total_amount' => $validatedData['totalAmount'],
         ]);
 
-        Log::where('id', $validatedData['log_id'])->update([
-            'transaction_id' => $transaction->id
-        ]);
+        $log->update(['transaction_id' => $transaction->id]);
 
-        // Get all other logs for the same client, excluding the log that was just updated
-        // and only for clients with monthly payment method
         $otherLogs = Log::where('client_id', $validatedData['client_id'])
-            ->where('id', '!=', $validatedData['log_id'])
-            ->whereHas('client.payment_method', function ($query) {
-                $query->where('name', 'monthly'); // Adjust 'name' to match your payment method identifier
-            })
-            ->where(function ($query) use ($transaction) {
-                // Check if the log's date is within the transaction's start and end date
-                $query->whereBetween('date', [$transaction->start_date, $transaction->end_date]);
-            })
-            ->get();
+        ->where('id', '!=', $validatedData['log_id'])
+        ->whereHas('payment_method', function ($query) {
+            $query->where('type', 'monthly');
+        })
+        ->where(function ($query) use ($transaction) {
+            $query->whereBetween('date', [$transaction->start_date, $transaction->end_date])
+                    ->whereNull('transaction_id');
+        })
+        ->get();
 
-        // Update all logs that are within the date range to have the same transaction ID
-        foreach ($otherLogs as $log) {
-            $log->update([
-                'transaction_id' => $transaction->id
-            ]);
-        }
-
-        // Update all logs that are within the date range to have the same transaction ID
-        foreach ($otherLogs as $log) {
-            $log->update([
-                'transaction_id' => $transaction->id
-            ]);
+        // Update other logs with the transaction ID
+        foreach ($otherLogs as $otherLog) {
+            $otherLog->update(['transaction_id' => $transaction->id]);
         }
 
         return redirect()->route('pending')->with('success', 'Transaction Successful.');
@@ -134,6 +125,7 @@ class TransactionController extends Controller
         $transaction = Transaction::create([
             'client_id' => $validatedData['client_id'],
             'description' => $description,
+            'payment_method_id' => $client->payment_method_id,
             'transaction_date' => now(),
             'start_date' => $validatedData['startDate'],
             'end_date' => $validatedData['endDate'],
@@ -142,9 +134,26 @@ class TransactionController extends Controller
 
         $log = Log::create([
             'client_id' => $validatedData['client_id'],
+            'payment_method_id' => $client->payment_method_id,
             'transaction_id' => $transaction->id,
             'date' => now()
         ]);
+
+        $otherLogs = Log::where('client_id', $validatedData['client_id'])
+        ->where('id', '!=', $log->id)
+        ->whereHas('payment_method', function ($query) {
+            $query->where('type', 'monthly');
+        })
+        ->where(function ($query) use ($transaction) {
+            $query->whereBetween('date', [$transaction->start_date, $transaction->end_date])
+                    ->whereNull('transaction_id');
+        })
+        ->get();
+
+        // Update other logs with the transaction ID
+        foreach ($otherLogs as $otherLog) {
+            $otherLog->update(['transaction_id' => $transaction->id]);
+        }
 
         return redirect()->back()->with([
             'success' => 'Transaction and Log created successfully.',

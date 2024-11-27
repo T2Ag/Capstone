@@ -92,7 +92,7 @@
                     <th scope="col" class="lg:px-5 px-3 py-3">Registration Type</th>
                     <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
                     <th scope="col" class="lg:px-5 px-3 py-3">Date</th>
-                    <th scope="col" class="lg:px-5 px-3 py-3">Overdue</th>
+                    <!-- <th scope="col" class="lg:px-5 px-3 py-3">Overdue</th> -->
                     <th scope="col" class="lg:px-5 px-3 py-3">Action</th>
                 </tr>
               </thead>
@@ -100,14 +100,14 @@
                 <tr v-for="log in allLogs" :key="log.id" class="text-center border-b hover:bg-gray-50">
                     <td class="lg:px-5 px-3 py-3">{{ log.client.first_name }} {{ log.client.last_name }}</td>
                     <td class="lg:px-5 px-3 py-3">{{ log.client.registration.type }}</td>
-                    <td class="lg:px-5 px-3 py-3">{{ log.client.payment_method.type }}</td>
+                    <td class="lg:px-5 px-3 py-3">{{ log.payment_method.type }}</td>
                     <td class="lg:px-5 px-3 py-3 ">
                         <div class="flex flex-col">
                           <div>{{ formatDate(log.date) }}</div>
                           <div>{{ formatTime(log.date) }}</div>
                         </div>
                       </td>
-                    <td class="lg:px-5 px-3 py-3">{{ calculateOverdueDays(log.client.transactions, log.client.payment_method.type) }}</td>
+                    <!-- <td class="lg:px-5 px-3 py-3">{{ calculateOverdueDays(log.client.transactions, log.client.payment_method.type) }}</td> -->
                     <td class="lg:px-5 px-3 py-3">
                       <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#transactionModal" @click="resetTransactionForm; openTransactionForm(log) ">
                           Pay
@@ -224,68 +224,70 @@ const transactionForm = useForm({
 
 // Computed properties for log grouping
 const groupedLogs = computed(() => {
-  const monthlyLogs = props.logs.filter(log => log.client.payment_method.type === 'monthly');
+  const monthlyLogs = props.logs.filter(log => log.payment_method.type === 'monthly');
   const groupedByClient = {};
   
   monthlyLogs.forEach(log => {
-    if (!groupedByClient[log.client.id]) {
-      groupedByClient[log.client.id] = log;
+    const clientId = log.client.id;
+    // If no log exists for this client, or this log is the oldest for the client
+    if (!groupedByClient[clientId] || new Date(log.date) < new Date(groupedByClient[clientId].date)) {
+      groupedByClient[clientId] = log;
     }
   });
   
-  return Object.values(groupedByClient);
+  return Object.values(groupedByClient).sort((a, b) => new Date(b.date) - new Date(a.date));
 });
 
 const nonMonthlyLogs = computed(() => {
-  return props.logs.filter(log => log.client.payment_method.type !== 'monthly');
+  return props.logs.filter(log => log.payment_method.type !== 'monthly');
 });
 
 const allLogs = computed(() => {
   return [...groupedLogs.value, ...nonMonthlyLogs.value];
 });
 
-// Function to calculate overdue days
-const calculateOverdueDays = (transactions, payment_method, log) => {
+// // Function to calculate overdue days
+// const calculateOverdueDays = (transactions, payment_method, log) => {
 
-  if (!transactions || transactions.length === 0 || payment_method !== 'monthly') {
-    return '-'; // No transactions or not monthly, so display "-"
-  }
+//   if (!transactions || transactions.length === 0 || payment_method !== 'monthly') {
+//     return '-'; // No transactions or not monthly, so display "-"
+//   }
   
-  // Sort transactions by end_date in descending order
-  const sortedTransactions = [...transactions].sort((a, b) =>
-    new Date(b.end_date) - new Date(a.end_date)
-  );
+//   // Sort transactions by end_date in descending order
+//   const sortedTransactions = [...transactions].sort((a, b) =>
+//     new Date(b.end_date) - new Date(a.end_date)
+//   );
 
-  const lastTransaction = sortedTransactions[0];
-    // Ensure lastEndDate is always a valid Date object
-  let lastEndDate;
-  if (lastTransaction.end_date) {
-    lastEndDate = new Date(lastTransaction.end_date);
-  } else {
-    return '-'; // If no end_date or log.date exists, return "-"
-  }
+//   const lastTransaction = sortedTransactions[0];
+//     // Ensure lastEndDate is always a valid Date object
+//   let lastEndDate;
+//   if (lastTransaction.end_date) {
+//     lastEndDate = new Date(lastTransaction.end_date);
+//   } else {
+//     return '-'; // If no end_date or log.date exists, return "-"
+//   }
 
-  const today = new Date();
+//   const today = new Date();
 
-  // If the last end date is in the future, not overdue
-  if (lastEndDate > today) {
-    return 0;
-  }
+//   // If the last end date is in the future, not overdue
+//   if (lastEndDate > today) {
+//     return 0;
+//   }
 
-  // Calculate the difference in days
-  const diffTime = Math.abs(today - lastEndDate);
-  const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+//   // Calculate the difference in days
+//   const diffTime = Math.abs(today - lastEndDate);
+//   const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   
-  const formattedEndDate = lastEndDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric'
-  });
+//   const formattedEndDate = lastEndDate.toLocaleDateString('en-US', {
+//     year: 'numeric',
+//     month: 'numeric',
+//     day: 'numeric'
+//   });
 
-  return diffDays === 1
-    ? `1 day since ${formattedEndDate}`
-    : `${diffDays} days since ${formattedEndDate}`;
-};
+//   return diffDays === 1
+//     ? `1 day since ${formattedEndDate}`
+//     : `${diffDays} days since ${formattedEndDate}`;
+// };
 
 // Reset the transaction form
 const resetTransactionForm = () => {
@@ -300,7 +302,7 @@ const openTransactionForm = (log) => {
   transactionForm.last_name = log.client.last_name;
 
   const registrationType = log.client.registration?.type || 'No Registration';
-  const paymentMethodType = log.client.payment_method?.type || 'No Payment Method';
+  const paymentMethodType = log.payment_method?.type || 'No Payment Method';
 
   transactionForm.registration = registrationType;
   transactionForm.payment_method = paymentMethodType;
