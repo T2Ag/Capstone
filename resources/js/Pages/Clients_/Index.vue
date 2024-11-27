@@ -102,6 +102,26 @@
                         </div>
                      </div>
                   </div>
+                  
+                  <!-- Registration Type Filter -->
+                  <div class="relative">
+                     <label for="payment_method" class="block text-xs text-gray-600 mb-1">Registration Type</label>
+                     <div class="relative">
+                        <select 
+                        v-model="form.payment_method" 
+                        @change="filterClients" 
+                        class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                        >
+                        <option value="all">All Types</option>
+                        <option v-for="payment_method in payment_methods" :key="payment_method.id" :value="payment_method.type">
+                           {{ payment_method.type }}
+                        </option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <i class="bi bi-chevron-down"></i>
+                        </div>
+                     </div>
+                  </div>
 
                   <!-- Day Filter -->
                   <div class="relative">
@@ -134,7 +154,19 @@
                            <td>{{ client.id }}</td>
                            <td>  {{ client.first_name }} {{ client.last_name }} </td>
                            <td> {{ client.registration.type }} </td>
-                           <td> {{ client.payment_method.type }} </td>
+                           <td > 
+                              <div class="flex lg:flex-row flex-col justify-center">
+                                 <div class="mr-2">
+                                    {{ client.payment_method.type }}
+                                 </div>
+                                 <span v-if="client.payment_method.type === 'monthly'">
+                                    <!-- Conditionally display 'Active' if first_active_transaction exists, else 'Expired' -->
+                                    <span v-if="client.first_active_transaction" class="text-green-500">( Active )</span>
+                                    <span v-else class="text-red-500">( Expired )</span>
+                                 </span>
+                              </div>
+                              
+                           </td>
                            <td> {{ formatDate(client.date) }}</td>
                            <td> {{ isMember(client) }} </td>
 
@@ -209,6 +241,8 @@ const props = defineProps({
    registrations: Array, 
    payment_methods: Array,
    year_filter: String,
+   payment_method: String,
+   registration_type: String,
    month_filter: String,
    search: String
  });
@@ -275,6 +309,7 @@ const form = useForm({
    year_filter: props.year_filter || 'all',
    month_filter : props.month_filter  || 'all',
    registration_type : props.registration_type || 'all',
+   payment_method : props.payment_method || 'all',
    member_filter : props.member_filter || false,
    date_filter : props.date_filter || '',
    search : props.search || ''
@@ -285,6 +320,7 @@ const filterClients = () => {
       year_filter: form.year_filter,
       month_filter: form.month_filter,
       registration_type: form.registration_type,
+      payment_method : form.payment_method,
       member_filter : form.member_filter,
       date_filter: form.date_filter,
       search: form.search

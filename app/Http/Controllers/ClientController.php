@@ -21,16 +21,27 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        $clients = Client::with('user', 'registration', 'payment_method')
+        $clients = Client::with('user', 'registration', 'payment_method',)
         ->filter([
             'year_filter' => $request->input('year_filter'),
             'month_filter' => $request->input('month_filter'),
             'registration_type' => $request->input('registration_type'),
+            'payment_method' => $request->input('payment_method'),
             'member_filter' => $request->boolean('member_filter'),
             'date_filter' => $request->input('date_filter'),
             'search' => $request->input('search')
         ])
         ->paginate(10);
+
+        // Add the first active transaction for each client
+        $clients->transform(function ($client) {
+            // Get the first active transaction for the client
+            $client->first_active_transaction = $client->transactions()
+                ->where('start_date', '<=', now()->startOfDay())
+                ->where('end_date', '>=', now()->startOfDay())
+                ->first();
+            return $client;
+        });
             
         $users = User::all();
         $registrations = Registration::all(); 
@@ -46,6 +57,7 @@ class ClientController extends Controller
             'year_filter' => $request->year_filter,
             'month_filter' => $request->month_filter,
             'registration_type' => $request->registration_type,
+            'payment_method' => $request->payment_method,
             'member_filter' => $request->member_filter,
             'date_filter' => $request->date_filter,
             'search' => $request->search,
@@ -63,6 +75,12 @@ class ClientController extends Controller
             'registration_id' => 'required|exists:registrations,id',
             'payment_method_id' => 'required|exists:payment_methods,id',
             'date' => 'nullable|date',
+
+        ]);
+
+        $validatedTransactionData = $request->validate([
+            'total_amount' => 'nullable|numeric',
+
         ]);
 
         $validatedUserData = $request->validate([
@@ -95,7 +113,17 @@ class ClientController extends Controller
         $validatedData['date'] = now();
 
         // Create the client
-        Client::create($validatedData);
+        $client = Client::create($validatedData);
+
+        // Create transaction if total amount is provided
+        if (isset($validatedTransactionData['total_amount']) && $validatedTransactionData['total_amount'] > 0) {
+            Transaction::create([
+                'client_id' => $client->id,
+                'description' => 'Membership Registration',
+                'transaction_date' => now(),
+                'total_amount' => $validatedTransactionData['total_amount'],
+            ]);
+        }
 
         return redirect()->route('clients')->with('success', 'Client created successfully.');
     }
@@ -119,7 +147,9 @@ class ClientController extends Controller
     public function view($id)
     {   
         $payment_methods = PaymentMethod::all();
-        $client = Client::with(['payment_method', 'transactions', 'user', 'registration', 'training', 'logs'])->findOrFail($id);
+        $client = Client::with(['payment_method', 'transactions', 'user', 'registration', 'training', 'logs',])->findOrFail($id);
+
+        $client->setAttribute('isMonthlyActive', $client->isMonthlyActive());
         
         $logs = Log::with('client')->where('client_id', $id)->paginate(10);
 

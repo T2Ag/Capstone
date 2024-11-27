@@ -19,7 +19,7 @@
                         <p class="lg:text-3xl font-bold text-white">
                               {{ totalClients }}
                         </p>
-                        <p class="text-white/90">
+                        <p class="text-white/90 font-bold">
                               Clients
                         </p>
                      </div>
@@ -36,7 +36,7 @@
                         <p class="lg:text-3xl font-bold text-white">
                               {{ totalMembers }}
                         </p>
-                        <p class="text-white/90">
+                        <p class="text-white/90 font-bold">
                               Members
                         </p>
                      </div>
@@ -44,7 +44,7 @@
             </div>
 
             <!-- Earnings Card -->
-            <div class="flex-1 bg-gradient-to-r from-green-500 to-green-400 rounded-lg shadow-lg">
+            <div class="flex-1 bg-gradient-to-r from-green-600 to-green-400 rounded-lg shadow-lg">
                <div class="lg:flex items-center p-6">
                   <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
                      <span class="text-2xl text-white">₱</span>
@@ -53,11 +53,52 @@
                         <p class="lg:text-3xl font-bold text-white">
                            {{ totalEarnings }}
                         </p>
-                        <p class="text-white/90">
+                        <p class="text-white/90 font-bold">
                            Total Earnings
                         </p>
                   </div>
                </div>
+            </div>
+            
+         </div>
+
+         <!-- Summary -->
+         <div class="flex flex-row space-x-4 w-full mx-auto py-2">
+            <!-- Monthly Clients Card -->
+            <div class="flex-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-lg shadow-lg">
+                  <div class="lg:flex items-center p-6">
+                     <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="white" class="bi bi-person-arms-up" viewBox="0 0 16 16">
+                        <path d="M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                        <path d="m5.93 6.704-.846 8.451a.768.768 0 0 0 1.523.203l.81-4.865a.59.59 0 0 1 1.165 0l.81 4.865a.768.768 0 0 0 1.523-.203l-.845-8.451A1.5 1.5 0 0 1 10.5 5.5L13 2.284a.796.796 0 0 0-1.239-.998L9.634 3.84a.7.7 0 0 1-.33.235c-.23.074-.665.176-1.304.176-.64 0-1.074-.102-1.305-.176a.7.7 0 0 1-.329-.235L4.239 1.286a.796.796 0 0 0-1.24.998l2.5 3.216c.317.316.475.758.43 1.204Z"/>
+                        </svg>
+                     </div>
+                     <div class="ml-4">
+                        <p class="lg:text-3xl font-bold text-white">
+                              {{ totalActiveMonthlyClients }}
+                        </p>
+                        <p class="text-white/90 font-bold">
+                              Active Monthly Clients
+                        </p>
+                     </div>
+                  </div>
+            </div>
+
+            <!-- Coaches Card -->
+            <div class="flex-1 bg-gradient-to-r from-red-700 to-red-400 rounded-lg shadow-lg">
+                  <div class="lg:flex items-center p-6">
+                     <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
+                        <i class="bi bi-people text-2xl text-white"></i>
+                     </div>
+                     <div class="ml-4">
+                        <p class="lg:text-3xl font-bold text-white">
+                              {{ totalCoaches }}
+                        </p>
+                        <p class="text-white/90 font-bold">
+                              Coaches
+                        </p>
+                     </div>
+                  </div>
             </div>
             
          </div>
@@ -96,10 +137,10 @@
                                  </div>
                                  <div class="text-center flex-grow flex flex-col justify-center">
                                     <span class="block text-4xl font-bold text-white mb-2">
-                                          {{ totalLogsThisWeek }}
+                                          {{ totalLogsThisMonth }}
                                     </span>
                                     <div class="text-white/90 text-lg font-medium">
-                                          Visits this week
+                                          Visits this month
                                     </div>
                                  </div>
                               </div>
@@ -113,10 +154,10 @@
                                  </div>
                                  <div class="ml-4">
                                     <p class="text-3xl font-bold text-white">
-                                          {{ totalLogsThisWeek }}
+                                          {{ totalLogsThisMonth }}
                                     </p>
                                     <p class="text-white/90">
-                                          Visits this week
+                                          Visits this month
                                     </p>
                                  </div>
                               </div>
@@ -131,10 +172,10 @@
                                  </div>
                                  <div class="text-center flex-grow flex flex-col justify-center">
                                     <span class="block text-4xl font-bold text-white mb-2">
-                                          {{ totalEarningsThisWeek }}
+                                          {{ totalEarningsThisMonth }}
                                     </span>
                                     <div class="text-white/90 text-lg font-medium">
-                                          Earnings this week
+                                          Earnings this month
                                     </div>
                                  </div>
                               </div>
@@ -148,10 +189,10 @@
                                  </div>
                                  <div class="ml-4">
                                     <p class="text-3xl font-bold text-white">
-                                          {{ totalEarningsThisWeek }}
+                                          {{ totalEarningsThisMonth }}
                                     </p>
                                     <p class="text-white/90">
-                                          Earnings this week
+                                          Earnings this month
                                     </p>
                                  </div>
                               </div>
@@ -163,40 +204,64 @@
 
       </div>
 
-      <!-- First Announcement Section -->
-      <div v-if="firstAnnouncement" class="bg-white mt-4 m-3 rounded-lg shadow-lg overflow-hidden">
-         <div class="bg-gradient-to-r from-red-500 to-red-400 p-6">
-            <div class="flex items-center mb-4">
-               <i class="bi bi-megaphone text-white text-3xl mr-4"></i>
-               <h2 class="text-2xl font-bold text-white">Latest Announcement</h2>
-            </div>
-            <div class="bg-white/20 rounded-lg p-4">
-               <h3 class="text-xl font-bold text-white mb-2">
-                  {{ firstAnnouncement.title }}
-               </h3>
-               <p class="text-white/90 mb-4">
-                  {{ firstAnnouncement.content }}
-               </p>
-               <div class="flex justify-between items-center">
-                  <span class="text-sm text-white/80">
-                     {{ formatDate(firstAnnouncement.created_at) }}
-                  </span>
-
+      <div class="flex space-x-4">
+         <!-- First Announcement Section -->
+         <div v-if="firstAnnouncement" class="bg-white mt-4 m-3 rounded-lg shadow-lg overflow-hidden flex-1">
+            <div class="bg-gradient-to-r from-red-500 to-red-400 p-6">
+               <div class="flex items-center mb-4">
+                  <i class="bi bi-megaphone text-white text-3xl mr-4"></i>
+                  <h2 class="text-2xl font-bold text-white">Latest Announcement</h2>
+               </div>
+               <div class="bg-white/20 rounded-lg p-4">
+                  <h3 class="text-xl font-bold text-white mb-2">
+                     {{ firstAnnouncement.title }}
+                  </h3>
+                  <p class="text-white/90 mb-4">
+                     {{ firstAnnouncement.content }}
+                  </p>
+                  <div class="flex justify-between items-center">
+                     <span class="text-sm text-white/80">
+                        {{ formatDate(firstAnnouncement.created_at) }}
+                     </span>
+                  </div>
                </div>
             </div>
          </div>
+
+         <!-- Active Monthly Clients Card with Table -->
+         <!-- <div class="bg-white rounded-lg shadow-lg m-3 flex-1">
+            <div class="p-6">
+               <h2 class="text-xl font-bold mb-4">Active Monthly Clients</h2>
+
+               <table class="min-w-full table-auto">
+                  <thead>
+                     <tr>
+                        <th class="py-2 px-4 border-b">Client Name</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr v-for="client in activeMonthlyClients" :key="client.id">
+                        <td class="py-2 px-4 border-b">
+                           {{ client.first_name }} {{ client.middle_initial }} {{ client.last_name }} 
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+         </div> -->
       </div>
 
-      <!-- Announcements Section -->
       <div class="bg-white mt-4 m-3 rounded-lg shadow-lg overflow-hidden">
-         <div class="px-6 py-4 bg-gradient-to-r from-gray-100 to-gray-200 border-b border-gray-300">
+
+
+         <!-- <div class="px-6 py-4 bg-gradient-to-r from-gray-100 to-gray-200 border-b border-gray-300">
             <p class="text-xl text-gray-700 font-semibold flex items-center">
                <i class="bi bi-calendar-event mr-3 text-gray-600"></i>
                ANNOUNCEMENTS
             </p>
-         </div>
+         </div> -->
 
-         <table class="w-full">
+         <!-- <table class="w-full">
             <thead>
                <tr class="bg-gray-50 border-b border-gray-200">
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -230,11 +295,10 @@
             </tbody>
          </table>
 
-         <!-- No announcements state -->
          <div v-if="announcements.length === 0" class="text-center py-6 text-gray-500">
             <i class="bi bi-info-circle mr-2"></i>
             No announcements at this time
-         </div>
+         </div> -->
       </div>
    </Layout>
 </template>
@@ -249,10 +313,13 @@ const props = defineProps({
    totalClients: Number,
    totalMembers: Number,
    totalEarnings: Number,
-   totalLogsThisWeek: Number,
-   totalEarningsThisWeek: Number,
+   totalLogsThisMonth: Number,
+   totalCoaches: Number,
+   totalEarningsThisMonth: Number,
+   totalActiveMonthlyClients: Number,
    announcements: Array,
-   firstAnnouncement: Object
+   firstAnnouncement: Object,
+   activeMonthlyClients: Array
 });
 
 const formatDate = (dateString) => {

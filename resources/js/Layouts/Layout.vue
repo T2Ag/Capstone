@@ -134,7 +134,7 @@ const openSideBar = () => {
       </div>
 
       <div class="mt-1" :class="{'hidden': !submenuVisible.logs}" >
-        <Link :href="route('logs')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs', true)}">Scan</Link>
+        <a href="/logs" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs', true)}">Scan</a>
         <Link :href="route('logs.list')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs/list', true)}">Logs List</Link>
       </div>
     </div>

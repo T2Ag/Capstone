@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use App\Models\Client;
+use App\Models\Coach;
 use App\Models\Log;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -80,16 +81,35 @@ class AuthController extends Controller
     
         $months = $gymVisits->map(fn($item) => Carbon::createFromFormat('m', $item->month)->format('F'));
         $totals = $gymVisits->pluck('total_visits');
+
+        $totalActiveMonthlyClients = Client::whereHas('transactions', function($query) {
+            $query->whereHas('client.payment_method', function($query) {
+                $query->where('type', 'monthly');
+            })
+            ->whereDate('start_date', '<=', now()->endOfDay())  
+            ->whereDate('end_date', '>=', now()->startOfDay()); 
+        })->count();
+
+        $activeMonthlyClients = Client::whereHas('transactions', function($query) {
+            $query->whereHas('client.payment_method', function($query) {
+                $query->where('type', 'monthly');
+            })
+            ->whereDate('start_date', '<=', now()->endOfDay())  
+            ->whereDate('end_date', '>=', now()->startOfDay()); 
+        })->get();
+
+        $totalCoaches = Coach::count();
     
         $totalClients = Client::count();
+
         $totalMembers = Client::whereNotNull('user_id')->count();
     
         $totalEarnings = Transaction::sum('total_amount');
     
         // Calculate total number of logs for the current week
-        $totalLogsThisWeek = Log::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $totalLogsThisMonth = Log::whereBetween('date', [now()->startOfMonth(), now()->endOfMonth()])->count();
     
-        $totalEarningsThisWeek = Transaction::whereBetween('transaction_date', [now()->startOfWeek(), now()->endOfWeek()])->sum('total_amount');
+        $totalEarningsThisMonth = Transaction::whereBetween('transaction_date', [now()->startOfMonth(), now()->endOfMonth()])->sum('total_amount');
     
         // Get the first announcement (oldest)
         $firstAnnouncement = Announcement::orderBy('created_at', 'desc')->first();
@@ -105,10 +125,14 @@ class AuthController extends Controller
             'totalClients' => $totalClients,
             'totalMembers' => $totalMembers,
             'totalEarnings' => $totalEarnings,
-            'totalLogsThisWeek' => $totalLogsThisWeek,
-            'totalEarningsThisWeek' => $totalEarningsThisWeek,
+            'totalCoaches' => $totalCoaches,
+            'totalLogsThisMonth' => $totalLogsThisMonth,
+            'totalEarningsThisMonth' => $totalEarningsThisMonth,
             'firstAnnouncement' => $firstAnnouncement,
             'announcements' => $announcements,
+            'totalActiveMonthlyClients' => $totalActiveMonthlyClients,
+            'activeMonthlyClients' => $activeMonthlyClients,
+
         ]);
     }
 }

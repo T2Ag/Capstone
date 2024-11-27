@@ -61,9 +61,18 @@ class TransactionController extends Controller
             'totalAmount' => 'required|numeric|min:0',
         ]);
 
+        $client = Client::findOrFail($validatedData['client_id']);
+
+        $description = match($client->payment_method->type) {
+            'monthly' => 'Monthly Payment',
+            'walk-in' => 'Walk-in Payment',
+            default => 'General Payment'
+        };
+
         // Create the transaction
         $transaction = Transaction::create([
             'client_id' => $validatedData['client_id'],
+            'description' => $description,
             'transaction_date' => now(),
             'start_date' => $validatedData['startDate'],
             'end_date' => $validatedData['endDate'],
@@ -75,13 +84,24 @@ class TransactionController extends Controller
         ]);
 
         // Get all other logs for the same client, excluding the log that was just updated
+        // and only for clients with monthly payment method
         $otherLogs = Log::where('client_id', $validatedData['client_id'])
-        ->where('id', '!=', $validatedData['log_id'])
-        ->where(function ($query) use ($transaction) {
-            // Check if the log's date is within the transaction's start and end date
-            $query->whereBetween('date', [$transaction->start_date, $transaction->end_date]);
-        })
-        ->get();
+            ->where('id', '!=', $validatedData['log_id'])
+            ->whereHas('client.payment_method', function ($query) {
+                $query->where('name', 'monthly'); // Adjust 'name' to match your payment method identifier
+            })
+            ->where(function ($query) use ($transaction) {
+                // Check if the log's date is within the transaction's start and end date
+                $query->whereBetween('date', [$transaction->start_date, $transaction->end_date]);
+            })
+            ->get();
+
+        // Update all logs that are within the date range to have the same transaction ID
+        foreach ($otherLogs as $log) {
+            $log->update([
+                'transaction_id' => $transaction->id
+            ]);
+        }
 
         // Update all logs that are within the date range to have the same transaction ID
         foreach ($otherLogs as $log) {
@@ -102,9 +122,18 @@ class TransactionController extends Controller
             'totalAmount' => 'required|numeric|min:0',
         ]);
 
+        $client = Client::findOrFail($validatedData['client_id']);
+
+        $description = match($client->payment_method->type) {
+            'monthly' => 'Monthly Payment',
+            'walk-in' => 'Walk-in Payment',
+            default => 'General Payment'
+        };
+
         // Create the transaction
         $transaction = Transaction::create([
             'client_id' => $validatedData['client_id'],
+            'description' => $description,
             'transaction_date' => now(),
             'start_date' => $validatedData['startDate'],
             'end_date' => $validatedData['endDate'],

@@ -20,6 +20,7 @@ Route::get('/', function () {
     return redirect('/dashboard');
 });
 
+
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -34,7 +35,6 @@ Route::middleware(['auth', 'role:admin|user|trainor'])->group(function () {
     Route::post('/toDoList', [TodoListController::class, 'store'])->name('toDoList.store');
     Route::put('toDoList/{todo}', [TodoListController::class, 'update'])->name('toDoList.update');
     Route::delete('toDoList/{todo}', [TodoListController::class, 'destroy'])->name('toDoList.destroy');
-
 });
 
 Route::middleware(['auth', 'role:trainor'])->group(function () {

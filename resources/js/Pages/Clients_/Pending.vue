@@ -245,7 +245,7 @@ const allLogs = computed(() => {
 });
 
 // Function to calculate overdue days
-const calculateOverdueDays = (transactions, payment_method) => {
+const calculateOverdueDays = (transactions, payment_method, log) => {
 
   if (!transactions || transactions.length === 0 || payment_method !== 'monthly') {
     return '-'; // No transactions or not monthly, so display "-"
@@ -257,7 +257,14 @@ const calculateOverdueDays = (transactions, payment_method) => {
   );
 
   const lastTransaction = sortedTransactions[0];
-  const lastEndDate = new Date(lastTransaction.end_date);
+    // Ensure lastEndDate is always a valid Date object
+  let lastEndDate;
+  if (lastTransaction.end_date) {
+    lastEndDate = new Date(lastTransaction.end_date);
+  } else {
+    return '-'; // If no end_date or log.date exists, return "-"
+  }
+
   const today = new Date();
 
   // If the last end date is in the future, not overdue
@@ -267,15 +274,14 @@ const calculateOverdueDays = (transactions, payment_method) => {
 
   // Calculate the difference in days
   const diffTime = Math.abs(today - lastEndDate);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
   
   const formattedEndDate = lastEndDate.toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'numeric',
     day: 'numeric'
   });
 
-  // Return the result with the number of days and the formatted end date
   return diffDays === 1
     ? `1 day since ${formattedEndDate}`
     : `${diffDays} days since ${formattedEndDate}`;

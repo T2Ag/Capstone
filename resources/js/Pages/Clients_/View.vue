@@ -8,21 +8,32 @@
 
          <div>
             <div class="flex justify-between align-middle items-center py-4">
-               <div class="text-[30px] font-semibold">
-                  {{ client.first_name }} {{ client.middle_initial }}. {{ client.last_name }}
+               
+               <div class="flex">
+                  <div class="text-[30px] font-semibold">
+                     {{ client.first_name }} {{ client.middle_initial }}. {{ client.last_name }}
+                  </div>
+                  <div class="my-auto align-middle ml-3 text-[20px]"
+                     :class="{
+                        'text-green-600 font-semibold': client.isMonthlyActive,
+                        'text-red-600 font-semibold': !client.isMonthlyActive,
+                        'hidden': client.payment_method.type === 'walk-in'
+                     }"
+                  >
+                     ({{ client.isMonthlyActive ? 'Active' : 'Expired' }})
+                  </div>
                </div>
-               <div>
-                  
-                  <button
-                     type="button" 
-                     class="rounded text-white px-3 py-2 bg-blue-500" 
-                     data-bs-toggle="modal" 
-                     data-bs-target="#transactionModal" 
-                     @click="openTransactionForm(client)">
-                        {{ client.payment_method.type === 'walk-in' ? 'Pay Session' : 'Renew Monthly' }}
-                  </button>
 
-               </div>
+                  <div>
+                     <button
+                        type="button" 
+                        class="rounded text-white px-3 py-2 bg-blue-500" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#transactionModal" 
+                        @click="openTransactionForm(client)">
+                           {{ client.payment_method.type === 'walk-in' ? 'Pay Session' : 'Renew Monthly' }}
+                     </button>   
+                  </div>
             </div>
 
             <div class="flex justify-between py-2">

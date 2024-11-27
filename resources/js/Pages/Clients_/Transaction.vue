@@ -97,7 +97,8 @@
             <table class="w-full text-left text-gray-600">
                <thead class="text-sm font-semibold uppercase bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700">
                   <tr class="text-center">
-                     <th scope="col" class="lg:px-5 px-3 py-3">Transaction ID</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">ID</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">Descrption</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Client Name</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Payment Type</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Duration</th>
@@ -112,6 +113,7 @@
                      class="text-center bg-white hover:bg-gray-50 transition-colors duration-200"
                   >
                      <td class="py-2 px-3">{{ transaction.id }}</td>
+                     <td class="py-2 px-3">{{ transaction.description }}</td>
                      <td class="py-2 px-3">{{ transaction.client.first_name }} {{ transaction.client.last_name }}</td>
                      <td class="py-2 px-3">
                         <span v-if="transaction.start_date && transaction.end_date">Monthly</span>

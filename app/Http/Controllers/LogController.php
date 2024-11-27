@@ -25,6 +25,17 @@ class LogController extends Controller
         ]);
     }
 
+    // public function index()
+    // {
+    //     $clients = Client::get();
+    //     $logs = Log::with('client')->get();
+
+    //     return view('scanner', [
+    //         'logs' => $logs,
+    //         'clients' => $clients,
+    //     ]);
+    // }
+
     public function pending(Request $request)
     {
     
@@ -124,6 +135,40 @@ class LogController extends Controller
             'log' => Log::with('client', 'client.payment_method')->find($log->id)
         ]);
     }
+
+    // public function store(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'client_id' => 'required|exists:clients,id',
+    //         'transaction_id' => 'nullable'
+    //     ]);
+
+    //     $client = Client::with('payment_method')->find($request->client_id);
+
+    //     $validatedData['date'] = now();
+
+    //     $latestTransaction = Transaction::where('client_id', $validatedData['client_id'])
+    //     ->latest('transaction_date')
+    //     ->first();
+
+    //     if (
+    //         $latestTransaction && 
+    //         !is_null($latestTransaction->start_date) && 
+    //         !is_null($latestTransaction->end_date) && 
+    //         $validatedData['date']->between($latestTransaction->start_date, $latestTransaction->end_date)
+    //     ) {
+    //         $validatedData['transaction_id'] = $latestTransaction->id;
+    //     }
+
+    //     $log = Log::create($validatedData);
+
+    //     return redirect('/logs')->with('info', [
+    //         'success' => 'Log created successfully.',
+    //         'logs' => Log::with('client','client.payment_method')->get(),
+    //         'client' => $client,
+    //         'log' => Log::with('client', 'client.payment_method')->find($log->id)
+    //     ]);
+    // }
 
     public function manualStore(Request $request)
     {

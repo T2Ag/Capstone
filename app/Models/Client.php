@@ -52,6 +52,29 @@ class Client extends Model
         return $this->hasMany(TodoList::class);
     }
 
+    public function isMonthlyActive()
+    {
+        // Find the latest monthly transaction for this client
+        $latestMonthlyTransaction = $this->transactions()
+            ->whereHas('client.payment_method', function($query) {
+                $query->where('type', 'monthly');
+            })
+            ->latest('start_date')
+            ->first();
+
+        // If no monthly transaction exists, return false
+        if (!$latestMonthlyTransaction) {
+            return false;
+        }
+
+        // Check if today is between the start and end dates of the latest monthly transaction
+        $today = now()->startOfDay();
+        return $today->between(
+            $latestMonthlyTransaction->start_date, 
+            $latestMonthlyTransaction->end_date
+        );
+    }
+
     public function scopeFilter($query, array $filters) 
     {
         if (isset($filters['year_filter']) && $filters['year_filter'] !== 'all') {
@@ -65,6 +88,12 @@ class Client extends Model
         if (isset($filters['registration_type']) && $filters['registration_type'] !== 'all') {
             $query->whereHas('registration', function($q) use ($filters) {
                 $q->where('type', $filters['registration_type']);
+            });
+        }
+
+        if (isset($filters['payment_method']) && $filters['payment_method'] !== 'all') {
+            $query->whereHas('payment_method', function($q) use ($filters) {
+                $q->where('type', $filters['payment_method']);
             });
         }
 

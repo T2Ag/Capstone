@@ -1,6 +1,6 @@
 <template>
   <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header flex justify-between">
           <h5 class="modal-title" id="createModalTitle">Create Client</h5>
@@ -114,7 +114,7 @@
                 </div>
 
                 <!-- Create a user -->
-                <div v-if="!showUserIdSelection" class="mb-3">
+                <div v-if="!showUserIdSelection" class="mb-1">
                   <div class="row">
                     <div class="col-md-12 mb-3">
                       <label for="username" class="form-label">Username</label>
@@ -127,7 +127,7 @@
                       <input type="password" class="form-control" id="password" name="password" v-model="form.password">
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-1">
                       <label for="password_confirmation" class="form-label">Confirm Password</label>
                       <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" v-model="form.password_confirmation">
                       <span class="text-red-500">{{ form.errors.password_confirmation }}</span>
@@ -137,6 +137,20 @@
                     </div>
 
 
+                  </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                  <div class="my-auto align-middle text-base font-medium">Membership fee</div> 
+                  <div class="flex items-center">
+                    <div class="text-2xl font-bold mr-2 text-gray-600">₱</div>
+                    <input 
+                      type="number" 
+                      class="form-control w-24 text-2xl text-right" 
+                      v-model.number="form.total_amount"
+                      min="0"
+                      step="100"
+                    >
                   </div>
                 </div>
               </div>
@@ -175,7 +189,9 @@ const form = useForm({
   middle_initial: '',
   gender: '',
   registration_id: '',
-  payment_method_id:''
+  payment_method_id:'',
+
+  total_amount: 200,
 });
 
 const showUserIdSelection = ref(true);
