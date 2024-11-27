@@ -17,7 +17,7 @@
             <div class="bg-gray-100 p-4 rounded-lg">
               <p class="text-gray-800">
                 {{ client ? 
-                  `${client.first_name} ${client.middle_initial || ''} ${client.last_name}`.trim() 
+                  `${client.first_name} ${client.middle_initial || ''}. ${client.last_name}`.trim() 
                   : 'Client Not Found' 
                 }}
               </p>
@@ -26,7 +26,7 @@
               @click="clearScanResult" 
               class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
             >
-              Continue Scanning
+              Confrim
             </button>
           </div>
         </div>

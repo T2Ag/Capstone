@@ -135,7 +135,7 @@ const openSideBar = () => {
 
       <div class="mt-1" :class="{'hidden': !submenuVisible.logs}" >
         <a href="/logs" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs', true)}">Scan</a>
-        <Link :href="route('logs.list')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs/list', true)}">Logs List</Link>
+        <Link :href="route('logs.list')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/logs/list', false)}">Logs List</Link>
       </div>
     </div>
 
@@ -159,9 +159,9 @@ const openSideBar = () => {
       </div>
 
       <div class="mt-1" :class="{'hidden': !submenuVisible.clients}">
-        <Link :href="route('clients')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/clients', true)}">Clients List</Link>
-        <Link :href="route('transactions.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/transactions', true)}">Client Transactions</Link>
-        <Link :href="route('pending')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/pending', true)}">Pending</Link>
+        <Link :href="route('clients')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/clients', false)}">Clients List</Link>
+        <Link :href="route('transactions.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/transactions', false)}">Client Transactions</Link>
+        <Link :href="route('pending')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/pending', false)}">Pending</Link>
       </div>
 
     </div>
@@ -184,7 +184,7 @@ const openSideBar = () => {
       </div>
 
       <div class="mt-1" :class="{'hidden': !submenuVisible.users}">
-        <Link :href="route('users')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/users', true)}">Manage Users</Link>
+        <Link :href="route('users')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/users', false)}">Manage Users</Link>
       </div>
     </div>
 
@@ -208,9 +208,9 @@ const openSideBar = () => {
       </div>
 
       <div class="mt-1" :class="{'hidden': !submenuVisible.trainors}">
-        <Link :href="route('coaches.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/coaches', true)}">Manage Coaches</Link>
-        <Link :href="route('trainings.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/trainings', true)}">Manage Trainings</Link>
-        <Link :href="route('trainingTransactions.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/trainingTransactions', true)}">Manage Training Transactions</Link>
+        <Link :href="route('coaches.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/coaches', false)}">Manage Coaches</Link>
+        <Link :href="route('trainings.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/trainings', false)}">Manage Trainings</Link>
+        <Link :href="route('trainingTransactions.index')" class="block p-2 hover:bg-gray-100 hover:text-red-500 ml-5" :class="{'bg-gray-100 text-red-500': isActive('/trainingTransactions', false)}">Manage Training Transactions</Link>
       </div>
 
     </div>

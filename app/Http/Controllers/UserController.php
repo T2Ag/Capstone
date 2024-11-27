@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index(Request $request) {
         
-        $users = User::with('roles')
+        $users = User::with('client','roles')
         ->filter([
             'search' => $request->input('search')
         ])
@@ -31,11 +31,12 @@ class UserController extends Controller
 
     public function edit(Request $request)
     {   
-        $userID = $request->user()->id;
-
+        $user = $request->user();
+        $client = $user->client; 
+        
         $qrCode = QrCode::format('svg')
-        ->size(200)
-        ->generate($userID);
+            ->size(200)
+            ->generate($client->id);
 
         $qrCodeSvgString = (string)$qrCode;
 
@@ -48,11 +49,12 @@ class UserController extends Controller
 
     public function editCoach(Request $request)
     {   
-        $userID = $request->user()->id;
-
+        $user = $request->user();
+        $coach = $user->coach; 
+        
         $qrCode = QrCode::format('svg')
-        ->size(200)
-        ->generate($userID);
+            ->size(200)
+            ->generate($coach->id);
 
         $qrCodeSvgString = (string)$qrCode;
 

@@ -69,6 +69,8 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::post('/clients/{client}', [ClientController::class, 'updatePayment'])->name('clients.updatePayment');
     Route::delete('/clients/{client}',[ClientController::class, 'destroy'])->name('clients.destroy');
     Route::delete('/transaction/{transaction}',[ClientController::class, 'destroyTransaction'])->name('clientTransactions.destroy');
+    Route::put('/clients/{client}/becomeMember', [ClientController::class, 'becomeMember'])->name('clients.becomeMember');
+    Route::put('/clients/{client}/revokeMembership', [ClientController::class, 'revoke'])->name('clients.revoke');
     // Logs 
     Route::get('/logs', [LogController::class, 'index'])->name('logs');
     Route::get('/logs/list', [LogController::class, 'list'])->name('logs.list');
@@ -78,10 +80,12 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::delete('/logs/{log}',[LogController::class, 'destroy'])->name('logs.destroy');
     // Pending Clients
     Route::get('/pending', [LogController::class, 'pending'])->name('pending');
+
     // Client Transaction
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'createTransaction'])->name('transactions.create');
     Route::post('/transactionAndLog', [TransactionController::class, 'createTransactionWithLogs'])->name('transactions.createWithLog');
+    Route::delete('/transaction/{transaction}',[TransactionController::class, 'destroy'])->name('transactions.destroy');
     // Announcements
     Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
     Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');

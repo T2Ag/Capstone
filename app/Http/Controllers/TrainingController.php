@@ -13,7 +13,7 @@ class TrainingController extends Controller
 {
     public function index()
     {
-        $trainings = Training::with('coach', 'clients')->get();
+        $trainings = Training::with('coach', 'clients')->paginate(10);
 
         $coaches = Coach::get();
 

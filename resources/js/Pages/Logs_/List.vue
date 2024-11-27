@@ -73,7 +73,7 @@
       </div>
       </div>
    
-      <div class="bg-white shadow-md rounded overflow-hidden p-3 m-2">
+      <div class="bg-white shadow-md rounded p-3 m-2">
 
          <!-- Filter by Date -->
          <div class="flex justify-end pb-4 space-x-4">
@@ -151,7 +151,7 @@
          </div>
 
          
-         <table class="w-full text-left text-gray-600">
+         <table class="w-full text-left text-gray-600 overflow-auto">
             <thead class="text-sm font-semibold uppercase bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700">
                <tr class="text-center">
                <th scope="col" class="lg:px-5 px-3 py-3">CLIENT</th>

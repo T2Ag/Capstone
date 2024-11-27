@@ -150,4 +150,11 @@ class TransactionController extends Controller
             'success' => 'Transaction and Log created successfully.',
         ]);
     }
+
+    public function destroy(Transaction $transaction)
+    {
+        $transaction->delete();
+
+        return redirect()->back()->with('success', 'Transaction Deleted successfully.');
+    }
 }

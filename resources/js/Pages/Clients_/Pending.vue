@@ -1,11 +1,11 @@
 <template>
   <Layout>
-    <div class="p-4">
+    <div class="p-3">
       <div class="">
           <p class="text-3xl mb-5 font-bold text-gray-900 ">Pending Payments</p>
       </div>
 
-      <div class="bg-white shadow-md rounded overflow-hidden p-3">
+      <div class="bg-white shadow-md rounded overflow-hidden p-3 m-2">
 
         <!-- Filter Section -->
         <div class="flex justify-end pb-4 space-x-4">
@@ -313,18 +313,28 @@ const openTransactionForm = (log) => {
   const prices = {
     'walk-in': {
       'student': 50.00,
-      'regular': 100.00,
-      'senior citizen': 75.00
+      'regular': 60.00,
+      'senior citizen': 50.00
     },
     'monthly': {
       'student': 500.00,
       'regular': 600.00,
-      'senior citizen': 550.00
+      'senior citizen': 500.00
     }
   };
 
   if (paymentMethodType === 'walk-in' || paymentMethodType === 'monthly') {
-    transactionForm.totalAmount = prices[paymentMethodType][registrationType] || 0;
+
+      let basePrice = prices[paymentMethodType][registrationType] || 0;
+
+      // Adjust prices based on payment method
+      if (paymentMethodType === 'walk-in' && !log.client.user_id) {
+      basePrice += 10.00;
+      } else if (paymentMethodType === 'monthly' && !log.client.user_id) {
+      basePrice += 100.00;
+      }
+
+      transactionForm.totalAmount = basePrice;
 
     if (paymentMethodType === 'monthly') {
       const startDate = new Date(log.date);

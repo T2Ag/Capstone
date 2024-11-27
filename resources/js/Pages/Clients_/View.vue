@@ -10,10 +10,10 @@
             <div class="flex justify-between align-middle items-center py-4">
                
                <div class="flex">
-                  <div class="text-[30px] font-semibold">
+                  <div class="text-[30px] font-semibold mr-3">
                      {{ client.first_name }} {{ client.middle_initial }}. {{ client.last_name }}
                   </div>
-                  <div class="my-auto align-middle ml-3 text-[20px]"
+                  <div class="my-auto align-middle mx-3 text-[20px]"
                      :class="{
                         'text-green-600 font-semibold': client.isMonthlyActive,
                         'text-red-600 font-semibold': !client.isMonthlyActive,
@@ -22,12 +22,19 @@
                   >
                      ({{ client.isMonthlyActive ? 'Active' : 'Expired' }})
                   </div>
+                  <div class="flex my-auto align-middle">
+                     <p class="text-[20px]">Expire on: 
+                        <span class="font-bold">
+                           {{ latestMonthlyTransaction && latestMonthlyTransaction.end_date ? formatDate(latestMonthlyTransaction.end_date) : '-' }}
+                        </span>
+                     </p>
+                  </div>
                </div>
 
                   <div>
                      <button
                         type="button" 
-                        class="rounded text-white px-3 py-2 bg-blue-500" 
+                        class="rounded text-white text-xl px-4 py-3 bg-blue-500" 
                         data-bs-toggle="modal" 
                         data-bs-target="#transactionModal" 
                         @click="openTransactionForm(client)">
@@ -37,28 +44,73 @@
             </div>
 
             <div class="flex justify-between py-2">
-               <div>
-                  Payment type: <span class="font-semibold ml-2">{{ client.payment_method.type }}</span>
+               <div class="text-xl flex">
+                  <div class="mr-2">
+                     Payment type:    
+                  </div>
+                  <div class="font-bold">
+                     {{ client.payment_method.type }}</div>
                </div>
-               <button
-                     type="button" 
-                     class="rounded text-white text-sm px-2 py-1" 
-                     :class="client.payment_method.type === 'walk-in' ? 'bg-green-500' : 'bg-gray-500'"
-                     data-bs-toggle="modal" 
-                     data-bs-target="#updatePaymentModal" 
-                     @click="openUpdatePaymentForm(client)">
-                        {{ client.payment_method.type === 'walk-in' ? 'Upgrade to Monthly' : 'Go back to Session' }}
-               </button>
+               <div>
+                  <button
+                        type="button" 
+                        class="rounded text-white text-lg px-3 py-2" 
+                        :class="client.payment_method.type === 'walk-in' ? 'bg-green-500' : 'bg-gray-500'"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#updatePaymentModal" 
+                        @click="openUpdatePaymentForm(client)">
+                           {{ client.payment_method.type === 'walk-in' ? 'Upgrade to Monthly' : 'Go back to Session' }}
+                  </button>
+                 
+               </div>
+              
 
             </div>
             
-            <div class="flex py-2 mb-3">
+            <div class="flex py-2 mb-3 text-xl">
                <div class="mr-2">
                   Registration:
                </div>
-               <div>
+               <div class="font-bold">
                   {{ client.registration.type }}
                </div>
+            </div>
+
+            <div class="flex justify-between py-2 mb-3 text-xl">
+               <div class="flex my-auto align-middle">
+                  <div class="mr-2">
+                     Membership status:
+                  </div>
+                  <div class="font-bold">
+                     {{ isMember(client) }}
+                  </div>                  
+               </div>
+
+               <button
+                  v-if="!client.user"
+                  type="button"
+                  class="rounded text-white text-lg px-3 py-2 bg-green-500"
+                  data-bs-toggle="modal"
+                  data-bs-target="#updateMembershipModal"
+               >
+                  Become a Member NOW
+               </button>
+
+               <button
+                  v-else
+                  type="button"
+                  class="rounded text-white text-lg px-3 py-2 bg-red-700"
+                  data-bs-toggle="modal"
+                  data-bs-target="#revokeMembership"
+               >
+                  Revoke Membership
+               </button>
+
+               <MembershipModal :client="client" :users="users" />
+            </div>
+
+            <div class="text-xl mr-3 mb-4">
+               Username: <span class="font-bold">{{ client.user ? client.user.username : '-' }}</span>
             </div>
             
          </div>
@@ -126,8 +178,10 @@
                         <td>{{ formatDate(transaction.transaction_date) }}</td>
                         <td>{{ formatTime(transaction.transaction_date) }}</td>
                         <td>
-                           <span v-if='client.payment_method.type === "walk-in"'>-</span>
-                           <span v-else>{{ formatDate(transaction.start_date) }} - {{ formatDate(transaction.end_date) }}</span>
+                           <span v-if="transaction.start_date && transaction.end_date">
+                              {{ formatDate(transaction.start_date) }} - {{ formatDate(transaction.end_date) }}
+                           </span>
+                           <span v-else>-</span>
                         </td>
                         <td>{{ transaction.total_amount }}</td>
                         <td>
@@ -279,6 +333,28 @@
             </div>
          </div>         
       </div>
+
+      <!-- Revoke Membership Modal -->
+      <div class="modal fade" id="revokeMembership" tabindex="-1" aria-labelledby="revokeMembershipTitle" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="revokeMembershipTitle">Revoke Membership</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div >
+                     <p> Would you like to revoke the membership of {{ client.first_name }} {{ client ? client.middle_initial: '' }}. {{ client.last_name }}</p>
+                  </div>
+
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-danger" @click="revoke">Revoke</button>
+               </div>
+            </div>
+         </div>
+      </div>
       
    </Layout>
 
@@ -287,17 +363,20 @@
 <script setup>
 import Pagination from '../../Components/Pagination.vue';
 import ToDoListTable from '../../Components/ToDoListTable.vue';
+import MembershipModal from '../../Components/UserModals/MembershipModal.vue';
 import Layout from '@/Layouts/Layout.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref,computed } from 'vue';
 
 const props = defineProps({
    client: Object,
+   users: Array,
    payment_methods: Array,
    createdLogTransaction: Object,
    logs: (Array, Object),
    transactions: (Array, Object),
-   todos: Array
+   todos: Array,
+   latestMonthlyTransaction: Object
  });
 
 const transactionForm = useForm({
@@ -346,7 +425,17 @@ const openTransactionForm = (client) => {
   };
 
   if (paymentMethodType === 'walk-in' || paymentMethodType === 'monthly') {
-    transactionForm.totalAmount = prices[paymentMethodType][registrationType] || 0;
+   
+      let basePrice = prices[paymentMethodType][registrationType] || 0;
+
+      // Adjust prices based on payment method
+      if (paymentMethodType === 'walk-in' && !client.user_id) {
+      basePrice += 10.00;
+      } else if (paymentMethodType === 'monthly' && !client.user_id) {
+      basePrice += 100.00;
+      }
+
+      transactionForm.totalAmount = basePrice;
 
     if (paymentMethodType === 'monthly') {
       const startDate = new Date();
@@ -429,8 +518,12 @@ const showAlertModal = () => {
    }, 4000);
 };
 
+function isMember(client) {
+   return client.user_id ? 'Member' : 'Non-member';
+}
+
 function formatDate(dateString) {
-   const options = { year: 'numeric', month: 'long', day: 'numeric' };
+   const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
    return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
@@ -491,6 +584,23 @@ const deleteTransaction = () => {
       },
       onSuccess: () => {
          const modalElement = document.querySelector('#deleteTransactionModal');
+         if(modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+               modal.hide();
+            }
+         }
+      }
+   });
+};
+
+const revoke = () => {
+   deleteLogForm.put(route('clients.revoke', props.client.id), {
+      onError: (errors) => {
+         console.error(errors);
+      },
+      onSuccess: () => {
+         const modalElement = document.querySelector('#revokeMembership');
          if(modalElement) {
             const modal = bootstrap.Modal.getInstance(modalElement);
             if (modal) {

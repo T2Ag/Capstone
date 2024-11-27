@@ -1,12 +1,12 @@
 <template>
 
    <Layout>
-   
+   <div class="p-3">
       <div class="flex justify-between">
-         <div class="px-2 py-2">
-            <p class="text-[30px] text-gray-600">COACH LIST</p>
+         <div class="">
+            <p class="text-3xl font-bold text-gray-900 ">Coach List</p>
          </div>
-         <div class="px-2 py-2">
+         <div class="">
             <form @submit.prevent="filterCoaches">
                <InputField
                   type="search"
@@ -23,7 +23,7 @@
       <div class="px-2 py-2">
    
          <div class="flex justify-end my-2">
-            <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">
+            <button type="button" class="rounded px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold shadow-md" data-bs-toggle="modal" data-bs-target="#createModal">
                Add Coach
             </button>
          </div>
@@ -88,6 +88,8 @@
             </div>
          </div>
       </div>
+   </div>
+      
    </Layout>
    
    </template>

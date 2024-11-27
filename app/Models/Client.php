@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -69,9 +70,15 @@ class Client extends Model
 
         // Check if today is between the start and end dates of the latest monthly transaction
         $today = now()->startOfDay();
+        
+        // Ensure start_date and end_date are not null before using between()
+        if ($latestMonthlyTransaction->start_date === null || $latestMonthlyTransaction->end_date === null) {
+            return false;
+        }
+
         return $today->between(
-            $latestMonthlyTransaction->start_date, 
-            $latestMonthlyTransaction->end_date
+            Carbon::parse($latestMonthlyTransaction->start_date),
+            Carbon::parse($latestMonthlyTransaction->end_date)
         );
     }
 

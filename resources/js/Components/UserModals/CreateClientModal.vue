@@ -167,7 +167,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -191,11 +191,15 @@ const form = useForm({
   registration_id: '',
   payment_method_id:'',
 
-  total_amount: 200,
+  total_amount: '',
 });
 
 const showUserIdSelection = ref(true);
 const isMemberChecked = ref(false);
+
+watch(isMemberChecked, (newValue) => {
+  form.total_amount = newValue ? 200 : ''; 
+});
 
 const submit = () => {
   form.post(route('clients.store'), {

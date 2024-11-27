@@ -35,7 +35,6 @@ class ClientController extends Controller
 
         // Add the first active transaction for each client
         $clients->transform(function ($client) {
-            // Get the first active transaction for the client
             $client->first_active_transaction = $client->transactions()
                 ->where('start_date', '<=', now()->startOfDay())
                 ->where('end_date', '>=', now()->startOfDay())
@@ -157,12 +156,22 @@ class ClientController extends Controller
 
         $todos = TodoList::where('client_id', $id)->get();
 
+        $users = User::all();
+
+        $latestMonthlyTransaction = $client->transactions()
+        ->whereNotNull('start_date')
+        ->whereNotNull('end_date')
+        ->latest('transaction_date')
+        ->first();
+
         return Inertia::render('Clients_/View', [
             'client' => $client,
+            'users' => $users,
             'payment_methods' => $payment_methods,
             'logs' => $logs,
             'transactions' => $transactions,
-            'todos' => $todos
+            'todos' => $todos,
+            'latestMonthlyTransaction' => $latestMonthlyTransaction,
         ]);
     }
 
@@ -176,6 +185,77 @@ class ClientController extends Controller
         return redirect()->back()->with([
             'success' => 'Log created successfully.',
         ]);
+    }
+
+    public function becomeMember(Request $request, Client $client)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'nullable|exists:users,id',
+        ]);
+
+        $validatedTransactionData = $request->validate([
+            'total_amount' => 'nullable|numeric',
+        ]);
+
+        $validatedUserData = $request->validate([
+            'username' => 'required|string|unique:users,username',
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+            ],
+        ], [
+            'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).'
+        ]);
+
+        if ($request->has('username') && $request->filled('username')) {
+            // Create the user
+            $user = User::create([
+                'username' => $validatedUserData['username'],
+                'password' => Hash::make($validatedUserData['password']),
+            ]);
+
+            // Assign the role to the user
+            $user->assignRole('user');
+
+            // Update the user_id in the validated data
+            $validatedData['user_id'] = $user->id;
+        }
+
+        $client->update($validatedData);
+
+        if (isset($validatedTransactionData['total_amount']) && $validatedTransactionData['total_amount'] > 0) {
+            Transaction::create([
+                'client_id' => $client->id,
+                'description' => 'Membership Registration',
+                'transaction_date' => now(),
+                'total_amount' => $validatedTransactionData['total_amount'],
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Membership updated successfully.');
+    }
+
+    public function revoke(Client $client) 
+    {
+        if (is_null($client->user_id)) {
+            return redirect()->back()->with('error', 'Client Membership is already revoked.');
+        }
+    
+        // Find and delete the associated user
+        $user = User::find($client->user_id);
+    
+        if ($user) {
+            $user->delete(); // Delete the associated user
+        }
+    
+        // Set user_id to null for the client
+        $client->user_id = null;
+        $client->save();
+
+        return redirect()->back()->with('success', 'Client Membership Revoked successfully.');
     }
 
     public function destroy(Client $client) 
