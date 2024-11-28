@@ -117,8 +117,7 @@
                      <td class="py-2 px-3">{{ transaction.description }}</td>
                      <td class="py-2 px-3">{{ transaction.client.first_name }} {{ transaction.client.last_name }}</td>
                      <td class="py-2 px-3">
-                        <span v-if="transaction.start_date && transaction.end_date">Monthly</span>
-                        <span v-else>Walk-in</span>
+                        {{ transaction.payment_method ? transaction.payment_method.type : '-' }}
                      </td>
                      <td class="py-2 px-3">
                         <span v-if="transaction.start_date && transaction.end_date">

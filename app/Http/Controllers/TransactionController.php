@@ -14,7 +14,7 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $transactions = Transaction::with('client', 'client.payment_method')->orderBy('created_at', 'desc')
+        $transactions = Transaction::with('client', 'client.payment_method', 'payment_method')->orderBy('created_at', 'desc')
         ->filter([
             'year_filter' => $request->input('year_filter'),
             'month_filter' => $request->input('month_filter'),

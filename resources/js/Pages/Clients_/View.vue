@@ -34,12 +34,17 @@
                   <div>
                      <button
                         type="button" 
-                        class="rounded text-white text-xl px-4 py-3 bg-blue-500" 
+                        class="rounded text-white text-xl px-4 py-3" 
+                        :class="{
+                           'bg-blue-500': !client.isMonthlyActive,
+                           'bg-gray-400 cursor-not-allowed': client.isMonthlyActive
+                        }"
+                        :disabled="client.isMonthlyActive"
                         data-bs-toggle="modal" 
                         data-bs-target="#transactionModal" 
                         @click="openTransactionForm(client)">
                            {{ client.payment_method.type === 'walk-in' ? 'Pay Session' : 'Renew Monthly' }}
-                     </button>   
+                     </button>  
                   </div>
             </div>
 
@@ -53,12 +58,17 @@
                </div>
                <div>
                   <button
-                        type="button" 
-                        class="rounded text-white text-lg px-3 py-2" 
-                        :class="client.payment_method.type === 'walk-in' ? 'bg-green-500' : 'bg-gray-500'"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#updatePaymentModal" 
-                        @click="openUpdatePaymentForm(client)">
+                     type="button" 
+                     class="rounded text-white text-lg px-3 py-2" 
+                     :class="{
+                           'bg-green-500': client.payment_method.type === 'walk-in',
+                           'bg-gray-500': client.payment_method.type !== 'walk-in',
+                           'bg-gray-400 cursor-not-allowed': client.isMonthlyActive
+                     }"
+                     :disabled="client.isMonthlyActive"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#updatePaymentModal" 
+                     @click="openUpdatePaymentForm(client)">
                            {{ client.payment_method.type === 'walk-in' ? 'Upgrade to Monthly' : 'Go back to Session' }}
                   </button>
                  

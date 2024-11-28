@@ -98,7 +98,7 @@
  </template>
  
  <script setup>
- import { ref } from 'vue';
+ import { ref, watch } from 'vue';
  import { useForm } from '@inertiajs/vue3';
  
  const props = defineProps({
@@ -113,9 +113,27 @@
    password_confirmation: '',
  
    total_amount: 200,
+
+   userSelected: true,
  });
  
  const showUserIdSelection = ref(true);
+ 
+  // Watch for changes in showUserIdSelection
+  watch(showUserIdSelection, (value) => {
+    if (value === true) {
+      // Clear fields related to user creation and set userSelected to true
+      form.username = '';
+      form.password = '';
+      form.password_confirmation = '';
+      form.userSelected = true;
+    } else if (value === false) {
+      // Clear user_id and set userSelected to false
+      form.user_id = '';
+      form.userSelected = false;
+    }
+  });
+
 
  const submit = () => {
    form.put(route('clients.becomeMember', props.client.id), {

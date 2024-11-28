@@ -78,52 +78,10 @@ class ClientController extends Controller
 
         ]);
 
-        $validatedTransactionData = $request->validate([
-            'total_amount' => 'nullable|numeric',
-
-        ]);
-
-        $validatedUserData = $request->validate([
-            'username' => 'nullable|string|unique:users,username',
-            'password' => [
-                'nullable',
-                'string',
-                'confirmed',
-                'min:8',
-                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
-            ],
-        ], [
-            'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).'
-        ]);
-
-        if ($request->has('username') && $request->filled('username')) {
-            // Create the user
-            $user = User::create([
-                'username' => $validatedUserData['username'],
-                'password' => Hash::make($validatedUserData['password']),
-            ]);
-
-            // Assign the role to the user
-            $user->assignRole('user');
-
-            // Update the user_id in the validated data
-            $validatedData['user_id'] = $user->id;
-        }
-
         $validatedData['date'] = now();
 
         // Create the client
-        $client = Client::create($validatedData);
-
-        // Create transaction if total amount is provided
-        if (isset($validatedTransactionData['total_amount']) && $validatedTransactionData['total_amount'] > 0) {
-            Transaction::create([
-                'client_id' => $client->id,
-                'description' => 'Membership Registration',
-                'transaction_date' => now(),
-                'total_amount' => $validatedTransactionData['total_amount'],
-            ]);
-        }
+        Client::create($validatedData);
 
         return redirect()->route('clients')->with('success', 'Client created successfully.');
     }
@@ -168,6 +126,20 @@ class ClientController extends Controller
         ->latest('transaction_date')
         ->first();
 
+        // $trans = $client->transactions()->get();
+        // foreach ($trans as $transaction) {
+        //     dd([
+        //         'transaction_id' => $transaction->id,
+        //         'payment_method_id' => $transaction->payment_method_id,
+        //         'payment_method' => $transaction->payment_method ? $transaction->payment_method->toArray() : 'No Payment Method',
+        //     ]);
+        // }
+
+        // dd([
+        //     'transactions' => $client->transactions()->with('payment_method')->get(),
+        //     'latest_transaction_details' => $latestMonthlyTransaction
+        // ]);
+
         $firstUnpaidMonthlyLog = $client->logs()
         ->whereHas('payment_method', function ($query) {
             $query->where('type', 'monthly');
@@ -202,42 +174,50 @@ class ClientController extends Controller
 
     public function becomeMember(Request $request, Client $client)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'nullable|exists:users,id',
-        ]);
+        // Check the value of userSelected to determine which validation to apply
+        if ($request->input('userSelected', true)) {
+            // Validate user selection
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+            ]);
+        } else {
+            // Validate user creation
+            $validatedUserData = $request->validate([
+                'username' => 'required|string|unique:users,username',
+                'password' => [
+                    'required',
+                    'string',
+                    'confirmed',
+                    'min:8',
+                    'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+                ],
+            ], [
+                'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).',
+            ]);
 
+            // Create the user if username is provided
+            if ($request->has('username') && $request->filled('username')) {
+                $user = User::create([
+                    'username' => $validatedUserData['username'],
+                    'password' => Hash::make($validatedUserData['password']),
+                ]);
+
+                // Assign the role to the user
+                $user->assignRole('user');
+
+                // Prepare validated data with the new user ID
+                $validatedData['user_id'] = $user->id;
+            }
+        }
+
+        // Validate transaction data
         $validatedTransactionData = $request->validate([
             'total_amount' => 'nullable|numeric',
         ]);
 
-        $validatedUserData = $request->validate([
-            'username' => 'required|string|unique:users,username',
-            'password' => [
-                'required',
-                'string',
-                'confirmed',
-                'min:8',
-                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
-            ],
-        ], [
-            'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).'
-        ]);
-
-        if ($request->has('username') && $request->filled('username')) {
-            // Create the user
-            $user = User::create([
-                'username' => $validatedUserData['username'],
-                'password' => Hash::make($validatedUserData['password']),
-            ]);
-
-            // Assign the role to the user
-            $user->assignRole('user');
-
-            // Update the user_id in the validated data
-            $validatedData['user_id'] = $user->id;
-        }
-
+        // Update the client with validated data
         $client->update($validatedData);
+
 
         if (isset($validatedTransactionData['total_amount']) && $validatedTransactionData['total_amount'] > 0) {
             Transaction::create([

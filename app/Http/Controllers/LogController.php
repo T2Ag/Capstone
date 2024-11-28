@@ -105,6 +105,9 @@ class LogController extends Controller
         $validatedData['payment_method_id'] = $client->payment_method_id;
 
         $latestTransaction = Transaction::where('client_id', $validatedData['client_id'])
+        ->whereHas('payment_method', function ($query) {
+            $query->where('type', 'monthly');
+        })
         ->latest('transaction_date')
         ->first();
 
@@ -174,8 +177,11 @@ class LogController extends Controller
         $validatedData['payment_method_id'] = $client->payment_method_id;
 
         $latestTransaction = Transaction::where('client_id', $validatedData['client_id'])
-            ->latest('transaction_date')
-            ->first();
+        ->whereHas('payment_method', function ($query) {
+            $query->where('type', 'monthly');
+        })
+        ->latest('transaction_date')
+        ->first();
     
         if (
             $latestTransaction && 

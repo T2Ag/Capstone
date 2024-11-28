@@ -50,12 +50,19 @@
                   <span v-else>No roles assigned</span>
                 </td>
                 <td>
-                    <button class="text-green-600 mx-2" type="button" @click="openEditModal(user)" data-bs-toggle="modal" data-bs-target="#editModal">
+                    <Link
+                      :href="route('users.view', { user: user.id })"
+                      class="text-green-500 text-lg"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </Link>
+
+                    <!-- <button class="text-green-600 mx-2" type="button" @click="openEditModal(user)" data-bs-toggle="modal" data-bs-target="#editModal">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                           <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                           <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                       </svg>
-                    </button>
+                    </button> -->
   
                   <button class="text-red-600 mx-2" type="button" @click="openDeleteModal(user)" data-bs-toggle="modal" data-bs-target="#deleteModal">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
@@ -63,8 +70,8 @@
                       </svg>  
                   </button>
   
-                  <!-- Edit Modal -->
-                  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalTitle" aria-hidden="true">
+                  
+                  <!-- <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -73,28 +80,28 @@
                         </div>
                         <form @submit.prevent="update" class="text-left">
                           <div class="modal-body">
-                            <!-- Username -->
+                            
                             <div class="mb-3">
                               <label :for="'username-' + user.id" class="form-label">Username</label>
                               <input type="text" class="form-control" :id="'username-' + user.id" name="username" v-model="editForm.username" />
                               <span class="text-red-500">{{ editForm.errors.username }}</span>
                             </div>
 
-                            <!-- Password -->
+                           
                             <div class="mb-3">
                               <label :for="'password-' + user.id" class="form-label">Password</label>
                               <input type="password" class="form-control" :id="'password-' + user.id" name="password" v-model="editForm.password" />
                               <span class="text-red-500">{{ editForm.errors.password }}</span>
                             </div>
 
-                            <!-- Confirm Password -->
+                            
                             <div class="mb-3">
                               <label :for="'password_confirmation-' + user.id" class="form-label">Confirm Password</label>
                               <input type="password" class="form-control" :id="'password_confirmation-' + user.id" name="password_confirmation" v-model="editForm.password_confirmation" />
                               <span class="text-red-500">{{ editForm.errors.password_confirmation }}</span>
                             </div>
 
-                            <!-- Role -->
+                            
                             <div class="mb-3">
                               <label class="form-label">Roles</label>
                               <div v-for="role in user_roles" :key="role.id" class="form-check">
@@ -111,7 +118,7 @@
                         </form>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
 
                     <!-- Delete User Modal -->
                     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
@@ -160,41 +167,41 @@
  });
  
  // Edit Form
- const editForm = useForm({
-   id: null,
-   username: '',
-   password: '',
-   password_confirmation: '',
-   role: ''
- });
+//  const editForm = useForm({
+//    id: null,
+//    username: '',
+//    password: '',
+//    password_confirmation: '',
+//    role: ''
+//  });
  
- const openEditModal = (user) => {
-   editForm.id = user.id;
-   editForm.username = user.username;
-   editForm.password = '';
-   editForm.password_confirmation = '';
-   editForm.role = user.roles && user.roles.length ? user.roles[0].name : '';
- };
+//  const openEditModal = (user) => {
+//    editForm.id = user.id;
+//    editForm.username = user.username;
+//    editForm.password = '';
+//    editForm.password_confirmation = '';
+//    editForm.role = user.roles && user.roles.length ? user.roles[0].name : '';
+//  };
  
- const update = () => {
-   editForm.errors = {};
+//  const update = () => {
+//    editForm.errors = {};
  
-   editForm.put(route('users.update', editForm.id), {
-     onError: (errors) => {
-       editForm.errors = errors;
-     },
-     onSuccess: () => {
-       editForm.reset();
-       const modalElement = document.querySelector("#editModal");
-       if (modalElement) {
-         const modal = bootstrap.Modal.getInstance(modalElement);
-         if (modal) {
-           modal.hide();
-         }
-       }
-     }
-   });
- };
+//    editForm.put(route('users.update', editForm.id), {
+//      onError: (errors) => {
+//        editForm.errors = errors;
+//      },
+//      onSuccess: () => {
+//        editForm.reset();
+//        const modalElement = document.querySelector("#editModal");
+//        if (modalElement) {
+//          const modal = bootstrap.Modal.getInstance(modalElement);
+//          if (modal) {
+//            modal.hide();
+//          }
+//        }
+//      }
+//    });
+//  };
  
  // Delete
  const deleteForm = useForm({

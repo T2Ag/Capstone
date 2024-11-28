@@ -57,7 +57,7 @@ class Client extends Model
     {
         // Find the latest monthly transaction for this client
         $latestMonthlyTransaction = $this->transactions()
-            ->whereHas('client.payment_method', function($query) {
+            ->whereHas('payment_method', function($query) {
                 $query->where('type', 'monthly');
             })
             ->latest('start_date')

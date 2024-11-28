@@ -29,16 +29,66 @@ class UserController extends Controller
         ]);
     }
 
+    public function view($id)
+    {   
+        $user = User::findOrFail($id);
+
+        return Inertia::render('Users/Edit', [
+            'user' => $user,
+
+        ]);
+    }
+
+    public function forgotPassword($id)
+    {
+        $user = User::findOrFail($id);
+
+        return Inertia::render('Users/ForgotPassword', [
+            'user' => $user,
+        ]);
+    }
+
+    public function updateUsername(Request $request, User $user){
+        $validatedUserData = $request->validate([
+            'username' => 'required|string|unique:users,username,'.$user->id,
+        ]);
+
+        $user->update($validatedUserData);
+
+        return redirect()->back()->with('success', 'User updated successfully');
+    }
+
+    public function updateFrogotPass(Request $request, User $user){
+        $validatedUserData = $request->validate([
+            'new_password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+            ],
+            'verify_password' => ['required', 'same:new_password'],
+        ],[
+            'new_password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).'
+        ]);
+
+        $user->update($validatedUserData);
+
+        return redirect()->back()->with('success', 'User updated successfully');
+    }
+
     public function edit(Request $request)
     {   
         $user = $request->user();
         $client = $user->client; 
         
-        $qrCode = QrCode::format('svg')
-            ->size(200)
-            ->generate($client->id);
-
-        $qrCodeSvgString = (string)$qrCode;
+        // Check if client or client->id is null
+        $qrCodeSvgString = '';
+        if ($client && $client->id) {
+            $qrCode = QrCode::format('svg')
+                ->size(200)
+                ->generate($client->id);
+            $qrCodeSvgString = (string)$qrCode;
+        }
 
         return Inertia::render('Edit',[
             'user' => User::with('client','coach')->find($request->user()->id),
@@ -52,11 +102,14 @@ class UserController extends Controller
         $user = $request->user();
         $coach = $user->coach; 
         
-        $qrCode = QrCode::format('svg')
-            ->size(200)
-            ->generate($coach->id);
-
-        $qrCodeSvgString = (string)$qrCode;
+        // Check if client or client->id is null
+        $qrCodeSvgString = '';
+        if ($coach && $coach->id) {
+            $qrCode = QrCode::format('svg')
+                ->size(200)
+                ->generate($coach->id);
+            $qrCodeSvgString = (string)$qrCode;
+        }
 
         return Inertia::render('EditAsCoach',[
             'user' => User::with('coach')->find($request->user()->id),
@@ -126,8 +179,16 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
-            'new_password' => ['required', 'min:8', 'different:current_password'],
+            'new_password' => [
+                'nullable',
+                'string',
+                'confirmed',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+            ],
             'verify_password' => ['required', 'same:new_password'],
+        ],[
+            'new_password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).'
         ]);
 
         $user->update([
@@ -141,8 +202,15 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'username' => 'required|string|unique:users,username',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
+            ],
             'role' => 'required'
+        ],[
+            'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).'
         ]);
     
         $validatedData['password'] = Hash::make($validatedData['password']);

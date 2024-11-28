@@ -137,7 +137,7 @@ import {ref, computed} from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
 
 const props = defineProps({
-   trainings: Array,
+   trainings: (Array, Object),
    coaches: Array
 });
 

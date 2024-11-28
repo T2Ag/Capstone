@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coach;
+use App\Models\Training;
+use App\Models\TrainingTransaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -24,6 +26,25 @@ class CoachController extends Controller
         ]);
     }
 
+    public function view($id)
+    {
+        $coach = Coach::with(['user'])->findOrFail(($id));
+
+        $earnings = TrainingTransaction::whereHas('training', function ($query) use ($coach) {
+            $query->where('coach_id', $coach->id);
+        })->sum('total_amount');
+        
+        $trainings = Training::where('coach_id', $coach->id)
+        ->with(['clients', 'trainingTransactions'])
+        ->get();
+
+        return Inertia::render('Coach/View',[
+            'coach' => $coach,
+            'earnings' => $earnings,
+            'trainings' => $trainings
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -34,8 +55,16 @@ class CoachController extends Controller
         ]);
 
         $validatedUserData = $request->validate([
-            'username' => 'nullable|string|unique:users,username',
-            'password' => 'nullable|string|confirmed|min:8',
+            'username' => 'required|string|unique:users,username',
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+            ],
+        ],[
+            'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).',
         ]);
         
         $user = User::create([
@@ -65,5 +94,18 @@ class CoachController extends Controller
         $coach->update($validatedData);
 
         return redirect()->route('coaches.index')->with('success', 'Trainor updated successfully.');
+    }
+
+    public function destroy(Coach $coach)
+    {
+        // If the coach has an associated user, delete the user as well
+        if ($coach->user) {
+            $coach->user->delete();
+        }
+        
+        // Delete the coach
+        $coach->delete();
+
+        return redirect()->route('coaches.index')->with('success', 'Coach deleted successfully.');
     }
 }

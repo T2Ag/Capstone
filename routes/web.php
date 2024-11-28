@@ -27,9 +27,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:admin|user|trainor'])->group(function () {
     Route::get('/edit', [UserController::class, 'edit'])->name('edit');
-    Route::get('/editCoach', [UserController::class, 'editCoach'])->name('editCoach');
     Route::put('/edit/{user}', [UserController::class, 'editProfile'])->name('editProfile');
-    Route::put('/editCoach/{user}', [UserController::class, 'editCoachProfile'])->name('editCoachProfile');
     Route::get('/change-password', [UserController::class, 'changePassword'])->name('changePassword');
     Route::put('/change-password/{user}', [UserController::class, 'updatePassword'])->name('updatePassword');
     Route::post('/toDoList', [TodoListController::class, 'store'])->name('toDoList.store');
@@ -37,7 +35,14 @@ Route::middleware(['auth', 'role:admin|user|trainor'])->group(function () {
     Route::delete('toDoList/{todo}', [TodoListController::class, 'destroy'])->name('toDoList.destroy');
 });
 
+Route::middleware(['auth', 'role:admin|user'])->group(function () {
+    Route::get('/edit', [UserController::class, 'edit'])->name('edit');
+    Route::put('/edit/{user}', [UserController::class, 'editProfile'])->name('editProfile');
+});
+
 Route::middleware(['auth', 'role:trainor'])->group(function () {
+    Route::get('/editCoach', [UserController::class, 'editCoach'])->name('editCoach');
+    Route::put('/editCoach/{user}', [UserController::class, 'editCoachProfile'])->name('editCoachProfile');
     Route::get('/trainerDashboard', [TrainerPageController::class, 'trainerDashboard'])->name('trainerDashboard');
     Route::get('/trainingList', [TrainerPageController::class, 'trainingList'])->name('trainingList');
     Route::get('/trainingList/{training}', [TrainerPageController::class, 'view'])->name('trainingList.view');
@@ -55,8 +60,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/users',[UserController::class, 'index'])->name('users');
+    Route::get('/users/{user}/editUsername',[UserController::class, 'view'])->name('users.view');
+    Route::get('/users/{user}/forgotPass',[UserController::class, 'forgotPassword'])->name('users.forgotPassword');
     Route::post('/users',[UserController::class, 'store'])->name('users.store');
     Route::put('/users/{user}',[UserController::class, 'update'])->name('users.update');
+    Route::put('/users/{user}/updateUsername',[UserController::class, 'updateUsername'])->name('users.updateUsername');
+    Route::put('/users/{user}/updateForgotPassword',[UserController::class, 'updateFrogotPass'])->name('users.updateForgotPassword');
     Route::delete('/users/{user}',[UserController::class, 'destroy'])->name('users.destroy');
 });
 
@@ -68,15 +77,15 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
     Route::post('/clients/{client}', [ClientController::class, 'updatePayment'])->name('clients.updatePayment');
     Route::delete('/clients/{client}',[ClientController::class, 'destroy'])->name('clients.destroy');
-    Route::delete('/transaction/{transaction}',[ClientController::class, 'destroyTransaction'])->name('clientTransactions.destroy');
     Route::put('/clients/{client}/becomeMember', [ClientController::class, 'becomeMember'])->name('clients.becomeMember');
     Route::put('/clients/{client}/revokeMembership', [ClientController::class, 'revoke'])->name('clients.revoke');
+
     // Logs 
     Route::get('/logs', [LogController::class, 'index'])->name('logs');
     Route::get('/logs/list', [LogController::class, 'list'])->name('logs.list');
     Route::post('/logs', [LogController::class, 'store'])->name('logs.store');
     Route::post('/logs/manual', [LogController::class, 'manualStore'])->name('logs.manualStore');
-    Route::delete('/log/{log}',[ClientController::class, 'destroyLog'])->name('clientLogs.destroy');
+    Route::delete('/clientLogs/{log}',[ClientController::class, 'destroyLog'])->name('clientLogs.destroy');
     Route::delete('/logs/{log}',[LogController::class, 'destroy'])->name('logs.destroy');
     // Pending Clients
     Route::get('/pending', [LogController::class, 'pending'])->name('pending');
@@ -93,9 +102,13 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
     // Coaches
     Route::get('/coaches', [CoachController::class, 'index'])->name('coaches.index');
+    Route::get('/coaches/{coach}', [CoachController::class, 'view'])->name('coaches.view');
+
+    Route::delete('/coaches/{coach}', [CoachController::class, 'destroy'])->name('coaches.destroy');
     // Trainings
     Route::get('/trainings', [TrainingController::class, 'index'])->name('trainings.index');
     Route::get('/trainings/{training}', [TrainingController::class, 'view'])->name('trainings.view');
+    Route::delete('/clientTransaction/{transaction}/', [ClientController::class, 'destroyTransaction'])->name('clientTransactions.destroy');
     //Training Transactions
     Route::get('/trainingTransactions', [TrainingTransactionController::class, 'index'])->name('trainingTransactions.index');
     Route::delete('/trainingTransactions/{trainingTransaction}', [TrainingTransactionController::class, 'destroy'])->name('trainingTransactions.destroy');

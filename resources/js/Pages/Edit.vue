@@ -62,7 +62,11 @@
          </div>
          
          <div class="w-full lg:w-auto flex flex-col items-center border mt-2 lg:mt-0 lg:ml-4">
-            <div v-html="qrCode" class="px-[3rem] pt-4"></div>
+            <div v-if="qrCode" v-html="qrCode" class="px-[3rem] pt-4"></div>
+            <div v-else class="px-[3rem] pt-4 text-gray-500 text-center">
+               <!-- Placeholder when qrCode is null -->
+               No QR Code Available
+            </div>
             <div class="text-center py-4">
                <p>Personal QR Code</p>
             </div>

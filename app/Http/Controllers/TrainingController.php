@@ -121,7 +121,7 @@ class TrainingController extends Controller
     {
         $training->delete();
 
-        return back()->with('success', 'Trainor deleted successfully.');
+        return back()->with('success', 'Training deleted successfully.');
     }
 
 

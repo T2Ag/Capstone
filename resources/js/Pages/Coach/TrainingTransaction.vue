@@ -56,7 +56,7 @@
                         <th scope="col" class="lg:px-5 px-3 py-3">Client Name</th>
                         <th scope="col" class="lg:px-5 px-3 py-3">Training</th>
                         <th scope="col" class="lg:px-5 px-3 py-3">Coach Name</th>
-                        <th scope="col" class="lg:px-5 px-3 py-3">Duration</th>
+                        <!-- <th scope="col" class="lg:px-5 px-3 py-3">Duration</th> -->
                         <th scope="col" class="lg:px-5 px-3 py-3">Total</th>
                         <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
 
@@ -71,7 +71,7 @@
                         <td>{{ transaction.client.first_name }} {{ transaction.client.middle_initial }} {{ transaction.client.last_name }}</td>
                         <td>{{ transaction.training.name }}</td>
                         <td>{{ transaction.training.coach.first_name }} {{ transaction.training.coach.middle_initial }} {{ transaction.training.coach.last_name }}</td>
-                        <td>{{ formatDate(transaction.start_date) }} - {{ formatDate(transaction.end_date) }}</td>
+                        <!-- <td>{{ formatDate(transaction.start_date) }} - {{ formatDate(transaction.end_date) }}</td> -->
                         <td>₱ {{ transaction.total_amount }}</td>
                         <td>
                            <button class="text-red-600 mx-2" type="button" @click="openDeleteModal(transaction)" data-bs-toggle="modal" data-bs-target="#deleteModal">
