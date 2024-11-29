@@ -32,6 +32,7 @@
                   id="first_name"
                   name="first_name"
                   v-model="form.first_name"
+                  @input="capitalizeFirstLetter"
                 />
                 <span class="text-red-500">{{ form.errors.first_name }}</span>
               </div>
@@ -45,6 +46,7 @@
                   id="last_name"
                   name="last_name"
                   v-model="form.last_name"
+                  @input="capitalizeFirstLetter"
                 />
                 <span class="text-red-500">{{ form.errors.last_name }}</span>
               </div>
@@ -58,6 +60,8 @@
                   id="middle_initial"
                   name="middle_initial"
                   v-model="form.middle_initial"
+                  @input="capitalizeFirstLetter"
+                  maxlength="1"
                 />
                 <span class="text-red-500">{{ form.errors.middle_initial }}</span>
               </div>
@@ -124,6 +128,12 @@ const props = defineProps({
   client: Object,
   registrations: Array,
 });
+
+const capitalizeFirstLetter = (event) => {
+  const inputName = event.target.name; 
+  const value = event.target.value; 
+  form[inputName] = value.charAt(0).toUpperCase() + value.slice(1); 
+};
 
 const form = useForm({
   first_name: props.client.first_name || "",

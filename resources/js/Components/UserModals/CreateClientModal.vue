@@ -16,21 +16,21 @@
                 <!-- First Name -->
                 <div class="col-6 mb-3">
                   <label for="first_name" class="form-label">First Name</label>
-                  <input type="text" class="form-control" id="first_name" name="first_name" v-model="form.first_name">
+                  <input type="text" class="form-control" id="first_name" name="first_name" v-model="form.first_name" @input="capitalizeFirstLetter">
                   <span class="text-red-500">{{ form.errors.first_name }}</span>
                 </div>
 
                 <!-- Last Name -->
                 <div class="col-6 mb-3">
                   <label for="last_name" class="form-label">Last Name</label>
-                  <input type="text" class="form-control" id="last_name" name="last_name" v-model="form.last_name">
+                  <input type="text" class="form-control" id="last_name" name="last_name" v-model="form.last_name" @input="capitalizeFirstLetter">
                   <span class="text-red-500">{{ form.errors.last_name }}</span>
                 </div>
 
                 <!-- Middle Initial -->
                 <div class="col-6 mb-3">
                   <label for="middle_initial" class="form-label">Middle Initial</label>
-                  <input type="text" class="form-control" id="middle_initial" name="middle_initial" v-model="form.middle_initial">
+                  <input type="text" class="form-control" id="middle_initial" name="middle_initial" v-model="form.middle_initial" @input="capitalizeFirstLetter" maxlength="1">
                   <span class="text-red-500">{{ form.errors.middle_initial }}</span>
                 </div>
 
@@ -66,6 +66,7 @@
                       {{ payment_method.type }}
                     </option>
                   </select>
+                  <span class="text-red-500">{{ form.errors.payment_method_id }}</span>
                 </div>
 
               </div>
@@ -109,12 +110,11 @@ const form = useForm({
   total_amount: '',
 });
 
-const showUserIdSelection = ref(true);
-const isMemberChecked = ref(false);
-
-watch(isMemberChecked, (newValue) => {
-  form.total_amount = newValue ? 200 : ''; 
-});
+const capitalizeFirstLetter = (event) => {
+  const inputName = event.target.name; 
+  const value = event.target.value; 
+  form[inputName] = value.charAt(0).toUpperCase() + value.slice(1); 
+};
 
 const submit = () => {
   form.post(route('clients.store'), {

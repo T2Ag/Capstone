@@ -152,7 +152,7 @@
                      <tbody>
                         <tr v-for="client in clients.data" :key="client.id" class="text-center ">
                            <td>{{ client.id }}</td>
-                           <td>  {{ client.first_name }} {{ client.last_name }} </td>
+                           <td>  {{ client.first_name }} {{ client && client.middle_initial ? client.middle_initial + "." : '' }} {{ client.last_name }} </td>
                            <td> {{ client.registration.type }} </td>
                            <td > 
                               <div class="flex lg:flex-row flex-col justify-center">

@@ -67,7 +67,7 @@
 
                      <tr v-for="transaction in trainingTransactions.data" :key="transaction.id" class="text-center lg:text-[15px] text-[7px]">
 
-                        <td>{{ transaction.id }}</td>
+                        <td class="py-3">{{ transaction.id }}</td>
                         <td>{{ transaction.client.first_name }} {{ transaction.client.middle_initial }} {{ transaction.client.last_name }}</td>
                         <td>{{ transaction.training.name }}</td>
                         <td>{{ transaction.training.coach.first_name }} {{ transaction.training.coach.middle_initial }} {{ transaction.training.coach.last_name }}</td>

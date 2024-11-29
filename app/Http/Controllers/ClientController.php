@@ -70,7 +70,7 @@ class ClientController extends Controller
             'user_id' => 'nullable|exists:users,id',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'middle_initial' => 'required|string',
+            'middle_initial' => 'nullable|string',
             'gender' => 'required|string',
             'registration_id' => 'required|exists:registrations,id',
             'payment_method_id' => 'required|exists:payment_methods,id',
@@ -92,7 +92,7 @@ class ClientController extends Controller
         $validatedData = $request->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'middle_initial' => 'required|string',
+            'middle_initial' => 'nullable|string',
             'gender' => 'required|string',
             'registration_id' => 'required|exists:registrations,id',
         ]);

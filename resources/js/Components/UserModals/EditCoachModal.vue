@@ -92,6 +92,12 @@ const capitalizeMiddleInitial = (event) => {
   form.middle_initial = event.target.value.toUpperCase();
 };
 
+const capitalizeFirstLetter = (event) => {
+  const inputName = event.target.name; 
+  const value = event.target.value; 
+  form[inputName] = value.charAt(0).toUpperCase() + value.slice(1); 
+};
+
 const submit = () => {
  form.put(route('coaches.update', props.coach.id), {
     onSuccess: () => {
