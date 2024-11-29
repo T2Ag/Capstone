@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Coach;
 use App\Models\TodoList;
 use App\Models\Training;
+use App\Models\TrainingTransaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,6 +16,12 @@ class TrainerPageController extends Controller
     public function trainerDashboard(Request $request)
     {
         $user = $request->user();
+
+        $coach = $user->coach;
+
+        $earnings = TrainingTransaction::whereHas('training', function ($query) use ($coach) {
+            $query->where('coach_id', $coach->id);
+        })->sum('total_amount');
         
         $totalStudents = Training::whereHas('coach', function($query) use ($user) {
             $query->where('user_id', $user->id);
@@ -27,12 +34,19 @@ class TrainerPageController extends Controller
             $query->where('user_id', $user->id);
         })->count();
 
-        $announcements = Announcement::orderBy('created_at', 'desc')->paginate(3);
+        // Get the first announcement (oldest)
+        $firstAnnouncement = Announcement::orderBy('created_at', 'desc')->first();
+        // Get all announcements except the first one
+        $announcements = Announcement::where('id', '!=', optional($firstAnnouncement)->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
     
         return Inertia::render('TrainerPage/TrainerIndex', [
             'totalStudents' => $totalStudents,
             'totalTrainings' => $totalTrainings,
-            'announcements' => $announcements
+            'announcements' => $announcements,
+            'earnings' => $earnings,
+            'firstAnnouncement' => $firstAnnouncement,
 
         ]);
     }

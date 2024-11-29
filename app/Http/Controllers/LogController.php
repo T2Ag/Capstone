@@ -25,6 +25,12 @@ class LogController extends Controller
         ]);
     }
 
+    public function scan()
+    {
+        return Inertia::render('Scan', [
+        ]);
+    }
+
     public function pending(Request $request)
     {
     
@@ -123,6 +129,46 @@ class LogController extends Controller
         $log = Log::create($validatedData);
 
         return Inertia::render('Logs_/Index', [
+            'success' => 'Log created successfully.',
+            'logs' => Log::with('client','client.payment_method')->get(),
+            'client' => $client,
+            'log' => Log::with('client', 'client.payment_method')->find($log->id)
+        ]);
+    }
+
+    public function scanFullScreen(Request $request)
+    {
+
+        $validatedData = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'transaction_id' => 'nullable'
+        ]);
+
+        $client = Client::with('payment_method')->find($request->client_id);
+
+        $validatedData['date'] = now();
+
+        $validatedData['payment_method_id'] = $client->payment_method_id;
+
+        $latestTransaction = Transaction::where('client_id', $validatedData['client_id'])
+        ->whereHas('payment_method', function ($query) {
+            $query->where('type', 'monthly');
+        })
+        ->latest('transaction_date')
+        ->first();
+
+        if (
+            $latestTransaction && 
+            !is_null($latestTransaction->start_date) && 
+            !is_null($latestTransaction->end_date) && 
+            $validatedData['date']->between($latestTransaction->start_date, $latestTransaction->end_date)
+        ) {
+            $validatedData['transaction_id'] = $latestTransaction->id;
+        }
+
+        $log = Log::create($validatedData);
+
+        return Inertia::render('Scan', [
             'success' => 'Log created successfully.',
             'logs' => Log::with('client','client.payment_method')->get(),
             'client' => $client,

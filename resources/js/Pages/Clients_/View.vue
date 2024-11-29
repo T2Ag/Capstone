@@ -119,9 +119,22 @@
                <MembershipModal :client="client" :users="users" />
             </div>
 
-            <div class="text-xl mr-3 mb-4">
-               Username: <span class="font-bold">{{ client.user ? client.user.username : '-' }}</span>
+            <div class="flex justify-between">
+               <div class="text-xl mr-3 mb-4">
+                  Username: <span class="font-bold">{{ client.user ? client.user.username : '-' }}</span>
+               </div>
+
+               <div v-if="client.user_id">
+                  <Link
+                     :href="route('users.view', { user: client.user_id })"
+                     class="inline-flex align-middle text-sm items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+                  >
+                     <i class="bi bi-pencil mr-2"></i>
+                     Edit Client User Account
+                  </Link>
+               </div>
             </div>
+
             
          </div>
 
@@ -179,6 +192,7 @@
                   <thead class="text-l text-700 uppercase bg-gray-100">
                      <tr class="text-center">
                      <th scope="col" class="lg:px-5 px-3 py-3">Transaction ID</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Transaction Date</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Time</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Duration</th>
@@ -189,6 +203,9 @@
                   <tbody>
                      <tr v-for="transaction in transactions.data" :key="transaction.id" class="text-center">
                         <td>{{ transaction.id }}</td>
+                        <td class="py-2 px-3">
+                           {{ transaction.payment_method ? transaction.payment_method.type : '-' }}
+                        </td>
                         <td>{{ formatDate(transaction.transaction_date) }}</td>
                         <td>{{ formatTime(transaction.transaction_date) }}</td>
                         <td>
@@ -235,6 +252,7 @@
                         <label for="clientName" class="form-label"><strong>Client:</strong></label>
                         <div class="flex">
                            <p class="pr-1">{{ client.first_name }}</p>
+                           <p class="pr-1">{{ client.middle_initial }}</p>
                            <p>{{ client.last_name }}</p>
                         </div>
                      </div>
@@ -246,14 +264,19 @@
                         <label for="paymentMethod" class="form-label"><strong>Payment Method:</strong></label>
                         <p>{{ client.payment_method.type }}</p>
                      </div>
-                     <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
+                     <div v-if="client.payment_method.type ==='monthly'" class="mb-3">
                         <label for="startDate" class="form-label"><strong>Start Date:</strong></label>
                         <input type="date" id="startDate" class="form-control" v-model="transactionForm.startDate">
                      </div>
-                     <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
+
+                     <div v-if="client.payment_method.type ==='monthly'" class="mb-3">
                         <label for="endDate" class="form-label"><strong>End Date:</strong></label>
                         <input type="date" id="endDate" class="form-control" v-model="transactionForm.endDate">
+
+                        <span class="text-red-500">{{ transactionForm.errors.startDate }}</span>
+                        <span class="text-red-500">{{ transactionForm.errors.endDate }}</span>
                      </div>
+
                      <div class="mb-3">
                         <label for="totalAmount" class="form-label"><strong>Total Amount:</strong></label>
                         <input type="number" id="totalAmount" class="form-control" v-model="transactionForm.totalAmount" placeholder="Total Amount">

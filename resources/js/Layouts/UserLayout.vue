@@ -126,7 +126,7 @@ const openSideBar = () => {
     
   </div>
 
-  <div class="lg:ml-[300px] mt-[69px] bg-gray-200 min-h-screen transition-all duration-300 ease-in-out" id="container">
+  <div class="mt-[69px] bg-gradient-to-br from-white to-red-300 transition-all duration-300 ease-in-out min-h-screen lg:ml-[300px] overflow-hidden" id="container">
     <slot></slot>
   </div>
 </template>

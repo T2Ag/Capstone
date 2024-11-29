@@ -87,10 +87,11 @@ import Layout from '../../Layouts/Layout.vue';
    form.put(route('users.updateForgotPassword', form.id), {
       onError: (errors) => {
          form.errors = errors;
-         successMessage.value = ''; // Clear success message on error
+         successMessage.value = ''; 
       },
       onSuccess: () => {
          successMessage.value = 'User Account Successfully updated.'
+         form.reset()
       }
    });
  }

@@ -97,7 +97,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="log in allLogs" :key="log.id" class="text-center border-b hover:bg-gray-50">
+                <tr v-for="log in allLogs" :key="log.id" class=" border-b hover:bg-gray-50">
                     <td class="lg:px-5 px-3 py-3">{{ log.client.first_name }} {{ log.client.last_name }}</td>
                     <td class="lg:px-5 px-3 py-3">{{ log.client.registration.type }}</td>
                     <td class="lg:px-5 px-3 py-3">{{ log.payment_method.type }}</td>
@@ -113,56 +113,62 @@
                           Pay
                       </button>
                     </td>
+
+                     
+
                 </tr>
               </tbody>
           </table>
         </div>
       </div>
 
-
       <!-- Transaction Modal -->
       <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalTitle" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="transactionModalTitle">Transaction</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="transactionModalTitle">Transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+              </div>
+              <div class="modal-body text-black">
+                <div class="mb-3">
+                  <label for="clientName" class="form-label"><strong>Client:</strong></label>
+                    <div class="flex">
+                      <p class="pr-1"> {{ transactionForm.first_name }} </p>
+                      <p> {{ transactionForm.last_name }} </p>
+                    </div>
                 </div>
-                <div class="modal-body">
-                  <div class="mb-3">
-                    <label for="clientName" class="form-label"><strong>Client:</strong></label>
-                      <div class="flex">
-                        <p class="pr-1"> {{ transactionForm.first_name }} </p>
-                        <p> {{ transactionForm.last_name }} </p>
-                      </div>
-                  </div>
-                  <div class="mb-3">
-                      <label for="registrationType" class="form-label"><strong>Registration:</strong></label>
-                      <p> {{ transactionForm.registration }} </p>
-                  </div>
-                  <div class="mb-3">
-                      <label for="paymentMethod" class="form-label"><strong>Payment Method:</strong></label>
-                      <p> {{ transactionForm.payment_method }} </p>
-                  </div>
-                  <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
-                      <label for="startDate" class="form-label"><strong>Start Date:</strong></label>
-                      <input type="date" id="startDate" class="form-control" v-model="transactionForm.startDate">
-                  </div>
-                  <div v-if="transactionForm.startDate && transactionForm.endDate" class="mb-3">
-                      <label for="endDate" class="form-label"><strong>End Date:</strong></label>
-                      <input type="date" id="endDate" class="form-control" v-model="transactionForm.endDate">
-                  </div>
-                  <div class="mb-3">
-                      <label for="totalAmount" class="form-label"><strong>Total Amount:</strong></label>
-                      <input type="number" id="totalAmount" class="form-control" v-model="transactionForm.totalAmount" placeholder="Total Amount">
-                  </div>
+                <div class="mb-3">
+                    <label for="registrationType" class="form-label"><strong>Registration:</strong></label>
+                    <p> {{ transactionForm.registration }} </p>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
-                  <button type="button" class="btn btn-danger" @click="submit">Pay</button>
+                <div class="mb-3">
+                    <label for="paymentMethod" class="form-label"><strong>Payment Method:</strong></label>
+                    <p> {{ transactionForm.payment_method.type }} </p>
                 </div>
-            </div>
+                <div v-if="transactionForm.payment_method.type ==='monthly'" class="mb-3">
+                  <label for="startDate" class="form-label"><strong>Start Date:</strong></label>
+                  <input type="date" id="startDate" class="form-control" v-model="transactionForm.startDate">
+                </div>
+
+                <div v-if="transactionForm.payment_method.type ==='monthly'" class="mb-3">
+                  <label for="endDate" class="form-label"><strong>End Date:</strong></label>
+                  <input type="date" id="endDate" class="form-control" v-model="transactionForm.endDate">
+
+                  <span class="text-red-500">{{ transactionForm.errors.startDate }}</span>
+                  <span class="text-red-500">{{ transactionForm.errors.endDate }}</span>
+                </div>
+                <div class="mb-3">
+                    <label for="totalAmount" class="form-label"><strong>Total Amount:</strong></label>
+                    <input type="number" id="totalAmount" class="form-control" v-model="transactionForm.totalAmount" placeholder="Total Amount">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+                <button type="button" class="btn btn-danger" @click="submit">Pay</button>
+              </div>
           </div>
+        </div>
       </div>
 
       <!-- Alert Modal -->
@@ -305,7 +311,7 @@ const openTransactionForm = (log) => {
   const paymentMethodType = log.payment_method?.type || 'No Payment Method';
 
   transactionForm.registration = registrationType;
-  transactionForm.payment_method = paymentMethodType;
+  transactionForm.payment_method = log.payment_method;
 
   // Reset dates and amount
   transactionForm.startDate = '';

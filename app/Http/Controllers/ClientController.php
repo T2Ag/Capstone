@@ -109,9 +109,9 @@ class ClientController extends Controller
 
         $client->setAttribute('isMonthlyActive', $client->isMonthlyActive());
         
-        $logs = Log::with('client','payment_method')->where('client_id', $id)->paginate(10);
+        $logs = Log::with('client','payment_method')->where('client_id', $id)->orderBy('date', 'desc')->paginate(10);
 
-        $transactions = Transaction::with('client')->where('client_id', $id)->paginate(10);
+        $transactions = Transaction::with('client','payment_method')->where('client_id', $id)->orderBy('transaction_date', 'desc')->paginate(10);
 
         $todos = TodoList::where('client_id', $id)->get();
 
@@ -260,9 +260,7 @@ class ClientController extends Controller
 
     public function destroyLog(Log $log)
     {
-        if ($log->transaction) {
-            $log->transaction->delete();
-        }
+
         $log->delete();
 
         return redirect()->back()->with('success', 'Log Deleted successfully.');

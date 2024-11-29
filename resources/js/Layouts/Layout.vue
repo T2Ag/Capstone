@@ -199,7 +199,7 @@ const openSideBar = () => {
       }">
         <div>
           <i class="bi bi-person mr-3"></i>
-          <span>TRAINORS</span>        
+          <span>TRAINING</span>        
         </div>
 
         <span class="text-md transition-transform duration-300" :class="{'rotate-180': submenuVisible.trainors}">

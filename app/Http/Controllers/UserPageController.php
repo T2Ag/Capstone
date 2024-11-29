@@ -15,12 +15,34 @@ class UserPageController extends Controller
         $user = User::with('client')->find($request->user()->id);
         $totalGymVisits = $user->client ? $user->client->logs->count() : 0;
 
-        $announcements = Announcement::orderBy('created_at', 'desc')->paginate(3);
+        
+
+        $paymentMethod = $user->client ? $user->client->payment_method : null;
+
+        // Get the latest monthly transaction for the user's client
+        $latestMonthlyTransaction = $user->client
+        ? $user->client->transactions()
+            ->whereHas('payment_method', function ($query) {
+                $query->where('type', 'monthly'); // Adjust this to match the exact column name and value
+            })
+            ->latest()
+            ->first()
+        : null;
+        
+        // Get the first announcement (oldest)
+        $firstAnnouncement = Announcement::orderBy('created_at', 'desc')->first();
+        // Get all announcements except the first one
+        $announcements = Announcement::where('id', '!=', optional($firstAnnouncement)->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
     
         return Inertia::render('UserPage/UserIndex', [
             'user' => $user,
             'totalGymVisits' => $totalGymVisits,
-            'announcements' => $announcements
+            'firstAnnouncement' => $firstAnnouncement,
+            'announcements' => $announcements,
+            'paymentMethod' => $paymentMethod,
+            'latestMonthlyTransaction' => $latestMonthlyTransaction,
         ]);
     }
 

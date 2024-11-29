@@ -8,7 +8,7 @@
          </div>
 
          <!-- Summary -->
-         <div class="flex flex-row space-x-4 w-full  py-2">
+         <div class="flex flex-row space-x-4 w-full py-2">
             <!-- Clients Card -->
             <div class="flex-1 bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-lg shadow-lg">
                   <div class="lg:flex items-center p-6">
@@ -51,7 +51,7 @@
                   </div>
                   <div class="ml-4">
                         <p class="lg:text-3xl font-bold text-white">
-                           {{ totalEarnings }}
+                           {{"₱" + totalEarnings }}
                         </p>
                         <p class="text-white/90 font-bold">
                            Total Earnings

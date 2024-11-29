@@ -56,16 +56,38 @@ class TransactionController extends Controller
         $validatedData = $request->validate([
             'log_id' => 'required|exists:logs,id',
             'client_id' => 'required|exists:clients,id',
-            'startDate' => 'nullable|date',
-            'endDate' => 'nullable|date',
+            'startDate' => [
+                'nullable', 
+                'date', 
+                'required_with:endDate',
+                function ($attribute, $value, $fail) use ($request) {
+                    $endDate = $request->input('endDate');
+                    
+                    // Check if both dates are provided
+                    if ($endDate) {
+                        // Ensure start date and end date are not the same
+                        if ($value === $endDate) {
+                            $fail('Start date and end date cannot be the same.');
+                        }
+                        
+                        // Ensure end date is not before start date
+                        if (strtotime($endDate) < strtotime($value)) {
+                            $fail('End date must not be earlier than start date.');
+                        }
+                    }
+                }
+            ],
+            'endDate' => [
+                'nullable', 
+                'date',
+                'required_with:startDate'
+            ],
             'totalAmount' => 'required|numeric|min:0',
         ]);
 
         $client = Client::findOrFail($validatedData['client_id']);
 
         $log = Log::findOrFail($validatedData['log_id']);
-
-        $validatedData['payment_method_id'] = $log->payment_method_id;
 
         $description = match($client->payment_method->type) {
             'monthly' => 'Monthly Payment',
@@ -77,6 +99,7 @@ class TransactionController extends Controller
         $transaction = Transaction::create([
             'client_id' => $validatedData['client_id'],
             'description' => $description,
+            'payment_method_id' => $log->payment_method_id,
             'transaction_date' => now(),
             'start_date' => $validatedData['startDate'],
             'end_date' => $validatedData['endDate'],
@@ -108,8 +131,32 @@ class TransactionController extends Controller
     {
         $validatedData = $request->validate([
             'client_id' => 'required|exists:clients,id',
-            'startDate' => 'nullable|date',
-            'endDate' => 'nullable|date',
+            'startDate' => [
+                'nullable', 
+                'date', 
+                'required_with:endDate',
+                function ($attribute, $value, $fail) use ($request) {
+                    $endDate = $request->input('endDate');
+                    
+                    // Check if both dates are provided
+                    if ($endDate) {
+                        // Ensure start date and end date are not the same
+                        if ($value === $endDate) {
+                            $fail('Start date and end date cannot be the same.');
+                        }
+                        
+                        // Ensure end date is not before start date
+                        if (strtotime($endDate) < strtotime($value)) {
+                            $fail('End date must not be earlier than start date.');
+                        }
+                    }
+                }
+            ],
+            'endDate' => [
+                'nullable', 
+                'date',
+                'required_with:startDate'
+            ],
             'totalAmount' => 'required|numeric|min:0',
         ]);
 

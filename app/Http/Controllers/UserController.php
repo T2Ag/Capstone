@@ -30,12 +30,15 @@ class UserController extends Controller
     }
 
     public function view($id)
-    {   
+    {
+        if (is_null($id)) {
+            return redirect()->back()->with('error', 'User ID is required.');
+        }
+    
         $user = User::findOrFail($id);
-
+    
         return Inertia::render('Users/Edit', [
             'user' => $user,
-
         ]);
     }
 
@@ -100,14 +103,14 @@ class UserController extends Controller
     public function editCoach(Request $request)
     {   
         $user = $request->user();
-        $coach = $user->coach; 
+        $client = $user->client; 
         
         // Check if client or client->id is null
         $qrCodeSvgString = '';
-        if ($coach && $coach->id) {
+        if ($client && $client->id) {
             $qrCode = QrCode::format('svg')
                 ->size(200)
-                ->generate($coach->id);
+                ->generate($client->id);
             $qrCodeSvgString = (string)$qrCode;
         }
 
