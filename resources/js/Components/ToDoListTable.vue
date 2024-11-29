@@ -145,7 +145,7 @@ const addTodo = () => {
   router.post(route('toDoList.store'), {
     title: newTodo.value,
     client_id: props.client.id
-  }, {
+  }, { 
     preserveScroll: true,
     preserveState: true,
     onSuccess: () => {

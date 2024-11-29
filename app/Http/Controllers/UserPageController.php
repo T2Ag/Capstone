@@ -15,8 +15,6 @@ class UserPageController extends Controller
         $user = User::with('client')->find($request->user()->id);
         $totalGymVisits = $user->client ? $user->client->logs->count() : 0;
 
-        
-
         $paymentMethod = $user->client ? $user->client->payment_method : null;
 
         // Get the latest monthly transaction for the user's client
@@ -49,6 +47,14 @@ class UserPageController extends Controller
     public function userToDoList(Request $request)
     {
         $user = User::with('client')->find($request->user()->id);
+        
+        // Check if the client exists
+        if (!$user->client) {
+            return Inertia::render('UserPage/ToDoList', [
+                'user' => $user,
+                'todos' => null 
+            ]);
+        }
 
         $todos = TodoList::where('client_id', $user->client->id)->get();
 

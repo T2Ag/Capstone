@@ -1,16 +1,24 @@
 <template>
 
 <UserLayout>
-<div>
-   <div class="px-2 pt-2">
-      <p class="text-[30px] text-gray-600">TO DO LIST</p>
+<div class="p-4">
+   <div class="pb-8">
+      <h1 class="text-3xl font-bold text-gray-800">
+         To Do List
+      </h1>
    </div>
    <div class="px-4">
       
       <ToDoListTable 
+         v-if="user.client" 
          :todos="todos" 
          :client="user.client"
       />
+      
+      <div v-else class="text-gray-500 text-center py-4">
+         This user has no registered client
+      </div>
+
    </div>
 </div>
 
