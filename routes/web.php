@@ -1,16 +1,19 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TodoListController;
 use App\Http\Controllers\TrainerPageController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\TrainingTransactionController;
 use App\Http\Controllers\TrainorController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPageController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +31,11 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/scan', [LogController::class, 'scan'])->name('scan');
     Route::post('/scan', [LogController::class, 'scanFullScreen'])->name('scanFullScreen');
+    Route::get('/register', [RegisterController::class, 'index'])->name('register.index');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController:: class, 'handler'] )->middleware(['signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])->middleware(['throttle:6,1'])->name('verification.send');
 });
 
 Route::middleware(['auth', 'role:admin|user|trainor'])->group(function () {
@@ -38,6 +46,9 @@ Route::middleware(['auth', 'role:admin|user|trainor'])->group(function () {
     Route::post('/toDoList', [TodoListController::class, 'store'])->name('toDoList.store');
     Route::put('toDoList/{todo}', [TodoListController::class, 'update'])->name('toDoList.update');
     Route::delete('toDoList/{todo}', [TodoListController::class, 'destroy'])->name('toDoList.destroy');
+    Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two-factor.index');
+    Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
+
 });
 
 Route::middleware(['auth', 'role:admin|user'])->group(function () {
@@ -59,11 +70,11 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/userToDoList', [UserPageController::class, 'userToDoList'])->name('userToDoList');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin',  'verified'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin',  'verified'])->group(function () {
     Route::get('/users',[UserController::class, 'index'])->name('users');
     Route::get('/users/{user}/editUsername',[UserController::class, 'view'])->name('users.view');
     Route::get('/users/{user}/forgotPass',[UserController::class, 'forgotPassword'])->name('users.forgotPassword');
@@ -74,7 +85,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/users/{user}',[UserController::class, 'destroy'])->name('users.destroy');
 });
 
-Route::middleware('auth', 'role:admin')->group(function () {
+Route::middleware(['auth', 'role:admin',  'verified'])->group(function () {
     // Clients
     Route::get('/clients', [ClientController::class, 'index'])->name('clients');
     Route::post('/clients',[ClientController::class, 'store'])->name('clients.store');

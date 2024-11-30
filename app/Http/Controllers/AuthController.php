@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\HelloMail;
 use App\Models\Announcement;
 use App\Models\Client;
 use App\Models\Coach;
 use App\Models\Log;
 use App\Models\Transaction;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -44,7 +48,9 @@ class AuthController extends Controller
         
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-                
+
+            $email = Mail::to('kingjulien899@gmail.com')->send(new HelloMail()); 
+
             if ($user->hasRole('admin')) {
                 return redirect()->intended('dashboard'); 
             }

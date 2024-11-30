@@ -20,12 +20,16 @@
         </div>
       <div class="px-2 py-2">
         <div class="flex justify-end my-2">
-          <button type="button" class="rounded px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold shadow-md " data-bs-toggle="modal" data-bs-target="#createModal">
+          <!-- <button type="button" class="rounded px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold shadow-md " data-bs-toggle="modal" data-bs-target="#createModal">
             Register User
-          </button>
+          </button> -->
+
+          <Link :href="route('register.index')" class="rounded px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold shadow-md ">
+            Register User
+          </Link>
         </div>
   
-        <CreateUserModal :user_roles="user_roles" />
+        <!-- <CreateUserModal :user_roles="user_roles" /> -->
   
         <div class="bg-white shadow-md rounded overflow-hidden p-4">
           <table class="w-full text-left text-gray-500 bg-white">
@@ -120,25 +124,6 @@
                     </div>
                   </div> -->
 
-                    <!-- Delete User Modal -->
-                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalTitle">Delete User</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            Are you sure you want to delete user # - {{ deleteForm.id }} - {{ deleteForm.username }}?
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger" @click="deleteUser">Delete</button>
-                          </div>
-                      </div>
-                      </div>
-                    </div>
-
                 </td>
               </tr>
             </tbody>
@@ -148,13 +133,31 @@
         </div>
       </div>
     </div>
-      
+    
+    <!-- Delete User Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalTitle">Delete User</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete user # - {{ deleteForm.id }} - {{ deleteForm.username }}?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" @click="deleteUser">Delete</button>
+          </div>
+      </div>
+      </div>
+    </div>
    </Layout>
  </template>
  
  <script setup>
  import { ref } from 'vue';
- import { useForm, router } from '@inertiajs/vue3';
+ import { useForm, router, Link } from '@inertiajs/vue3';
  import Layout from '@/Layouts/Layout.vue';
  import CreateUserModal from '@/Components/UserModals/CreateUserModal.vue';
  import InputField from '../../Components/InputField.vue';
