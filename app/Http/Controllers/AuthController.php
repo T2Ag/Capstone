@@ -49,8 +49,6 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            $email = Mail::to('kingjulien899@gmail.com')->send(new HelloMail()); 
-
             if ($user->hasRole('admin')) {
                 return redirect()->intended('dashboard'); 
             }

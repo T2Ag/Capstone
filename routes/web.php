@@ -31,6 +31,15 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/scan', [LogController::class, 'scan'])->name('scan');
     Route::post('/scan', [LogController::class, 'scanFullScreen'])->name('scanFullScreen');
+
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController:: class, 'handler'] )->middleware(['signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])->middleware(['throttle:6,1'])->name('verification.send');
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/scan', [LogController::class, 'scan'])->name('scan');
+    Route::post('/scan', [LogController::class, 'scanFullScreen'])->name('scanFullScreen');
     Route::get('/register', [RegisterController::class, 'index'])->name('register.index');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
@@ -70,11 +79,16 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/userToDoList', [UserPageController::class, 'userToDoList'])->name('userToDoList');
 });
 
-Route::middleware(['auth', 'role:admin',  'verified'])->group(function () {
+Route::middleware(['auth', 'role:admin',  'verified', 'twofactor'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 });
 
-Route::middleware(['auth', 'role:admin',  'verified'])->group(function () {
+Route::middleware(['auth', 'role:admin', 'verified', 'twofactor'])->group(function () {
+    //register
+    Route::get('/register', [RegisterController::class, 'index'])->name('register.index');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+
+    //create users
     Route::get('/users',[UserController::class, 'index'])->name('users');
     Route::get('/users/{user}/editUsername',[UserController::class, 'view'])->name('users.view');
     Route::get('/users/{user}/forgotPass',[UserController::class, 'forgotPassword'])->name('users.forgotPassword');
@@ -85,7 +99,7 @@ Route::middleware(['auth', 'role:admin',  'verified'])->group(function () {
     Route::delete('/users/{user}',[UserController::class, 'destroy'])->name('users.destroy');
 });
 
-Route::middleware(['auth', 'role:admin',  'verified'])->group(function () {
+Route::middleware(['auth', 'role:admin',  'verified', 'twofactor'])->group(function () {
     // Clients
     Route::get('/clients', [ClientController::class, 'index'])->name('clients');
     Route::post('/clients',[ClientController::class, 'store'])->name('clients.store');
