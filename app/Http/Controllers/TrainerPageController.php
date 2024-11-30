@@ -68,9 +68,11 @@ class TrainerPageController extends Controller
         return Inertia::render('TrainerPage/TrainingList',[
             'coach' => $coach,
             'trainings' => $trainings,
+            'success' => session('success')
         ]);
     }
 
+    //VIEW THE inside TRAININGs
     public function view($id)
     {
         $training = Training::with('coach', 'clients')->findORFail($id);
@@ -78,10 +80,54 @@ class TrainerPageController extends Controller
 
         return Inertia::render('TrainerPage/TrainingView',[
             'training' => $training,
-            'clients' => $clients
+            'clients' => $clients,
+            'success' => session('success')
+
         ]);
     }
 
+    public function trainingStore(Request $request)
+    {
+        $validatedData = $request->validate([
+
+            'coach_id' => 'required|exists:coaches,id',
+            'name' => 'required|string',
+            'price' => 'required|numeric',
+
+        ]);
+
+        Training::create($validatedData);
+
+        return back()->with('success', 'Training created successfully.');
+    }
+
+    public function trainingUpdate(Request $request, Training $training)
+    {
+        $validatedData = $request->validate([
+
+            'coach_id' => 'required|exists:coaches,id',
+            'name' => 'required|string',
+            'price' => 'required|numeric',
+
+        ]);
+
+        $training->update($validatedData);
+
+        return back()->with('success', 'Training updated successfully.');
+    }
+
+    public function trainingDestroy(Training $training)
+    {
+        $training->delete();
+
+        return back()->with('success', 'Training deleted successfully.');
+    }
+
+
+    //ADD THE CONTROLLER FOR GETTING THE DATA OF THE TRAINING MOVE IT HERE SINCE WE NEED TO SEPARATE THE TRINER AND ADMIN
+    //THE ADD EDIT AND UPDATE HERE
+
+    //ToDoList Controller
     public function clientToDoList(Client $client)
     {
         $todos = TodoList::where('client_id', $client->id)
@@ -90,7 +136,93 @@ class TrainerPageController extends Controller
     
         return Inertia::render('TrainerPage/ToDoList', [
             'todos' => $todos,
-            'client' => $client
+            'client' => $client,
+            'success' => session('success')
         ]);
+    }
+
+    public function toDoStore(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'client_id' => 'required|exists:clients,id'
+        ]);
+ 
+        TodoList::create([
+            'title' => $request->title,
+            'client_id' => $request->client_id,
+            'is_completed' => false
+        ]);
+ 
+        return redirect()->back()->with('success', 'To Do List created successfully');
+    }
+ 
+    public function toDoUpdate(TodoList $todo)
+    {
+        $todo->update([
+            'is_completed' => request('is_completed'),
+            'title' => request('title', $todo->title)
+        ]);
+ 
+        return redirect()->back()->with('success', 'To Do List updated successfully');
+    }
+
+    public function toDoDestroy(TodoList $todo)
+    {
+        $todo->delete();
+        return redirect()->back()->with('success', 'To Do List deleted successfully');
+    }
+
+    public function addClientToTraining(Request $request)
+    {
+        $validatedData = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'training_id' => 'required|exists:trainings,id',
+        ]);
+    
+        $client = Client::findOrFail($validatedData['client_id']);
+        $training = Training::findOrFail($validatedData['training_id']);
+
+        if ($client->training_id == $validatedData['training_id']) {
+            return back()->withErrors(['client_id' => 'The client is already in this training.']);
+        }
+    
+        $client->training_id = $validatedData['training_id'];
+        $client->save();
+
+        // Create a TrainingTransaction
+        $startDate = now();
+        $endDate = now()->addMonth();
+        $transactionDate = now(); 
+
+        TrainingTransaction::create([
+            'client_id' => $client->id,
+            'training_id' => $training->id,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'transaction_date' => $transactionDate,
+            'total_amount' => $training->price,
+        ]);
+    
+        return back()->with('success', 'Client added to training successfully.');
+    }
+
+    public function removeClientFromTraining(Request $request)
+    {
+        $validatedData = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'training_id' => 'required|exists:trainings,id',
+        ]);
+    
+        $client = Client::findOrFail($validatedData['client_id']);
+    
+        if ($client->training_id !== $validatedData['training_id']) {
+            return back()->withErrors(['client_id' => 'The client is not part of this training.']);
+        }
+    
+        $client->training_id = null;
+        $client->save();
+    
+        return back()->with('success', 'Client removed from training successfully.');
     }
 }

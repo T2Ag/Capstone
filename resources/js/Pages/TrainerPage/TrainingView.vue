@@ -21,7 +21,11 @@
          </div>
       
       
-         <AddClientToTraining :clients="clients" :training="training" />
+         <TrainerPageAddClient :clients="clients" :training="training" />
+         
+         <div v-if="success" class="px-2 py-1 bg-green-200 rounded border-1 border-green-500 mb-4">
+            <SuccessMessages :success="success" class="p-3"/>
+         </div>
       
          <div class="px-2 py-2 mx-2">
             <div class="bg-white p-5 rounded">
@@ -101,13 +105,16 @@
    <script setup>
    
    import AddClientToTraining from '../../Components/UserModals/AddClientToTraining.vue';
+   import SuccessMessages from '../../Components/SuccessMessages.vue';
+   import TrainerPageAddClient from '../../Components/TrainerPage/TrainerPageAddClient.vue';
    import TrainerLayout from '../../Layouts/TrainerLayout.vue';
    import { Link } from '@inertiajs/vue3';
    import { useForm } from '@inertiajs/vue3';
    
    const props = defineProps({
       training: Object,
-      clients: Array
+      clients: Array,
+      success: String
    })
    
    const deleteForm = useForm({
@@ -127,7 +134,7 @@
    };
    
    const deleteTraining = () => {
-      deleteForm.put(route('trainings.removeClient', deleteForm.training_id), {
+      deleteForm.put(route('trainingList.removeClient', deleteForm.training_id), {
          onError: (errors) => {
             console.error(errors);
          },

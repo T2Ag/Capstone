@@ -8,8 +8,12 @@
       </h1>
    </div>
    <div class="px-4">
+
+      <div v-if="success" class="px-2 py-1 bg-green-200 rounded border-1 border-green-500 ">
+         <SuccessMessages :success="success" class="p-3"/>
+      </div>
       
-      <ToDoListTable 
+      <UserPageToDoListTable 
          v-if="user.client" 
          :todos="todos" 
          :client="user.client"
@@ -28,12 +32,13 @@
 </template>
 <script setup>
 import UserLayout from '../../Layouts/UserLayout.vue';
-import ToDoListTable from '../../Components/ToDoListTable.vue';
+import UserPageToDoListTable from '../../Components/UserPage/UserPageToDoListTable.vue';
+import SuccessMessages from '../../Components/SuccessMessages.vue'
 
 const props = defineProps({
    user: Object,
-   todos: Array
-
+   todos: Array,
+   success: String
 })
 
 </script>

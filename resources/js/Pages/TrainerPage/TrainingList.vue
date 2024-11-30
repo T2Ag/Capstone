@@ -10,7 +10,12 @@
             </button>
 
             <AddCoachTraining :coach="coach" />
+            
 
+         </div>
+
+         <div v-if="success" class="px-2 py-1 bg-green-200 rounded border-1 border-green-500 mb-4">
+            <SuccessMessages :success="success" class="p-3"/>
          </div>
 
          <!-- Training Cards Grid -->
@@ -82,14 +87,16 @@
 
 <script setup>
 import TrainerLayout from '../../Layouts/TrainerLayout.vue';
-import EditTraining from '../../Components/CoachPageModal/EditTraining.vue';
+import EditTraining from '../../Components/TrainerPage/TrainerPageEditTraining.vue';
 import AddCoachTraining from '../../Components/UserModals/AddCoachTraining.vue';
+import SuccessMessages from '../../Components/SuccessMessages.vue';
 import { defineProps } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
    trainings: Array,
-   coach: Object
+   coach: Object,
+   success: String
 });
 
 const deleteForm = useForm({
@@ -103,7 +110,7 @@ const openDeleteModal = (training) => {
 };
 
 const deleteTraining = () => {
-   deleteForm.delete(route('trainings.destroy', deleteForm.id), {
+   deleteForm.delete(route('trainingList.destroy', deleteForm.id), {
       onError: (errors) => {
          console.error(errors);
       },

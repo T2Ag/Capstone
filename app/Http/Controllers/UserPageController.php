@@ -60,7 +60,40 @@ class UserPageController extends Controller
 
         return Inertia::render('UserPage/ToDoList', [
             'user' => $user,
-            'todos' => $todos
+            'todos' => $todos,
+            'success' => session('success')
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'client_id' => 'required|exists:clients,id'
+        ]);
+ 
+        TodoList::create([
+            'title' => $request->title,
+            'client_id' => $request->client_id,
+            'is_completed' => false
+        ]);
+ 
+        return redirect()->back()->with('success', 'To Do List added successfully');
+    }
+
+    public function update(TodoList $todo)
+    {
+        $todo->update([
+            'is_completed' => request('is_completed'),
+            'title' => request('title', $todo->title)
+        ]);
+ 
+        return redirect()->back()->with('success', 'To Do List updated successfully');
+    }
+
+    public function destroy(TodoList $todo)
+    {
+        $todo->delete();
+        return redirect()->back()->with('success', 'To Do List deleted successfully');
     }
 }
