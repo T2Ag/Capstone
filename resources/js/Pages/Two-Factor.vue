@@ -21,14 +21,14 @@ const submit = () => {
 
          <!-- login form-->
          <div class="w-[25rem] p-10">
-            <div class="p-10 flex justify-center ">
+            <div class="p-2 flex justify-center ">
                <h2 class="font-bold text-2xl">Please Enter Your Two Factor Authentication</h2>
             </div>
 
             <div>
                <form @submit.prevent="submit" class="flex flex-col">
 
-                  <label for="username">Please enter the code here.</label>
+                  <label for="username">Please enter the code set to your gmail here.</label>
                   <input 
                      v-model="form.code"
                      type="text" 
@@ -38,7 +38,7 @@ const submit = () => {
                   >
                   <div class="text-red-500 text-sm mb-1">{{ form.errors.code }}</div>
 
-                  <button class="px-3 py-2 bg-red-700 my-3 text-white rounded">Submit</button>
+                  <button class="px-3 py-2 bg-green-700 my-3 text-white rounded">Verify</button>
 
                </form>
             </div>

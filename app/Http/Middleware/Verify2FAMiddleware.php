@@ -15,9 +15,13 @@ class Verify2FAMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        if(auth()->check() && !session('two_factor_authenticated')){
-            return redirect()-> route('two-factor.index');
+        if (auth()->check()) {
+            $user = auth()->user();
+            
+            // Only enforce two-factor for admin roles
+            if ($user->hasRole('admin') && !session('two_factor_authenticated')) {
+                return redirect()->route('two-factor.index');
+            }
         }
         
         return $next($request);

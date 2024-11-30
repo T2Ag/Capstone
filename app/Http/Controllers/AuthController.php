@@ -68,6 +68,17 @@ class AuthController extends Controller
 
     public function logout()
     {
+        $user = Auth::user();
+
+        // Flush the two-factor authentication session
+        Session::forget('two_factor_authenticated');
+    
+        // Clear the two-factor code
+        if ($user) {
+            $user->two_factor_code = null;
+            $user->save();
+        }
+
         Session::flush();
         Auth::logout();
         return redirect()->route('login');
