@@ -17,7 +17,8 @@ class UserController extends Controller
         
         $users = User::with('client','roles')
         ->filter([
-            'search' => $request->input('search')
+            'search' => $request->input('search'),
+            'roleFilter' => $request->input('roleFilter'),
         ])
         ->paginate(10);
         $roles = Role::all();
@@ -26,6 +27,7 @@ class UserController extends Controller
             'users' => $users,
             'user_roles' => $roles,
             'search' => $request->search,
+            'roleFilter' => $request->roleFilter
         ]);
     }
 

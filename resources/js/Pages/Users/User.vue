@@ -32,6 +32,31 @@
         <!-- <CreateUserModal :user_roles="user_roles" /> -->
   
         <div class="bg-white shadow-md rounded overflow-hidden p-4">
+
+           <!-- Filter by Date -->
+         <div class="flex justify-end pb-4 space-x-4">
+
+            <div class="relative">
+              <label class="block text-xs text-gray-600 mb-1">User Roles</label>
+              <div class="relative">
+                  <select 
+                    v-model="form.roleFilter" 
+                    @change="filterUsers" 
+                    class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                  >
+                    <option value="all">All Roles</option>
+                    <option v-for="user_role in user_roles" :key="user_role.id" :value="user_role.name">
+                        {{ user_role.name }}
+                    </option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="bi bi-chevron-down"></i>
+                  </div>
+              </div>
+            </div>
+
+         </div>
+
           <table class="w-full text-left text-gray-500 bg-white">
             <thead class="text-l text-700 uppercase bg-gray-100">
               <tr class="text-center">
@@ -166,7 +191,8 @@
  const props = defineProps({
    users: (Array,Object),
    user_roles: Array,
-   search: String
+   search: String,
+   roleFilter: String
  });
  
  // Edit Form
@@ -235,12 +261,16 @@
  };
 
 const form = useForm({
-  search : props.search || ''
+  search : props.search || '',
+  roleFilter : props.roleFilter || 'all',
+
 })
 
 const filterUsers = () => {
    router.get(route('users'), { 
-      search: form.search
+      search: form.search,
+      roleFilter: form.roleFilter
+
    }, {
       preserveState: true,
       preserveScroll: true,

@@ -11,6 +11,9 @@ class EmailVerificationController extends Controller
 {
     public function notice()
     {
+        if (auth()->user()->hasVerifiedEmail()) {
+            return redirect()->route('dashboard');
+        }
         return Inertia::render('Users/VerifyEmail',[
             'status' => session('status')
         ]);

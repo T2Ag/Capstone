@@ -61,6 +61,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function scopeFilter($query, array $filters) 
     {
 
+        if (isset($filters['roleFilter']) && $filters['roleFilter'] !== 'all') {
+            $query->whereHas('roles', function ($roleQuery) use ($filters) {
+                $roleQuery->where('name', $filters['roleFilter']);
+            });
+        }
+
         if ($filters['search'] ?? false) {
             $search = $filters['search']; 
             $query->where(function ($query) use ($search) {

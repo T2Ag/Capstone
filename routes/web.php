@@ -23,12 +23,11 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', 'role:admin' ])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController:: class, 'handler'] )->middleware(['signed'])->name('verification.verify');
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])->middleware(['throttle:6,1'])->name('verification.send');
@@ -39,9 +38,11 @@ Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
     Route::post('/scan', [LogController::class, 'scanFullScreen'])->name('scanFullScreen');
     Route::get('/register', [RegisterController::class, 'index'])->name('register.index');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+
     //2factor in verify becos how can you send email if not vefied utok ba 
     Route::get('/two-factor', [TwoFactorController::class, 'index'])->name('two-factor.index');
     Route::post('/two-factor', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
+    Route::post('/two-factor/resend', [TwoFactorController::class, 'resendCode'])->name('two-factor.resend');
 });
 
 Route::middleware(['auth', 'role:admin|user|trainor'])->group(function () {
