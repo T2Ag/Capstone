@@ -59,11 +59,10 @@ class TrainerPageController extends Controller
         
         // Get the coach associated with this user
         $coach = Coach::where('user_id', $user->id)->first();
-        
-        // Get all trainings of this coach with their clients
+  
         $trainings = Training::with(['clients', 'coach'])
         ->where('coach_id', $coach->id)
-        ->get();
+        ->paginate(6);
 
         return Inertia::render('TrainerPage/TrainingList',[
             'coach' => $coach,
@@ -123,9 +122,6 @@ class TrainerPageController extends Controller
         return back()->with('success', 'Training deleted successfully.');
     }
 
-
-    //ADD THE CONTROLLER FOR GETTING THE DATA OF THE TRAINING MOVE IT HERE SINCE WE NEED TO SEPARATE THE TRINER AND ADMIN
-    //THE ADD EDIT AND UPDATE HERE
 
     //ToDoList Controller
     public function clientToDoList(Client $client)

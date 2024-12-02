@@ -172,7 +172,7 @@
                                  </div>
                                  <div class="text-center flex-grow flex flex-col justify-center">
                                     <span class="block text-4xl font-bold text-white mb-2">
-                                          {{ totalEarningsThisMonth }}
+                                          {{ "₱" + totalEarningsThisMonth }}
                                     </span>
                                     <div class="text-white/90 text-lg font-medium">
                                           Earnings this month
@@ -189,7 +189,7 @@
                                  </div>
                                  <div class="ml-4">
                                     <p class="text-3xl font-bold text-white">
-                                          {{ totalEarningsThisMonth }}
+                                          {{ "₱" + totalEarningsThisMonth }}
                                     </p>
                                     <p class="text-white/90">
                                           Earnings this month

@@ -18,6 +18,9 @@
             </div>
          </div>
 
+         <div v-if="success" class="px-2 py-1 mt-3 bg-green-200 rounded border-1 border-green-500 ">
+            <SuccessMessages :success="success" class="p-3"/>
+         </div>   
 
          <div class="px-2 py-2">
 
@@ -33,98 +36,67 @@
 
                <!-- Filter Section -->
                <div class="flex flex-wrap justify-end pb-4 space-x-4">
-                  <!-- Members Filter -->
-                  <div class="flex flex-col justify-start items-center pr-2">
-                     <label for="member_filter" class="block text-xs text-gray-600 mb-1">Members</label>
-                     <div class="p-1">
-                        <input 
-                        type="checkbox" 
-                        id="member_filter" 
-                        v-model="form.member_filter" 
-                        @change="filterClients" 
-                        class="form-checkbox text-indigo-600"
+                  <div class="">
+                     <label class="block text-xs text-gray-600 mb-1">Year</label>
+                     <div class="flex items-center">
+                        <select 
+                           v-model="form.year_filter" 
+                           @change="filterClients" 
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
+                           <option value="all">All Years</option>
+                           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                        </select>
                      </div>
                   </div>
 
-                  <!-- Year Filter -->
-                  <div class="relative">
-                     <label for="year_filter" class="block text-xs text-gray-600 mb-1">Year</label>
-                     <div class="relative">
+                  <div class="">
+                     <label class="block text-xs text-gray-600 mb-1">Month</label>
+                     <div class="flex items-center">
                         <select 
-                        v-model="form.year_filter" 
-                        @change="filterClients" 
-                        class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                           v-model="form.month_filter" 
+                           @change="filterClients" 
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
-                        <option value="all">All Years</option>
-                        <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                           <option value="all">All Months</option>
+                           <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <i class="bi bi-chevron-down"></i>
-                        </div>
                      </div>
                   </div>
 
-                  <!-- Month Filter -->
-                  <div class="relative">
-                     <label for="month_filter" class="block text-xs text-gray-600 mb-1">Month</label>
-                     <div class="relative">
+                  <div class="">
+                     <label class="block text-xs text-gray-600 mb-1">Registration Type</label>
+                     <div class="flex items-center">
                         <select 
-                        v-model="form.month_filter" 
-                        @change="filterClients" 
-                        class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                           v-model="form.registration_type" 
+                           @change="filterClients" 
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
-                        <option value="all">All Months</option>
-                        <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
+                           <option value="all">All Types</option>
+                           <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
+                              {{ registration.type }}
+                           </option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <i class="bi bi-chevron-down"></i>
-                        </div>
                      </div>
                   </div>
 
-                  <!-- Registration Type Filter -->
-                  <div class="relative">
-                     <label for="registration_type" class="block text-xs text-gray-600 mb-1">Registration Type</label>
-                     <div class="relative">
+                  <div class="">
+                     <label class="block text-xs text-gray-600 mb-1">Payment Type</label>
+                     <div class="flex items-center">
                         <select 
-                        v-model="form.registration_type" 
-                        @change="filterClients" 
-                        class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                           v-model="form.payment_method" 
+                           @change="filterClients" 
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
-                        <option value="all">All Types</option>
-                        <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
-                           {{ registration.type }}
-                        </option>
+                           <option value="all">All Types</option>
+                           <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
+                              {{ paymentMethod.type }}
+                           </option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <i class="bi bi-chevron-down"></i>
-                        </div>
-                     </div>
-                  </div>
-                  
-                  <!-- Registration Type Filter -->
-                  <div class="relative">
-                     <label for="payment_method" class="block text-xs text-gray-600 mb-1">Registration Type</label>
-                     <div class="relative">
-                        <select 
-                        v-model="form.payment_method" 
-                        @change="filterClients" 
-                        class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
-                        >
-                        <option value="all">All Types</option>
-                        <option v-for="payment_method in payment_methods" :key="payment_method.id" :value="payment_method.type">
-                           {{ payment_method.type }}
-                        </option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <i class="bi bi-chevron-down"></i>
-                        </div>
                      </div>
                   </div>
 
-                  <!-- Day Filter -->
-                  <div class="relative">
+                  <div class="">
                      <label for="day_filter" class="block text-xs text-gray-600 mb-1">Day</label>
                      <input 
                         type="date" 
@@ -144,8 +116,8 @@
                            <th scope="col" class="lg:px-5 px-1 py-3">Name</th>
                            <th scope="col" class="lg:px-5 px-1 py-3">Registration Type</th>
                            <th scope="col" class="lg:px-5 px-1 py-3">Payment Type</th>
-                           <th scope="col" class="lg:px-5 px-1 py-3">Date</th>
                            <th scope="col" class="lg:px-5 px-1 py-3">Membership</th>
+                           <th scope="col" class="lg:px-5 px-1 py-3">Date Created</th>
                            <th scope="col" class="lg:px-5 px-1 py-3">Actions</th>
                         </tr>
                      </thead>
@@ -167,10 +139,10 @@
                               </div>
                               
                            </td>
-                           <td> {{ formatDate(client.date) }}</td>
                            <td> {{ isMember(client) }} </td>
+                           <td> {{ formatDate(client.date) }}</td>
 
-                           <td class="items-center my-auto align-middle py-4">
+                           <td class="items-center my-auto align-middle py-3 px-3">
 
                               <Link :href="route('clients.view',  { client: client.id })" >
                                  <i class="bi bi-eye text-[1.5rem]"></i>
@@ -227,8 +199,9 @@
 <script setup>
 
 import Layout from '@/Layouts/Layout.vue';
-import CreateClientModal from '@/Components/UserModals/CreateClientModal.vue'
+import CreateClientModal from '@/Components/UserModals/CreateClientModal.vue';
 import EditClientModal from '../../Components/UserModals/EditClientModal.vue';
+import SuccessMessages from '../../Components/SuccessMessages.vue';
 import Pagination from '../../Components/Pagination.vue';
 import InputField from '../../Components/InputField.vue';
 import { useForm, router } from '@inertiajs/vue3';
@@ -244,7 +217,8 @@ const props = defineProps({
    payment_method: String,
    registration_type: String,
    month_filter: String,
-   search: String
+   search: String,
+   success: String
  });
 
  function isMember(client) {

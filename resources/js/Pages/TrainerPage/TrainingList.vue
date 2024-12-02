@@ -20,7 +20,7 @@
 
          <!-- Training Cards Grid -->
          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="training in trainings" :key="training.id" 
+            <div v-for="training in trainings.data" :key="training.id" 
                  class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                
                <!-- Card Header -->
@@ -52,8 +52,12 @@
                </div>
 
                <EditTraining :training="training" :key="`editModal-${training.id}`"/>
+               
             </div>
          </div>
+         
+         <Pagination class="flex mt-4 justify-end"  :links="trainings.links" />
+
 
          <!-- Empty State -->
          <div v-if="trainings.length === 0" 
@@ -90,11 +94,12 @@ import TrainerLayout from '../../Layouts/TrainerLayout.vue';
 import EditTraining from '../../Components/TrainerPage/TrainerPageEditTraining.vue';
 import AddCoachTraining from '../../Components/UserModals/AddCoachTraining.vue';
 import SuccessMessages from '../../Components/SuccessMessages.vue';
+import Pagination from '../../Components/Pagination.vue';
 import { defineProps } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
-   trainings: Array,
+   trainings: (Array, Object),
    coach: Object,
    success: String
 });

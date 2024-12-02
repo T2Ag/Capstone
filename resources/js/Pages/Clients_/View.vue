@@ -135,8 +135,11 @@
                </div>
             </div>
 
-            
          </div>
+
+         <div v-if="success" class="px-2 py-1 my-3 bg-green-200 rounded border-1 border-green-500 ">
+            <SuccessMessages :success="success" class="p-3"/>
+         </div>   
 
          <div class="bg-white shadow-md rounded overflow-hidden p-3 ">
             <!-- Select Dropdown for choosing Logs or Transactions -->
@@ -401,6 +404,7 @@
 import Pagination from '../../Components/Pagination.vue';
 import ToDoListTable from '../../Components/ToDoListTable.vue';
 import MembershipModal from '../../Components/UserModals/MembershipModal.vue';
+import SuccessMessages from '../../Components/SuccessMessages.vue';
 import Layout from '@/Layouts/Layout.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref,computed } from 'vue';
@@ -414,7 +418,8 @@ const props = defineProps({
    transactions: (Array, Object),
    todos: Array,
    latestMonthlyTransaction: Object,
-   firstUnpaidMonthlyLog: Object
+   firstUnpaidMonthlyLog: Object,
+   success: String
  });
 
 const transactionForm = useForm({

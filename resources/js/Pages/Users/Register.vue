@@ -1,6 +1,15 @@
 <template>
  <Layout>
-   <div class="px-4 py-[4rem]">
+
+   <!-- Back Button -->
+   <div class="flex items-center p-3">
+      <button @click="back" class="inline-flex items-center text-black-600 hover:text-gray-800">
+         <i class="bi bi-arrow-left text-xl mr-2"></i>
+      </button>
+   </div>
+
+   <div class="px-4 py-[1rem]">
+
       <div class="container mx-auto lg:w-[30rem] rounded shadow-md bg-white p-5 py-8">
          <div v-if="success" class="text-center bg-green-500/80 text-white p-4 rounded mb-4">
             {{ success }}
@@ -103,4 +112,9 @@ const submit = () => {
     onSuccess: () => form.reset(),
   });
 };
+
+const back = () =>
+{
+    window.history.back();
+}
 </script>

@@ -71,37 +71,76 @@
           </div>
 
 
+         <!-- First Announcement Section -->
+         <div v-if="firstAnnouncement" class="bg-white mt-4 m-3 rounded-lg shadow-lg overflow-hidden flex-1">
+            <div class="bg-gradient-to-r from-red-500 to-red-400 p-6">
+               <div class="flex items-center mb-4">
+                  <i class="bi bi-megaphone text-white text-3xl mr-4"></i>
+                  <h2 class="text-2xl font-bold text-white">Latest Announcement</h2>
+               </div>
+               <div class="bg-white/20 rounded-lg p-4">
+                  <h3 class="text-xl font-bold text-white mb-2">
+                     {{ firstAnnouncement.title }}
+                  </h3>
+                  <p class="text-white/90 mb-4">
+                     {{ firstAnnouncement.content }}
+                  </p>
+                  <div class="flex justify-between items-center">
+                     <span class="text-sm text-white/80">
+                        {{ formatDate(firstAnnouncement.created_at) }}
+                     </span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
          <!-- Announcements Section -->
          <div class="bg-white mt-4 m-3">
-            <div class="px-3 py-2 border-b-2 border-gray-400">
-               <p class="text-[20px] text-gray-600 font-bold">ANNOUNCEMENTS</p>
+            <div class="px-6 py-4 bg-gradient-to-r from-gray-100 to-gray-200 border-b border-gray-300">
+               <p class="text-xl text-gray-700 font-semibold flex items-center">
+                  <i class="bi bi-calendar-event mr-3 text-gray-600"></i>
+                  ANNOUNCEMENTS
+               </p>
             </div>
 
             <table class="w-full">
-               <thead class="bg-gray-100">
-                  <tr>
-                     <th class="px-4 py-2 text-left text-gray-600">Content</th>
-                     <th class="px-4 py-2 text-left text-gray-600">Date</th>
-
+               <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200">
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Announcement Details
+                     </th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Date
+                     </th>
                   </tr>
                </thead>
-               <tbody>
+               <tbody class="divide-y divide-gray-200">
                   <tr 
                      v-for="announcement in announcements.data" 
                      :key="announcement.id"
-                     class="border-b hover:bg-gray-50"
+                     class="hover:bg-gray-50 transition-colors duration-200"
                   >
-                     <td class="px-4 py-2 flex flex-col">
-                        <div class="text-[20px] font-bold my-2">{{ announcement.title }}</div>
-                        <div class="mx-2">{{ announcement.content }}</div>
+                     <td class="px-6 py-4">
+                        <div class="text-sm font-medium text-gray-900">
+                           {{ announcement.title }}
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1 line-clamp-2">
+                           {{ announcement.content }}
+                        </div>
                      </td>
-                     <td class="px-4 w-[10rem]">
-                        {{ formatDate(announcement.created_at) }}
+                     <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">
+                           {{ formatDate(announcement.created_at) }}
+                        </div>
                      </td>
-                     
                   </tr>
                </tbody>
             </table>
+
+            <div v-if="announcements.length === 0" class="text-center py-6 text-gray-500">
+               <i class="bi bi-info-circle mr-2"></i>
+               No announcements at this time
+            </div>
 
             <Pagination class="flex mt-4 justify-end" :links="announcements.links" preserve-scroll/>
 
@@ -117,7 +156,8 @@ const props = defineProps({
    totalStudents: Number,
    totalTrainings: Number,
    announcements: (Array, Object),
-   earnings: Number
+   earnings: Number,
+   firstAnnouncement: Object
 })
 
 const formatDate = (dateString) => {

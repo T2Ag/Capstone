@@ -61,6 +61,7 @@ class ClientController extends Controller
             'member_filter' => $request->member_filter,
             'date_filter' => $request->date_filter,
             'search' => $request->search,
+            'success' => session("success")
         ]);
     }
 
@@ -156,7 +157,8 @@ class ClientController extends Controller
             'transactions' => $transactions,
             'todos' => $todos,
             'latestMonthlyTransaction' => $latestMonthlyTransaction,
-            'firstUnpaidMonthlyLog' => $firstUnpaidMonthlyLog
+            'firstUnpaidMonthlyLog' => $firstUnpaidMonthlyLog,
+            'success' => session("success")
         ]);
     }
 
@@ -168,7 +170,7 @@ class ClientController extends Controller
         $client->update(['payment_method_id' => $newPaymentMethod->id]);
 
         return redirect()->back()->with([
-            'success' => 'Log created successfully.',
+            'success' => 'Payment Method updated successfully.',
         ]);
     }
 

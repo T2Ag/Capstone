@@ -3,9 +3,22 @@
 
    <div class="p-3">
 
-      <h1 class="text-3xl font-bold text-gray-900 ">
-         Logs List
-      </h1>
+      <div class="flex justify-between">
+         <div class="">
+            <p class="text-3xl font-bold text-gray-900 ">Logs List</p>
+         </div>
+         <div class="">
+            <form @submit.prevent="filterLogs">
+               <InputField
+                  type="search"
+                  label=""
+                  icon="search"
+                  placeholder="Search..."
+                  v-model="filterForm.search"
+               />
+            </form>
+         </div>
+      </div>
 
    
       <!-- Button for the modal -->
@@ -60,7 +73,7 @@
       <div class="modal-dialog modal-dialog-centered">
          <div class="modal-content bg-light shadow-lg rounded-lg">
             <div class="modal-body text-center py-5">
-            <div class="mb-4">
+            <div class="mb-4 text-2xl text-green-700 font-bold">
                {{ header }}
             </div>
             <div class="bg-white p-4 rounded-lg shadow-md">
@@ -77,75 +90,63 @@
 
          <!-- Filter by Date -->
          <div class="flex justify-end pb-4 space-x-4">
-            <div class="relative">
+            <div class="">
                <label class="block text-xs text-gray-600 mb-1">Year</label>
-               <div class="relative">
+               <div class="flex items-center">
                   <select 
                      v-model="filterForm.year_filter" 
                      @change="filterLogs" 
-                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                     class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                   >
                      <option value="all">All Years</option>
                      <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                   </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                     <i class="bi bi-chevron-down"></i>
-                  </div>
                </div>
             </div>
 
-            <div class="relative">
+            <div class="">
                <label class="block text-xs text-gray-600 mb-1">Month</label>
-               <div class="relative">
+               <div class="flex items-center">
                   <select 
                      v-model="filterForm.month_filter" 
                      @change="filterLogs" 
-                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                     class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                   >
                      <option value="all">All Months</option>
                      <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
                   </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                     <i class="bi bi-chevron-down"></i>
-                  </div>
                </div>
             </div>
 
-            <div class="relative">
+            <div class="">
                <label class="block text-xs text-gray-600 mb-1">Registration Type</label>
-               <div class="relative">
+               <div class="flex items-center">
                   <select 
                      v-model="filterForm.registration_type" 
                      @change="filterLogs" 
-                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                     class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                   >
                      <option value="all">All Types</option>
                      <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
                         {{ registration.type }}
                      </option>
                   </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                     <i class="bi bi-chevron-down"></i>
-                  </div>
                </div>
             </div>
 
-            <div class="relative">
+            <div class="">
                <label class="block text-xs text-gray-600 mb-1">Payment Type</label>
-               <div class="relative">
+               <div class="flex items-center">
                   <select 
                      v-model="filterForm.payment_method" 
                      @change="filterLogs" 
-                     class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700 "
+                     class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                   >
                      <option value="all">All Types</option>
                      <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
                         {{ paymentMethod.type }}
                      </option>
                   </select>
-                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                     <i class="bi bi-chevron-down"></i>
-                  </div>
                </div>
             </div>
          </div>
@@ -234,6 +235,7 @@ import { ref, computed } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
 import Layout from '@/Layouts/Layout.vue';
 import Pagination from '../../Components/Pagination.vue';
+import InputField from '../../Components/InputField.vue';
 
 
 const props = defineProps({
@@ -245,7 +247,8 @@ const props = defineProps({
    year_filter: String,
    month_filter: String,
    registrations: Array,
-   paymentMethods: Array
+   paymentMethods: Array,
+   search: String
 });
 
 const form = useForm({
@@ -388,6 +391,7 @@ const filterForm = useForm({
    month_filter : props.month_filter  || 'all',
    registration_type : props.registration_type || 'all',
    payment_method : props.payment_method || 'all',
+   search : props.search || '',
    // member_filter : props.member_filter || false,
    // date_filter : props.date_filter || ''
 })
@@ -398,6 +402,8 @@ const filterLogs = () => {
       month_filter: filterForm.month_filter,
       registration_type: filterForm.registration_type,
       payment_method: filterForm.payment_method,
+      search: filterForm.search,
+
       // member_filter : filterForm.member_filter,
       // date_filter: filterForm.date_filter
    }, {

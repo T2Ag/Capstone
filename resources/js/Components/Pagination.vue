@@ -14,9 +14,10 @@
 
             <Link
                v-else
-               class="mr-1 mb-1 px-3 py-2 text-sm leading-4 border rounded hover:bg-white "
+               class="mr-1 mb-1 px-3 py-2 text-sm leading-4 border rounded hover:bg-red-400"
                :class="{ 'bg-red-600 text-white': link.active }"
                :href="link.url"
+               preserve-state
                preserve-scroll
             >
                <span v-html="link.label"></span>

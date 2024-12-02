@@ -48,6 +48,15 @@ class Log extends Model
             });
         }
 
+        if ($filters['search'] ?? false) {
+            $query->whereHas('client', function ($query) use ($filters) {
+                $search = $filters['search']; // Get search from filters instead of request()
+                $query->where('first_name', 'like', '%' . $search . '%')
+                      ->orWhere('last_name', 'like', '%' . $search . '%')
+                      ->orWhereRaw("first_name || ' ' || last_name LIKE ?", ['%' . $search . '%']);
+            });
+        }
+
         // if (isset($filters['member_filter']) && $filters['member_filter']) {
         //     $query->whereNotNull('user_id');
         // }

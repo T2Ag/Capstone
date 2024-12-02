@@ -24,7 +24,7 @@ class TransactionController extends Controller
             // 'member_filter' => $request->boolean('member_filter'),
             // 'date_filter' => $request->input('date_filter')
         ])
-        ->paginate(15);
+        ->paginate(6);
 
         $totalEarnings = Transaction::filter([
             'year_filter' => $request->input('year_filter'),

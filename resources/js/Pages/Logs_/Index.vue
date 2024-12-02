@@ -11,7 +11,10 @@
         <!-- Scan Result Popup -->
         <div v-if="scanResult" class="absolute inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 text-center">
-            <div class="text-xl font-bold mb-4">
+            <div :class="[
+              'text-xl font-bold mb-4',
+              header === 'Error' || header === 'Please Pay At the Cashier' ? 'text-red-700' : 'text-green-700'
+            ]">
               {{ header }}
             </div>
             <div class="bg-gray-100 p-4 rounded-lg">

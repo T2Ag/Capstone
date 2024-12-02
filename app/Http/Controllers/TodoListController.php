@@ -20,7 +20,7 @@ class TodoListController extends Controller
            'is_completed' => false
        ]);
 
-       return back();
+       return redirect()->back()->with('success', 'To Do List created successfully');
    }
 
    public function update(TodoList $todo)
@@ -30,12 +30,12 @@ class TodoListController extends Controller
            'title' => request('title', $todo->title)
        ]);
 
-       return back();
+       return redirect()->back()->with('success', 'To Do List updated successfully');
    }
 
    public function destroy(TodoList $todo)
     {
         $todo->delete();
-        return back();
+        return redirect()->back()->with('success', 'To Do List deleted successfully');
     }
 }

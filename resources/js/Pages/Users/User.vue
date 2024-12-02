@@ -63,6 +63,7 @@
                 <th scope="col" class="lg:px-5 px-3 py-3">ID</th>
                 <th scope="col" class="lg:px-5 px-3 py-3">Username</th>
                 <th scope="col" class="lg:px-5 px-3 py-3">Client</th>
+                <th scope="col" class="lg:px-5 px-3 py-3">Coach</th>
                 <th scope="col" class="lg:px-5 px-3 py-3">Role</th>
                 <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
               </tr>
@@ -71,7 +72,8 @@
               <tr v-for="user in users.data" :key="user.id" class="text-center">
                 <td class="py-2">{{ user.id }}</td>
                 <td>{{ user.username }}</td>
-                <td>{{ user.client ? user.client.first_name : '' }} {{ user.client ? user.client.middle_initial + '.' : '' }} {{ user.client ? user.client.last_name : 'No Client' }}</td>
+                <td>{{ user.client ? user.client.first_name : '' }} {{ user.client ? user.client.middle_initial + '.' : '' }} {{ user.client ? user.client.last_name : '-' }}</td>
+                <td>{{ user.coach ? user.coach.first_name : '' }} {{ user.coach ? user.coach.middle_initial + '.' : '' }} {{ user.coach ? user.coach.last_name : '-' }}</td>
                 <td class="capitalize">
                   <span v-if="user.roles && user.roles.length">
                     {{ user.roles.map(role => role.name).join(', ') }}

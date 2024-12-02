@@ -24,7 +24,7 @@
    
          <div class="flex justify-end my-2">
             <button type="button" class="rounded px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold shadow-md" data-bs-toggle="modal" data-bs-target="#createModal">
-               Add Coach
+               Register Coach
             </button>
          </div>
    

@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index(Request $request) {
         
-        $users = User::with('client','roles')
+        $users = User::with('client','roles', 'coach')
         ->filter([
             'search' => $request->input('search'),
             'roleFilter' => $request->input('roleFilter'),

@@ -1,9 +1,22 @@
 <template>
    <Layout>
       <div class="p-3">
-         <h1 class="text-3xl mb-5 font-bold text-gray-900 tracking-tight hover:text-gray-900 transition-colors">
-            Transaction List
-         </h1>
+         <div class="flex justify-between">
+            <div class="">
+               <p class="text-3xl font-bold text-gray-900 my-2 align-middle">Transactions List</p>
+            </div>
+            <div class="">
+               <form @submit.prevent="filterTransactions">
+                  <InputField
+                     type="search"
+                     label=""
+                     icon="search"
+                     placeholder="Search..."
+                     v-model="filterForm.search"
+                  />
+               </form>
+            </div>
+         </div>
 
          <div class="bg-white shadow-md rounded overflow-auto p-3 m-2">
             
@@ -20,73 +33,61 @@
                <div class="flex justify-end pb-4 space-x-4">
                   <div class="">
                      <label class="block text-xs text-gray-600 mb-1">Year</label>
-                     <div class="relative">
+                     <div class="flex items-center">
                         <select 
                            v-model="filterForm.year_filter" 
                            @change="filterTransactions" 
-                           class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
                            <option value="all">All Years</option>
                            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                           <i class="bi bi-chevron-down"></i>
-                        </div>
                      </div>
                   </div>
 
                   <div class="">
                      <label class="block text-xs text-gray-600 mb-1">Month</label>
-                     <div class="relative">
+                     <div class="flex items-center">
                         <select 
                            v-model="filterForm.month_filter" 
                            @change="filterTransactions" 
-                           class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
                            <option value="all">All Months</option>
                            <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}</option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                           <i class="bi bi-chevron-down"></i>
-                        </div>
                      </div>
                   </div>
 
                   <div class="">
                      <label class="block text-xs text-gray-600 mb-1">Registration Type</label>
-                     <div class="relative">
+                     <div class="flex items-center">
                         <select 
                            v-model="filterForm.registration_type" 
                            @change="filterTransactions" 
-                           class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
                            <option value="all">All Types</option>
                            <option v-for="registration in registrations" :key="registration.id" :value="registration.type">
                               {{ registration.type }}
                            </option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                           <i class="bi bi-chevron-down"></i>
-                        </div>
                      </div>
                   </div>
 
                   <div class="">
                      <label class="block text-xs text-gray-600 mb-1">Payment Type</label>
-                     <div class="relative">
+                     <div class="flex items-center">
                         <select 
                            v-model="filterForm.payment_method" 
                            @change="filterTransactions" 
-                           class="appearance-none w-full bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm text-gray-700"
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
                            <option value="all">All Types</option>
                            <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
                               {{ paymentMethod.type }}
                            </option>
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                           <i class="bi bi-chevron-down"></i>
-                        </div>
                      </div>
                   </div>
                </div>   
@@ -172,6 +173,7 @@
 <script setup>
 import Layout from '@/Layouts/Layout.vue';
 import Pagination from '../../Components/Pagination.vue';
+import InputField from '../../Components/InputField.vue';
 import { useForm, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
