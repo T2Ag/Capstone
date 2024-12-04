@@ -95,6 +95,7 @@ class AuthController extends Controller
         ->get();
     
         $months = $gymVisits->map(fn($item) => Carbon::createFromFormat('m', $item->month)->format('F'));
+        
         $totals = $gymVisits->pluck('total_visits');
 
         $totalActiveMonthlyClients = Client::whereHas('transactions', function($query) {

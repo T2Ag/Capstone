@@ -36,9 +36,9 @@ class TrainingTransactionController extends Controller
         ]);
     }
 
-    public function destroy(TrainingTransaction $tt)
+    public function destroy(TrainingTransaction $trainingTransaction)
     {
-        $tt->delete();
+        $trainingTransaction->delete();
 
         return redirect()->route('trainingTransactions.index')->with('success', 'Trainor deleted successfully.');
     }

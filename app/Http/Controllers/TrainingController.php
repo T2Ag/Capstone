@@ -19,7 +19,8 @@ class TrainingController extends Controller
 
         return Inertia::render('Coach/Training',[
             'trainings' => $trainings,
-            'coaches' => $coaches
+            'coaches' => $coaches,
+            'success' => session('success')
         ]);
     }
 
@@ -35,7 +36,7 @@ class TrainingController extends Controller
 
         Training::create($validatedData);
 
-        return back()->with('success', 'Trainor created successfully.');
+        return back()->with('success', 'Training created successfully.');
     }
 
     public function view($id)
@@ -61,7 +62,7 @@ class TrainingController extends Controller
 
         $training->update($validatedData);
 
-        return back()->with('success', 'Client added to training successfully.');
+        return back()->with('success', 'Training updated successfully.');
     }
 
     public function addClientToTraining(Request $request)

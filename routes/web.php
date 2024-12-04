@@ -56,7 +56,7 @@ Route::middleware(['auth', 'role:admin|user'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin', 'verified', 'twofactor'])->group(function () {
-    //register
+    //dashboard
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 
     //register
@@ -147,7 +147,6 @@ Route::middleware(['auth', 'role:trainor'])->group(function () {
     Route::delete('/trainingList/{training}', [TrainerPageController::class, 'trainingDestroy'])->name('trainingList.destroy');
     Route::put('/trainingList/{training}/add', [TrainerPageController::class, 'addClientToTraining'])->name('trainingList.addClient');
     Route::put('/trainingList/{training}/remove', [TrainerPageController::class, 'removeClientFromTraining'])->name('trainingList.removeClient');
-
     
     //trainer clients to do list managemente
     Route::get('/trainingList/clientToDoList/{client}', [TrainerPageController::class, 'clientToDoList'])->name('clientToDoList');

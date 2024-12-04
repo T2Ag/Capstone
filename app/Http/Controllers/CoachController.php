@@ -79,7 +79,7 @@ class CoachController extends Controller
 
         Coach::create($validatedData);
 
-        return redirect()->route('coaches.index')->with('success', 'Trainor created successfully.');
+        return redirect()->route('coaches.index')->with('success', 'Coach created successfully.');
 
     }
 
@@ -94,7 +94,7 @@ class CoachController extends Controller
 
         $coach->update($validatedData);
 
-        return redirect()->route('coaches.index')->with('success', 'Trainor updated successfully.');
+        return redirect()->route('coaches.index')->with('success', 'Coach updated successfully.');
     }
 
     public function destroy(Coach $coach)

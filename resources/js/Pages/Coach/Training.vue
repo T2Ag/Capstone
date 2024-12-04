@@ -14,6 +14,10 @@
 
          <AddTraining :coaches="coaches"/>
 
+         <div v-if="success" class="px-2 py-1 mt-3 bg-green-200 rounded border-1 border-green-500 ">
+            <SuccessMessages :success="success" class="p-3"/>
+         </div>   
+
          <div  class="px-2 py-2">
             <!-- Training Cards Grid -->
             <div class="bg-white shadow-md rounded p-3">
@@ -133,12 +137,14 @@ import Layout from '../../Layouts/Layout.vue';
 import Pagination from '../../Components/Pagination.vue';
 import AddTraining from '../../Components/UserModals/AddTraining.vue';
 import EditTrainingModal from '../../Components/UserModals/EditTrainingModal.vue';
+import SuccessMessages from '../../Components/SuccessMessages.vue';
 import {ref, computed} from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
 
 const props = defineProps({
    trainings: (Array, Object),
-   coaches: Array
+   coaches: Array,
+   success: String
 });
 
 const deleteForm = useForm({

@@ -73,7 +73,10 @@
       <div class="modal-dialog modal-dialog-centered">
          <div class="modal-content bg-light shadow-lg rounded-lg">
             <div class="modal-body text-center py-5">
-            <div class="mb-4 text-2xl text-green-700 font-bold">
+               <div :class="[
+              'text-xl font-bold mb-4',
+              header === 'Error' || header === 'Please Pay At the Cashier' ? 'text-red-700' : 'text-green-700'
+            ]">
                {{ header }}
             </div>
             <div class="bg-white p-4 rounded-lg shadow-md">
