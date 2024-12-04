@@ -86,6 +86,9 @@ class AuthController extends Controller
 
     public function dashboard()
     {
+
+        
+
         $gymVisits = Log::selectRaw(
             "strftime('%m', date) as month, COUNT(*) as total_visits"
         )
@@ -95,7 +98,7 @@ class AuthController extends Controller
         ->get();
     
         $months = $gymVisits->map(fn($item) => Carbon::createFromFormat('m', $item->month)->format('F'));
-        
+
         $totals = $gymVisits->pluck('total_visits');
 
         $totalActiveMonthlyClients = Client::whereHas('transactions', function($query) {

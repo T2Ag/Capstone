@@ -68,9 +68,10 @@ const selectedCoachName = ref('');
 
 const updateCoachId = () => {
 
-  const coach = props.coaches.find(
-    c => `${c.first_name} ${c.middle_initial} ${c.last_name}` === selectedCoachName.value
-  );
+  const coach = props.coaches.find(c => {
+    const fullName = `${c.first_name} ${c.middle_initial || ''} ${c.last_name}`.trim().replace(/\s+/g, ' ');
+    return fullName === selectedCoachName.value;
+  });
 
     if (coach) {
         form.coach_id = coach.id;

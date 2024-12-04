@@ -81,13 +81,14 @@
                         </td>
                         <td>{{ transaction.training?.name ?? '-' }}</td>
                         <td>
-                           {{
-                              transaction.training?.coach 
-                                 ? transaction.training.coach.first_name + ' ' + 
-                                 transaction.training.coach.middle_initial + ' ' + 
-                                 transaction.training.coach.last_name 
-                                 : '-'
-                           }}
+                           <span v-if="transaction.training?.coach">
+                              {{ transaction.training.coach.first_name || '' }} 
+                              {{ (transaction.training.coach.middle_initial ? transaction.training.coach.middle_initial + '.' : '') || '' }} 
+                              {{ transaction.training.coach.last_name || '' }}
+                           </span>
+                           <span v-else>
+                              -
+                           </span>
                         </td>
                         <!-- <td>{{ formatDate(transaction.start_date) }} - {{ formatDate(transaction.end_date) }}</td> -->
                         <td>₱ {{ transaction.total_amount }}</td>

@@ -70,15 +70,16 @@ const selectedCoachName = ref('');
 onMounted(() => {
   const selectedCoach = props.coaches.find(coach => coach.id === props.training.coach_id);
   if (selectedCoach) {
-    selectedCoachName.value = `${selectedCoach.first_name} ${selectedCoach.middle_initial} ${selectedCoach.last_name}`;
+    selectedCoachName.value = `${selectedCoach.first_name} ${selectedCoach.middle_initial || ''} ${selectedCoach.last_name}`.trim();
   }
 });
 
 const updateCoachId = () => {
 
-  const coach = props.coaches.find(
-    c => `${c.first_name} ${c.middle_initial} ${c.last_name}` === selectedCoachName.value
-  );
+  const coach = props.coaches.find(c => {
+    const fullName = `${c.first_name} ${c.middle_initial || ''} ${c.last_name}`.trim().replace(/\s+/g, '');
+    return fullName === selectedCoachName.value;
+  });
 
     if (coach) {
         form.coach_id = coach.id;

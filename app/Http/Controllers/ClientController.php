@@ -177,13 +177,19 @@ class ClientController extends Controller
     public function becomeMember(Request $request, Client $client)
     {
         // Check the value of userSelected to determine which validation to apply
+
+        $validatedTransactionData = $request->validate([
+            'total_amount' => 'required|numeric',
+        ]);
+        
+
         if ($request->input('userSelected', true)) {
             // Validate user selection
             $validatedData = $request->validate([
                 'user_id' => 'required|exists:users,id',
             ]);
         } else {
-            // Validate user creation
+
             $validatedUserData = $request->validate([
                 'username' => 'required|string|unique:users,username',
                 'password' => [
@@ -197,7 +203,6 @@ class ClientController extends Controller
                 'password.regex' => 'The password must include at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&).',
             ]);
 
-            // Create the user if username is provided
             if ($request->has('username') && $request->filled('username')) {
                 $user = User::create([
                     'username' => $validatedUserData['username'],
@@ -213,9 +218,7 @@ class ClientController extends Controller
         }
 
         // Validate transaction data
-        $validatedTransactionData = $request->validate([
-            'total_amount' => 'nullable|numeric',
-        ]);
+    
 
         // Update the client with validated data
         $client->update($validatedData);
@@ -224,7 +227,7 @@ class ClientController extends Controller
         if (isset($validatedTransactionData['total_amount']) && $validatedTransactionData['total_amount'] > 0) {
             Transaction::create([
                 'client_id' => $client->id,
-                'description' => 'Membership Registration',
+                'description' => 'Membership Registration for ' . ($client->first_name . ' ' . $client->middle_initial. ' ' . $client->last_name),
                 'transaction_date' => now(),
                 'total_amount' => $validatedTransactionData['total_amount'],
             ]);

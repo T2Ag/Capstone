@@ -85,6 +85,9 @@
                   >
                   </div>
                </div>
+               <div class="col-md-12 mb-3">
+                    <span class="text-red-500">{{ form.errors.total_amount }}</span>
+                </div>
 
            </div>
            <div class="modal-footer">

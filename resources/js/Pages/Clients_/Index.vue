@@ -35,7 +35,24 @@
             <div class="bg-white shadow-md rounded p-3">
 
                <!-- Filter Section -->
+
+
                <div class="flex flex-wrap justify-end pb-4 space-x-4">
+
+                  <!-- Members Filter -->
+                  <div class="flex flex-col justify-start items-center pr-2">
+                     <label for="member_filter" class="block text-xs text-gray-600 mb-1">Members</label>
+                     <div class="p-1">
+                        <input 
+                        type="checkbox" 
+                        id="member_filter" 
+                        v-model="form.member_filter" 
+                        @change="filterClients" 
+                        class="form-checkbox text-indigo-600"
+                        >
+                     </div>
+                  </div>
+
                   <div class="">
                      <label class="block text-xs text-gray-600 mb-1">Year</label>
                      <div class="flex items-center">
@@ -96,7 +113,7 @@
                      </div>
                   </div>
 
-                  <div class="">
+                  <!-- <div class="">
                      <label for="day_filter" class="block text-xs text-gray-600 mb-1">Day</label>
                      <input 
                         type="date" 
@@ -104,7 +121,7 @@
                         @change="filterClients"
                         class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                      />
-                  </div>
+                  </div> -->
                </div>
 
                
@@ -147,15 +164,15 @@
                               <Link :href="route('clients.view',  { client: client.id })" >
                                  <i class="bi bi-eye text-[1.5rem]"></i>
                               </Link>
-               
-                              <button class="text-red-600 mx-2" type="button" @click="openDeleteModal(client)" data-bs-toggle="modal" data-bs-target="#deleteModal">
+
+                              <button type="button" class="rounded text-green-500 mx-4" :data-bs-toggle="'modal'" :data-bs-target="`#editModal-${client.id}`">
+                                 <i class="bi bi-pencil text-[1.3rem]"></i>
+                              </button>        
+
+                              <button class="text-red-600 " type="button" @click="openDeleteModal(client)" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
                                     <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
                                  </svg>  
-                              </button>
-
-                              <button type="button" class="rounded text-green-500 text-[15px]" :data-bs-toggle="'modal'" :data-bs-target="`#editModal-${client.id}`">
-                                 <i class="bi bi-pencil text-[1.5rem]"></i>
                               </button>
                               
                               <EditClientModal :client="client" :registrations="registrations" :key="`editModal-${client.id}`"/>
@@ -285,7 +302,7 @@ const form = useForm({
    registration_type : props.registration_type || 'all',
    payment_method : props.payment_method || 'all',
    member_filter : props.member_filter || false,
-   date_filter : props.date_filter || '',
+   // date_filter : props.date_filter || '',
    search : props.search || ''
 })
 
@@ -296,7 +313,7 @@ const filterClients = () => {
       registration_type: form.registration_type,
       payment_method : form.payment_method,
       member_filter : form.member_filter,
-      date_filter: form.date_filter,
+      // date_filter: form.date_filter,
       search: form.search
    }, {
       preserveState: true,
