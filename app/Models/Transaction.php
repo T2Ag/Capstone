@@ -51,7 +51,7 @@ class Transaction extends Model
         }
 
         if (isset($filters['payment_method']) && $filters['payment_method'] !== 'all') {
-            $query->whereHas('client.payment_method', function($q) use ($filters) {
+            $query->whereHas('payment_method', function($q) use ($filters) {
                 $q->where('type', $filters['payment_method']);
             });
         }

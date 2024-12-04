@@ -76,7 +76,7 @@ class LogController extends Controller
             // 'member_filter' => $request->boolean('member_filter'),
             // 'date_filter' => $request->input('date_filter')
         ])
-        ->paginate(10);
+        ->paginate(10)->withQueryString();
 
         $registrations = Registration::all(); 
         $paymentMethods = PaymentMethod::all();

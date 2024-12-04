@@ -18,11 +18,12 @@ class CoachController extends Controller
         ->filter([
             'search' => $request->input('search')
         ])
-        ->paginate(15);
+        ->paginate(15)->withQueryString();
      
         return Inertia::render('Coach/List',[
             'coaches' => $coaches,
             'search' => $request->search,
+            'success' => session('success')
         ]);
     }
 

@@ -141,6 +141,14 @@
             <SuccessMessages :success="success" class="p-3"/>
          </div>   
 
+         <div class="mb-3">
+            <ToDoListTable 
+               :todos="todos" 
+               :client="client"
+            />
+         </div>
+
+
          <div class="bg-white shadow-md rounded overflow-hidden p-3 ">
             <!-- Select Dropdown for choosing Logs or Transactions -->
             <div class="mb-2 flex justify-end">
@@ -195,7 +203,7 @@
                   <thead class="text-l text-700 uppercase bg-gray-100">
                      <tr class="text-center">
                      <th scope="col" class="lg:px-5 px-3 py-3">Transaction ID</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Payment Method</th>
+                     <th scope="col" class="lg:px-5 px-3 py-3">Descrption</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Transaction Date</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Time</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Duration</th>
@@ -206,9 +214,7 @@
                   <tbody>
                      <tr v-for="transaction in transactions.data" :key="transaction.id" class="text-center">
                         <td>{{ transaction.id }}</td>
-                        <td class="py-2 px-3">
-                           {{ transaction.payment_method ? transaction.payment_method.type : '-' }}
-                        </td>
+                        <td class="py-2 px-3">{{ transaction.description }}</td>
                         <td>{{ formatDate(transaction.transaction_date) }}</td>
                         <td>{{ formatTime(transaction.transaction_date) }}</td>
                         <td>
@@ -236,11 +242,6 @@
 
             
          </div>
-
-         <ToDoListTable 
-            :todos="todos" 
-            :client="client"
-         />
 
          <!-- Transaction Modal -->
          <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalTitle" aria-hidden="true">

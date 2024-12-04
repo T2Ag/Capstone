@@ -24,7 +24,8 @@ class TransactionController extends Controller
             // 'member_filter' => $request->boolean('member_filter'),
             // 'date_filter' => $request->input('date_filter')
         ])
-        ->paginate(6);
+        ->paginate(6)
+        ->withQueryString();
 
         $totalEarnings = Transaction::filter([
             'year_filter' => $request->input('year_filter'),
@@ -90,8 +91,8 @@ class TransactionController extends Controller
         $log = Log::findOrFail($validatedData['log_id']);
 
         $description = match($client->payment_method->type) {
-            'monthly' => 'Monthly Payment',
-            'walk-in' => 'Walk-in Payment',
+            'monthly' => 'Monthly Payment for ' . ($client->first_name . ' ' . $client->middle_initial. ' ' . $client->last_name),
+            'walk-in' => 'Walk-in Payment for '. ($client->first_name . ' ' . $client->middle_initial. ' ' . $client->last_name),
             default => 'General Payment'
         };
 
@@ -163,8 +164,8 @@ class TransactionController extends Controller
         $client = Client::findOrFail($validatedData['client_id']);
 
         $description = match($client->payment_method->type) {
-            'monthly' => 'Monthly Payment',
-            'walk-in' => 'Walk-in Payment',
+            'monthly' => 'Monthly Payment for ' . ($client->first_name . ' ' . $client->middle_initial. ' ' . $client->last_name),
+            'walk-in' => 'Walk-in Payment for ' . ($client->first_name . ' ' . $client->middle_initial. ' ' . $client->last_name),
             default => 'General Payment'
         };
 

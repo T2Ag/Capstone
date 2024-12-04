@@ -100,8 +100,6 @@
                   <tr class="text-center">
                      <th scope="col" class="lg:px-5 px-3 py-3">ID</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Descrption</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Client Name</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Payment Type</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Duration</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Transaction Date</th>
                      <th scope="col" class="lg:px-5 px-3 py-3">Total</th>
@@ -116,10 +114,6 @@
                   >
                      <td class="py-2 px-3">{{ transaction.id }}</td>
                      <td class="py-2 px-3">{{ transaction.description }}</td>
-                     <td class="py-2 px-3">{{ transaction.client.first_name }} {{ transaction.client.last_name }}</td>
-                     <td class="py-2 px-3">
-                        {{ transaction.payment_method ? transaction.payment_method.type : '-' }}
-                     </td>
                      <td class="py-2 px-3">
                         <span v-if="transaction.start_date && transaction.end_date">
                            {{ formatDate(transaction.start_date) }} - {{ formatDate(transaction.end_date) }}

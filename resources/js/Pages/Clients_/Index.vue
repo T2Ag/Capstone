@@ -89,8 +89,8 @@
                            class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
                            <option value="all">All Types</option>
-                           <option v-for="paymentMethod in paymentMethods" :key="paymentMethod.id" :value="paymentMethod.type">
-                              {{ paymentMethod.type }}
+                           <option v-for="payment_method in payment_methods" :key="payment_method.id" :value="payment_method.type">
+                              {{ payment_method.type }}
                            </option>
                         </select>
                      </div>

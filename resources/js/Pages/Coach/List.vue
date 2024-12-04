@@ -19,6 +19,10 @@
          </div>
          
       </div>
+
+      <div v-if="success" class="px-2 py-1 mt-3 bg-green-200 rounded border-1 border-green-500 ">
+         <SuccessMessages :success="success" class="p-3"/>
+      </div>   
    
       <div class="px-2 py-2">
    
@@ -103,6 +107,7 @@
    import Layout from '@/Layouts/Layout.vue';
    import CreateCoachModal from '../../Components/UserModals/CreateCoachModal.vue';
    import EditCoachModal from '../../Components/UserModals/EditCoachModal.vue';
+   import SuccessMessages from '../../Components/SuccessMessages.vue';
    import InputField from '../../Components/InputField.vue';
    import Pagination from '../../Components/Pagination.vue';
    import { useForm, router } from '@inertiajs/vue3';
@@ -110,7 +115,8 @@
    
    const props = defineProps({
       coaches: (Array, Object),
-      search: String
+      search: String,
+      success: String
    })
    
    const deleteForm = useForm({

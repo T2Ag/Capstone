@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('training_transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained()->onDelete('cascade');
-            $table->foreignId('training_id')->constrained()->onDelete('cascade');
+            $table->foreignId('client_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('training_id')->nullable()->constrained()->onDelete('set null');
             $table->date('start_date');
             $table->date('end_date');
             $table->date('transaction_date');

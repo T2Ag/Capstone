@@ -20,7 +20,8 @@ class UserController extends Controller
             'search' => $request->input('search'),
             'roleFilter' => $request->input('roleFilter'),
         ])
-        ->paginate(10);
+        ->paginate(10)->withQueryString();
+        
         $roles = Role::all();
     
         return Inertia::render('Users/User', [
@@ -185,7 +186,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
             'new_password' => [
-                'nullable',
+                'required',
                 'string',
                 'confirmed',
                 'min:8',

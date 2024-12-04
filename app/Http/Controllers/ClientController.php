@@ -31,7 +31,7 @@ class ClientController extends Controller
             'date_filter' => $request->input('date_filter'),
             'search' => $request->input('search')
         ])
-        ->paginate(10);
+        ->paginate(10)->withQueryString();
 
         // Add the first active transaction for each client
         $clients->transform(function ($client) {
@@ -110,9 +110,9 @@ class ClientController extends Controller
 
         $client->setAttribute('isMonthlyActive', $client->isMonthlyActive());
         
-        $logs = Log::with('client','payment_method')->where('client_id', $id)->orderBy('date', 'desc')->paginate(10);
+        $logs = Log::with('client','payment_method')->where('client_id', $id)->orderBy('date', 'desc')->paginate(10)->withQueryString();
 
-        $transactions = Transaction::with('client','payment_method')->where('client_id', $id)->orderBy('transaction_date', 'desc')->paginate(10);
+        $transactions = Transaction::with('client','payment_method')->where('client_id', $id)->orderBy('transaction_date', 'desc')->paginate(10)->withQueryString();
 
         $todos = TodoList::where('client_id', $id)->get();
 
