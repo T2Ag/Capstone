@@ -13,7 +13,7 @@
             <div class="flex-1 bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-lg shadow-lg">
                   <div class="lg:flex items-center p-6">
                      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
-                        <i class="bi bi-people text-2xl text-white"></i>
+                        <i class="bi bi-people lg:text-2xl text-white"></i>
                      </div>
                      <div class="ml-4">
                         <p class="lg:text-3xl font-bold text-white">
@@ -30,7 +30,7 @@
             <div class="flex-1 bg-gradient-to-r from-red-500 to-red-400 rounded-lg shadow-lg">
                   <div class="lg:flex items-center p-6">
                      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
-                        <i class="bi bi-person text-2xl text-white"></i>
+                        <i class="bi bi-person lg:text-2xl text-white"></i>
                      </div>
                      <div class="ml-4">
                         <p class="lg:text-3xl font-bold text-white">
@@ -47,7 +47,7 @@
             <div class="flex-1 bg-gradient-to-r from-green-600 to-green-400 rounded-lg shadow-lg">
                <div class="lg:flex items-center p-6">
                   <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
-                     <span class="text-2xl text-white">₱</span>
+                     <span class="lg:text-2xl text-white">₱</span>
                   </div>
                   <div class="ml-4">
                         <p class="lg:text-3xl font-bold text-white">
@@ -121,6 +121,7 @@
                   </div>
 
                   <div class="lg:flex gap-6">
+
                      <!-- Chart Section -->
                      <div class="flex-1 mb-6 lg:mb-0">
                         <ClientsChart :months="months" :totals="totals" class="h-[400px]"/>
@@ -128,6 +129,7 @@
 
                      <!-- Weekly Statistics Cards -->
                      <div class="flex lg:w-[460px] gap-4">
+                        
                         <!-- Visits Card -->
                         <!-- Large Screen Version -->
                         <div class="hidden lg:flex flex-1 bg-gradient-to-b from-emerald-400 to-emerald-700 rounded-xl shadow-lg overflow-hidden">
@@ -153,7 +155,7 @@
                                     <i class="bi bi-people text-2xl text-white"></i>
                                  </div>
                                  <div class="ml-4">
-                                    <p class="text-3xl font-bold text-white">
+                                    <p class=" font-bold text-white">
                                           {{ totalLogsThisMonth }}
                                     </p>
                                     <p class="text-white/90">
@@ -188,7 +190,7 @@
                                     <span class="text-2xl text-white">₱</span>
                                  </div>
                                  <div class="ml-4">
-                                    <p class="text-3xl font-bold text-white">
+                                    <p class=" font-bold text-white">
                                           {{ "₱" + totalEarningsThisMonth }}
                                     </p>
                                     <p class="text-white/90">

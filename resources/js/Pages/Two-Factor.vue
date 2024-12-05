@@ -24,13 +24,17 @@
                </form>
 
                <!-- Resend Code Button -->
-               <div class="text-center">
+               <div class="flex flex-col justify-centertext-center">
                   <button 
                      @click="resendCode" 
-                     class="text-blue-500 hover:underline"
+                     class="text-blue-500 hover:underline mb-4"
                   >
                      Didn't receive code? Resend
                   </button>
+
+                  <Link  method="post" as="button" :href="route('logout')"  class=" mx-auto hover:underline text-red-700" >
+                     Logout
+                  </Link>
                </div>
             </div>
          </div>

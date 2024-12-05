@@ -27,7 +27,8 @@ class ClientController extends Controller
             'month_filter' => $request->input('month_filter'),
             'registration_type' => $request->input('registration_type'),
             'payment_method' => $request->input('payment_method'),
-            'member_filter' => $request->boolean('member_filter'),
+            'member_filter' => $request->input('member_filter'),
+            'active_filter' => $request->input('active_filter'),
             'date_filter' => $request->input('date_filter'),
             'search' => $request->input('search')
         ])
@@ -59,6 +60,7 @@ class ClientController extends Controller
             'registration_type' => $request->registration_type,
             'payment_method' => $request->payment_method,
             'member_filter' => $request->member_filter,
+            'active_filter' => $request->active_filter,
             'date_filter' => $request->date_filter,
             'search' => $request->search,
             'success' => session("success")

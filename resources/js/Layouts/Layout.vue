@@ -15,11 +15,6 @@ const submenuVisible = reactive({
 
 const profileDropdownVisible = ref(false);
 
-// Toggles the dropdown menu
-const toggleDropdown = () => {
-  profileDropdownVisible.value = !profileDropdownVisible.value;
-};
-
 const isActive = (url, exact = false) => {
   return exact ? page.url === url : page.url.includes(url);
 };
@@ -96,17 +91,18 @@ const openSideBar = () => {
         <i class="bi bi-chevron-down ml-2"></i>
       </button>
       <!-- Dropdown Menu -->
-      <div v-show="profileDropdownVisible" class="absolute z-50 right-4 w-40 mt-2 bg-white border border-gray-200 rounded-md shadow-lg" >
+      <div v-show="profileDropdownVisible" class="absolute right-4 w-40 mt-2 bg-white border border-gray-200 rounded-md shadow-lg" >
         <Link :href="route('edit')" class="block px-4 py-2 text-black hover:bg-gray-100">Profile</Link>
         <Link :href="route('changePassword')" class="block px-4 py-2 text-black hover:bg-gray-100">Change Password</Link>
-        <Link :href="route('logout')" class="block px-4 py-2 text-red-700 hover:bg-gray-100" >
+        
+        <Link  method="post" as="button" :href="route('logout')"  class="block px-4 py-2 text-start w-full text-red-700 hover:bg-gray-100" >
           Logout
         </Link>
       </div>
     </div>
   </div>
 
-  <div class="sidebar fixed top-0 bottom-0 lg:left-0 left-[-300px] w-[300px] text-center bg-white border-r-2 border-gray-300 transition-all duration-300 ease-in-out z-10" >
+  <div class="sidebar fixed top-0 bottom-0 lg:left-0 left-[-300px] w-[300px] text-center bg-white border-r-2 border-gray-300 transition-all duration-300 ease-in-out z-40" >
     <div class="text-gray-500 text-xl p-2 h-[69px] items-center border-b">
       <div class="p-2.5 my-.5 flex lg:justify-center justify-between items-center">
         <img :src="'/arm.png'" class="max-w-8 max-h-8 align-middle lg:mr-3" alt="">

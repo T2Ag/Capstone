@@ -188,7 +188,6 @@ class UserController extends Controller
             'new_password' => [
                 'required',
                 'string',
-                'confirmed',
                 'min:8',
                 'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
             ],

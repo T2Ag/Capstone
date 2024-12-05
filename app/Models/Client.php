@@ -104,9 +104,51 @@ class Client extends Model
             });
         }
 
-        if (isset($filters['member_filter']) && $filters['member_filter']) {
-            $query->whereNotNull('user_id');
+        if (isset($filters['member_filter']) && $filters['member_filter'] !== 'all') {
+            if ($filters['member_filter'] === 'member') {
+
+                $query->whereNotNull('user_id');
+            } elseif ($filters['member_filter'] === 'non-member') {
+
+                $query->whereNull('user_id');
+            }
         }
+
+        if (isset($filters['active_filter']) && $filters['active_filter'] !== 'all') {
+            $today = now()->toDateString();
+        
+            // Filter for "expired" clients
+            if ($filters['active_filter'] === 'expired') {
+                $query->whereHas('payment_method', function ($q) {
+                    $q->where('type', 'monthly'); 
+                })->where(function ($q) use ($today) {
+                    $q->doesntHave('transactions')
+                        ->orWhereHas('transactions', function ($q) use ($today) {
+                            $q->whereHas('payment_method', function ($q) {
+                                $q->where('type', 'monthly'); 
+                            })
+                            ->orderBy('transaction_date') 
+                            ->where('end_date', '<', $today);
+                        });
+                });
+            }
+            // Filter for "active" clients
+            if ($filters['active_filter'] === 'active') {
+                $query->whereHas('payment_method', function ($q) {
+                    $q->where('type', 'monthly'); 
+                })->where(function ($q) use ($today) {
+                    $q->whereHas('transactions', function ($q) use ($today) {
+                        $q->whereHas('payment_method', function ($q) {
+                            $q->where('type', 'monthly'); 
+                        })
+                        ->orderBy('transaction_date') 
+                        ->where('start_date', '<=', $today) 
+                        ->where('end_date', '>=', $today);
+                    });
+                });
+            }
+        }
+        
 
         if (isset($filters['date_filter']) && $filters['date_filter'] !== '') {
             $query->whereDate('created_at', $filters['date_filter']);

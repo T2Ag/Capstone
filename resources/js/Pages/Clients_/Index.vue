@@ -40,17 +40,20 @@
                <div class="flex flex-wrap justify-end pb-4 space-x-4">
 
                   <!-- Members Filter -->
-                  <div class="flex flex-col justify-start items-center pr-2">
-                     <label for="member_filter" class="block text-xs text-gray-600 mb-1">Members</label>
-                     <div class="p-1">
-                        <input 
-                        type="checkbox" 
-                        id="member_filter" 
-                        v-model="form.member_filter" 
-                        @change="filterClients" 
-                        class="form-checkbox text-indigo-600"
+                  <div class="">
+                     <label class="block text-xs text-gray-600 mb-1">Members</label>
+                     <div class="flex items-center">
+                        <select 
+                           v-model="form.member_filter" 
+                           @change="filterClients" 
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
                         >
+                           <option value="all">All Members</option>
+                           <option value="member">Members</option>
+                           <option value="non-member">Non-Members</option>
+                        </select>                        
                      </div>
+
                   </div>
 
                   <div class="">
@@ -111,6 +114,23 @@
                            </option>
                         </select>
                      </div>
+                  </div>
+
+                  <!-- Active Filter -->
+                  <div class="">
+                     <label class="block text-xs text-gray-600 mb-1">Active Monthly Clients</label>
+                     <div class="flex items-center">
+                        <select 
+                           v-model="form.active_filter" 
+                           @change="filterClients" 
+                           class="w-full bg-white border border-gray-300 rounded-md pl-3 pr-3 py-2 text-sm text-gray-700"
+                        >
+                           <option value="all">All</option>
+                           <option value="active">Active</option>
+                           <option value="expired">Expired</option>
+                        </select>                        
+                     </div>
+
                   </div>
 
                   <!-- <div class="">
@@ -234,6 +254,8 @@ const props = defineProps({
    payment_method: String,
    registration_type: String,
    month_filter: String,
+   member_filter: String,
+   active_filter: String,
    search: String,
    success: String
  });
@@ -301,7 +323,8 @@ const form = useForm({
    month_filter : props.month_filter  || 'all',
    registration_type : props.registration_type || 'all',
    payment_method : props.payment_method || 'all',
-   member_filter : props.member_filter || false,
+   member_filter : props.member_filter || 'all',
+   active_filter : props.active_filter || 'all',
    // date_filter : props.date_filter || '',
    search : props.search || ''
 })
@@ -313,6 +336,7 @@ const filterClients = () => {
       registration_type: form.registration_type,
       payment_method : form.payment_method,
       member_filter : form.member_filter,
+      active_filter : form.active_filter,
       // date_filter: form.date_filter,
       search: form.search
    }, {

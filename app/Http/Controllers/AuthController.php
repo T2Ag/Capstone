@@ -66,7 +66,7 @@ class AuthController extends Controller
         ])->onlyInput('username');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         $user = Auth::user();
 
@@ -79,15 +79,16 @@ class AuthController extends Controller
             $user->save();
         }
 
-        Session::flush();
         Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
         return redirect()->route('login');
     }
 
     public function dashboard()
     {
-
-        
 
         $gymVisits = Log::selectRaw(
             "strftime('%m', date) as month, COUNT(*) as total_visits"

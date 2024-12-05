@@ -53,57 +53,55 @@
 
 
       <!-- Announcements Section -->
-      <div class="bg-white mt-4 m-3">
-         <div class="px-3 py-2 border-b-2 border-gray-400">
-            <p class="text-[20px] text-gray-600 font-bold">ANNOUNCEMENTS</p>
+      <div class="bg-white mt-4 m-3 rounded">
+         <div class="px-6 py-4 bg-gradient-to-r from-gray-100 to-gray-200 border-b border-gray-300 rounded">
+            <p class="text-xl text-gray-700 font-semibold flex items-center">
+               <i class="bi bi-calendar-event mr-3 text-gray-600"></i>
+               ANNOUNCEMENTS
+            </p>
          </div>
 
          <table class="w-full">
-            <thead class="bg-gray-100">
-               <tr>
-                  <th class="px-4 py-2 text-left text-gray-600">Content</th>
-                  <th class="px-4 py-2 text-left text-gray-600">Date</th>
-                  <th class="px-4 py-2 text-left text-gray-600">Actions</th>
-
+            <thead>
+               <tr class="bg-gray-50 border-b border-gray-200">
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                     Announcement Details
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                     Date
+                  </th>
                </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-200">
                <tr 
                   v-for="announcement in announcements.data" 
                   :key="announcement.id"
-                  class="border-b hover:bg-gray-50"
+                  class="hover:bg-gray-50 transition-colors duration-200"
                >
-                  <td class="px-4 py-2 flex flex-col">
-                     <div class="text-[20px] font-bold my-2">{{ announcement.title }}</div>
-                     <div class="mx-2">{{ announcement.content }}</div>
+                  <td class="px-6 py-4">
+                     <div class="text-sm font-medium text-gray-900">
+                        {{ announcement.title }}
+                     </div>
+                     <div class="text-xs text-gray-500 mt-1 line-clamp-2">
+                        {{ announcement.content }}
+                     </div>
                   </td>
-                  <td class="px-4 w-[10rem]">
-                     {{ formatDate(announcement.created_at) }}
-                  </td>
-                  <td>
-                     <button 
-                       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mr-2" data-bs-toggle="modal" :data-bs-target="`#editAnnouncementModal-${announcement.id}`"
-                     >
-                       Edit
-                     </button>
-
-                     <button 
-                       class="text-red-600 mx-2" 
-                       type="button" 
-                       @click="openDeleteModal(announcement)" 
-                       data-bs-toggle="modal" 
-                       data-bs-target="#deleteModal"
-                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                           <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                        </svg>
-                     </button>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                     <div class="text-sm text-gray-500">
+                        {{ formatDate(announcement.created_at) }}
+                     </div>
                   </td>
                </tr>
             </tbody>
          </table>
 
+         <div v-if="announcements.length === 0" class="text-center py-6 text-gray-500">
+            <i class="bi bi-info-circle mr-2"></i>
+            No announcements at this time
+         </div>
+
          <Pagination class="flex mt-4 justify-end" :links="announcements.links" preserve-scroll/>
+
       </div>
 
       <EditAnnouncementModal 
