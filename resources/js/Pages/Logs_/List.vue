@@ -8,7 +8,7 @@
             <p class="text-3xl font-bold text-gray-900 ">Logs List</p>
          </div>
          <div class="">
-            <form @submit.prevent="filterLogs">
+            <form @input="filterLogs">
                <InputField
                   type="search"
                   label=""

@@ -7,7 +7,7 @@
             <p class="text-3xl font-bold text-gray-900 ">Coach List</p>
          </div>
          <div class="">
-            <form @submit.prevent="filterCoaches">
+            <form @input="filterCoaches">
                <InputField
                   type="search"
                   label=""

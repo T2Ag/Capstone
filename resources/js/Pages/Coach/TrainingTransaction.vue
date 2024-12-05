@@ -7,7 +7,7 @@
                <p class="text-3xl font-bold text-gray-900 ">Training Transaction List</p>
             </div>
             <div class="">
-               <form @submit.prevent="filterTransactions" >
+               <form @input="filterTransactions" >
                   <InputField
                      type="search"
                      label=""

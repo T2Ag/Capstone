@@ -13,7 +13,7 @@ class TrainingTransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $trainingTransactions = TrainingTransaction::with('training','training.coach', 'client')
+        $trainingTransactions = TrainingTransaction::with('training','training.coach', 'client')->orderBy('created_at', 'desc')
         ->filter([
             'year_filter' => $request->input('year_filter'),
             'month_filter' => $request->input('month_filter'),

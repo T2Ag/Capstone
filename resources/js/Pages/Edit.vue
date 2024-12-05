@@ -22,6 +22,12 @@
                <span class="text-red-500">{{ form.errors.username }}</span>
             </div>
 
+            <div class="mb-3 lg:min-w-[20rem] w-full">
+               <label for="create-username" class="form-label">Email</label>
+               <input type="text" class="form-control w-full" id="create-username" name="username" v-model="form.email">
+               <span class="text-red-500">{{ form.errors.email }}</span>
+            </div>
+
             <span class="mb-3">
                <p class=" lg:text-[20px] text-gray-600">CLIENT PROFILE DETAILS</p>
             </span>
@@ -96,6 +102,7 @@ const successMessage = ref('') // Use ref for reactive message
 const form = useForm({
   id: props.user.id,
   username: props.user.username,
+  email: props.user.email,
   client_id: props.user.client?.id || null,
   first_name: props.user.client?.first_name || '',
   middle_initial: props.user.client?.middle_initial || '',

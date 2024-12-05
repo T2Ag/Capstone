@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Permission\Models\Role;
 
 class ClientController extends Controller
@@ -83,6 +84,17 @@ class ClientController extends Controller
 
         $validatedData['date'] = now();
 
+        $exists = Client::where('first_name', $request->first_name)
+        ->where('last_name', $request->last_name)
+        ->where('middle_initial', $request->middle_initial)
+        ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withErrors([
+                'first_name' => 'A client with the same name already exists.',
+            ])->withInput();
+        }
+
         // Create the client
         Client::create($validatedData);
 
@@ -108,6 +120,7 @@ class ClientController extends Controller
     public function view($id)
     {   
         $payment_methods = PaymentMethod::all();
+
         $client = Client::with(['payment_method', 'transactions', 'user', 'registration', 'training', 'logs',])->findOrFail($id);
 
         $client->setAttribute('isMonthlyActive', $client->isMonthlyActive());
@@ -151,6 +164,12 @@ class ClientController extends Controller
         ->oldest()
         ->first();
 
+        $qrCodeSvgString = (string) QrCode::format('svg')
+        ->size(200)
+        ->generate((string) $client->id);
+
+        // dd($qrCodeSvgString);
+
         return Inertia::render('Clients_/View', [
             'client' => $client,
             'users' => $users,
@@ -160,7 +179,8 @@ class ClientController extends Controller
             'todos' => $todos,
             'latestMonthlyTransaction' => $latestMonthlyTransaction,
             'firstUnpaidMonthlyLog' => $firstUnpaidMonthlyLog,
-            'success' => session("success")
+            'success' => session("success"),
+            'qrCode' => $qrCodeSvgString
         ]);
     }
 

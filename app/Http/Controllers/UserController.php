@@ -7,6 +7,7 @@ use App\Models\Coach;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Permission\Models\Role;
@@ -127,24 +128,40 @@ class UserController extends Controller
     public function editProfile(Request $request, User $user)
     {
         $validatedUserData = $request->validate([
-            'username' => 'required|string|unique:users,username,'.$user->id
+            'username' => 'required|string|unique:users,username,'.$user->id,
+            'email' => $request->user()->hasRole('admin') 
+            ? ['required', 'email', Rule::unique(User::class)->ignore($request->user()->id)]
+            : ['nullable', 'email', Rule::unique(User::class)->ignore($request->user()->id)]
         ]);
 
         $validatedData = $request->validate(([
             'client_id' => 'nullable|exists:clients,id',
         ]));
-    
-        $validatedClientData = $request->validate([
-            'first_name' => 'required|string',
-            'middle_initial' => 'nullable|string',
-            'last_name' => 'required|string',
-        ]);
-    
-        $user->update($validatedUserData);
-    
-        $client = Client::findOrFail($validatedData['client_id']);
 
-        $client->update($validatedClientData);
+        $userData = $request->user()->hasRole('admin') 
+        ? $validatedUserData 
+        : collect($validatedUserData)->except('email')->toArray();
+
+        $request->user()->fill($userData);
+
+        if($request->user()->hasRole('admin') && $request->user()->isDirty('email')){
+            $request->user()->email_verified_at = null;
+         }
+
+        $request->user()->save();
+
+        // $user->update($validatedUserData);
+    
+        if ($validatedData['client_id'] !== null) {
+            $validatedClientData = $request->validate([
+                'first_name' => 'required|string',
+                'middle_initial' => 'nullable|string',
+                'last_name' => 'required|string',
+            ]);
+    
+            $client = Client::findOrFail($validatedData['client_id']);
+            $client->update($validatedClientData);
+        }
     
         return redirect()->back()->with('success', 'Profile updated successfully');
     }

@@ -6,8 +6,36 @@
             <i class="bi bi-arrow-left text-lg mr-2"></i>
          </Link>
 
-         <div>
-            <div class="flex justify-between align-middle items-center py-4">
+         <div class="flex flex-col m-3">
+
+            <div 
+               v-if="qrCode" 
+               v-html="qrCode" 
+               class="border flex justify-center items-center" 
+               style="width: 200px; height: 200px;"
+            ></div>
+
+            <!-- No QR Code Fallback -->
+            <div 
+               v-else 
+               class="border text-gray-500 text-center flex justify-center items-center" 
+               style="width: 200px; height: 200px;"
+            >
+               No QR Code Available
+            </div>
+
+            <!-- QR Code Label -->
+            <div class="mt-1 text-center w-[200px]">
+               <p>Personal QR Code</p>
+            </div>
+
+         </div>
+
+
+
+         <div class="">
+
+            <div class="flex justify-between align-middle items-center pb-4">
                
                <div class="flex">
                   <div class="text-[30px] font-semibold mr-3">
@@ -62,7 +90,7 @@
                      class="rounded text-white text-lg px-3 py-2" 
                      :class="{
                            'bg-green-500': client.payment_method.type === 'walk-in',
-                           'bg-gray-500': client.payment_method.type !== 'walk-in',
+                           'bg-gray-500': client.payment_method.type !== 'walk-in'  && !client.isMonthlyActive,
                            'bg-gray-400 cursor-not-allowed': client.isMonthlyActive
                      }"
                      :disabled="client.isMonthlyActive"
@@ -103,7 +131,7 @@
                   data-bs-toggle="modal"
                   data-bs-target="#updateMembershipModal"
                >
-                  Become a Member NOW
+                  Grant Membership
                </button>
 
                <button
@@ -420,7 +448,8 @@ const props = defineProps({
    todos: Array,
    latestMonthlyTransaction: Object,
    firstUnpaidMonthlyLog: Object,
-   success: String
+   success: String,
+   qrCode: String 
  });
 
 const transactionForm = useForm({

@@ -6,7 +6,7 @@
                <p class="text-3xl font-bold text-gray-900 my-2 align-middle">Transactions List</p>
             </div>
             <div class="">
-               <form @submit.prevent="filterTransactions">
+               <form @input="filterTransactions">
                   <InputField
                      type="search"
                      label=""
@@ -96,14 +96,15 @@
 
             <!-- Transactions Table -->
             <table class="w-full text-left text-gray-600">
-               <thead class="text-sm font-semibold uppercase bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700">
+               <thead class=" font-semibold uppercase bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700">
                   <tr class="text-center">
-                     <th scope="col" class="lg:px-5 px-3 py-3">ID</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Descrption</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Duration</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Transaction Date</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Total</th>
-                     <th scope="col" class="lg:px-5 px-3 py-3">Actions</th>
+                     <th scope="col" class="px-3 py-3">ID</th>
+                     <th scope="col" class="px-[5rem] py-3">Descrption</th>
+                     <th scope="col" class="px-[3rem] py-3">Client</th>
+                     <th scope="col" class="">Duration</th>
+                     <th scope="col" class="">Transaction Date</th>
+                     <th scope="col" class="">Total</th>
+                     <th scope="col" class="">Actions</th>
                   </tr>
                </thead>
                <tbody>
@@ -114,6 +115,14 @@
                   >
                      <td class="py-2 px-3">{{ transaction.id }}</td>
                      <td class="py-2 px-3">{{ transaction.description }}</td>
+                     <td class="py-2 px-3">
+                        <span v-if="transaction.client">
+                           {{ transaction.client.first_name }} {{ transaction.client.middle_initial ? transaction.client.middle_initial + '.' : '' }} {{ transaction.client.last_name }} 
+                        </span>
+                        <span v-else>
+                           -
+                        </span>
+                     </td>
                      <td class="py-2 px-3">
                         <span v-if="transaction.start_date && transaction.end_date">
                            {{ formatDate(transaction.start_date) }} - {{ formatDate(transaction.end_date) }}
