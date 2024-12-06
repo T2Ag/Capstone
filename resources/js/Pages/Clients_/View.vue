@@ -6,63 +6,67 @@
             <i class="bi bi-arrow-left text-lg mr-2"></i>
          </Link>
 
-         <div class="flex flex-col m-3">
+         <div class="lg:flex">
+            <div class="flex flex-col justify-center items-center px-4 py-4 my-2 mx-4 border bg-white rounded">
 
-            <div 
-               v-if="qrCode" 
-               v-html="qrCode" 
-               class="border flex justify-center items-center" 
-               style="width: 200px; height: 200px;"
-            ></div>
+               <div 
+                  v-if="qrCode" 
+                  v-html="qrCode" 
+                  class="border flex justify-center items-center" 
+                  style="width: 200px; height: 200px;"
+               ></div>
 
-            <!-- No QR Code Fallback -->
-            <div 
-               v-else 
-               class="border text-gray-500 text-center flex justify-center items-center" 
-               style="width: 200px; height: 200px;"
-            >
-               No QR Code Available
-            </div>
-
-            <!-- QR Code Label -->
-            <div class="mt-1 text-center w-[200px]">
-               <p>Personal QR Code</p>
-            </div>
-
-         </div>
-
-
-
-         <div class="">
-
-            <div class="flex justify-between align-middle items-center pb-4">
-               
-               <div class="flex">
-                  <div class="text-[30px] font-semibold mr-3">
-                     {{ client.first_name }} {{ client.middle_initial }}. {{ client.last_name }}
-                  </div>
-                  <div class="my-auto align-middle mx-3 text-[20px]"
-                     :class="{
-                        'text-green-600 font-semibold': client.isMonthlyActive,
-                        'text-red-600 font-semibold': !client.isMonthlyActive,
-                        'hidden': client.payment_method.type === 'walk-in'
-                     }"
-                  >
-                     ({{ client.isMonthlyActive ? 'Active' : 'Expired' }})
-                  </div>
-                  <div class="flex my-auto align-middle">
-                     <p class="text-[20px]">Expire on: 
-                        <span class="font-bold">
-                           {{ latestMonthlyTransaction && latestMonthlyTransaction.end_date ? formatWordMonthDate(latestMonthlyTransaction.end_date) : '-' }}
-                        </span>
-                     </p>
-                  </div>
+               <!-- No QR Code Fallback -->
+               <div 
+                  v-else 
+                  class="border text-gray-500 text-center flex justify-center items-center" 
+                  style="width: 200px; height: 200px;"
+               >
+                  No QR Code Available
                </div>
+
+               <!-- QR Code Label -->
+               <div class="mt-3 text-center w-[200px]">
+                  <p>Personal QR Code</p>
+               </div>
+
+            </div>
+
+
+
+            <div class="w-full">
+
+               <div class="flex justify-between items-center py-4 ">
+                  
+                  <div class="flex flex-col">
+                     <div class="text-[20px] font-semibold mr-3">
+                        {{ client.first_name }} {{ client.middle_initial }}. {{ client.last_name }}
+                     </div>
+                     <div class="lg:flex ">
+                        <div class="my-auto align-middle mr-2 text-[15px]"
+                           :class="{
+                              'text-green-600 font-semibold': client.isMonthlyActive,
+                              'text-red-600 font-semibold': !client.isMonthlyActive,
+                              'hidden': client.payment_method.type === 'walk-in'
+                           }"
+                        >
+                           ({{ client.isMonthlyActive ? 'Active' : 'Expired' }})
+                        </div>
+                        <div class="flex my-auto align-middle">
+                           <p class="text-[15px]">Expire on: 
+                              <span class="font-bold">
+                                 {{ latestMonthlyTransaction && latestMonthlyTransaction.end_date ? formatWordMonthDate(latestMonthlyTransaction.end_date) : '-' }}
+                              </span>
+                           </p>
+                        </div>   
+                     </div>
+                     
+                  </div>
 
                   <div>
                      <button
                         type="button" 
-                        class="rounded text-white text-xl px-4 py-3" 
+                        class="rounded text-white lg:text-xl px-4 py-3" 
                         :class="{
                            'bg-blue-500': !client.isMonthlyActive,
                            'bg-gray-400 cursor-not-allowed': client.isMonthlyActive
@@ -74,96 +78,99 @@
                            {{ client.payment_method.type === 'walk-in' ? 'Pay Session' : 'Renew Monthly' }}
                      </button>  
                   </div>
-            </div>
+               </div>
 
-            <div class="flex justify-between py-2">
-               <div class="text-xl flex">
-                  <div class="mr-2">
-                     Payment type:    
+               <div class="flex justify-between py-2">
+                  <div class="text-md flex my-auto">
+                     <div class="mr-2">
+                        Payment type:    
+                     </div>
+                     <div class="font-bold">
+                        {{ client.payment_method.type }}</div>
+                  </div>
+                  <div>
+                     <button
+                        type="button" 
+                        class="rounded text-white lg:text-md text-sm px-3 py-2" 
+                        :class="{
+                              'bg-green-500': client.payment_method.type === 'walk-in',
+                              'bg-gray-500': client.payment_method.type !== 'walk-in'  && !client.isMonthlyActive,
+                              'bg-gray-400 cursor-not-allowed': client.isMonthlyActive
+                        }"
+                        :disabled="client.isMonthlyActive"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#updatePaymentModal" 
+                        @click="openUpdatePaymentForm(client)">
+                              {{ client.payment_method.type === 'walk-in' ? 'Upgrade to Monthly' : 'Go back to Session' }}
+                     </button>
+                  
+                  </div>
+               
+
+               </div>
+               
+               <div class="flex py-3  text-md my-auto">
+                  <div class="mr-2 flex">
+                     Registration:
                   </div>
                   <div class="font-bold">
-                     {{ client.payment_method.type }}</div>
+                     {{ client.registration.type }}
+                  </div>
                </div>
-               <div>
+
+               <div class="flex justify-between py-3  text-md">
+                  <div class="flex my-auto align-middle">
+                     <div class="mr-2">
+                        Membership status:
+                     </div>
+                     <div class="font-bold">
+                        {{ isMember(client) }}
+                     </div>                  
+                  </div>
+
                   <button
-                     type="button" 
-                     class="rounded text-white text-lg px-3 py-2" 
-                     :class="{
-                           'bg-green-500': client.payment_method.type === 'walk-in',
-                           'bg-gray-500': client.payment_method.type !== 'walk-in'  && !client.isMonthlyActive,
-                           'bg-gray-400 cursor-not-allowed': client.isMonthlyActive
-                     }"
-                     :disabled="client.isMonthlyActive"
-                     data-bs-toggle="modal" 
-                     data-bs-target="#updatePaymentModal" 
-                     @click="openUpdatePaymentForm(client)">
-                           {{ client.payment_method.type === 'walk-in' ? 'Upgrade to Monthly' : 'Go back to Session' }}
-                  </button>
-                 
-               </div>
-              
-
-            </div>
-            
-            <div class="flex py-2 mb-3 text-xl">
-               <div class="mr-2">
-                  Registration:
-               </div>
-               <div class="font-bold">
-                  {{ client.registration.type }}
-               </div>
-            </div>
-
-            <div class="flex justify-between py-2 mb-3 text-xl">
-               <div class="flex my-auto align-middle">
-                  <div class="mr-2">
-                     Membership status:
-                  </div>
-                  <div class="font-bold">
-                     {{ isMember(client) }}
-                  </div>                  
-               </div>
-
-               <button
-                  v-if="!client.user"
-                  type="button"
-                  class="rounded text-white text-lg px-3 py-2 bg-green-500"
-                  data-bs-toggle="modal"
-                  data-bs-target="#updateMembershipModal"
-               >
-                  Grant Membership
-               </button>
-
-               <button
-                  v-else
-                  type="button"
-                  class="rounded text-white text-lg px-3 py-2 bg-red-700"
-                  data-bs-toggle="modal"
-                  data-bs-target="#revokeMembership"
-               >
-                  Revoke Membership
-               </button>
-
-               <MembershipModal :client="client" :users="users" />
-            </div>
-
-            <div class="flex justify-between">
-               <div class="text-xl mr-3 mb-4">
-                  Username: <span class="font-bold">{{ client.user ? client.user.username : '-' }}</span>
-               </div>
-
-               <div v-if="client.user_id">
-                  <Link
-                     :href="route('users.view', { user: client.user_id })"
-                     class="inline-flex align-middle text-sm items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+                     v-if="!client.user"
+                     type="button"
+                     class="rounded text-white lg:text-md text-sm px-3 py-2 bg-green-500"
+                     data-bs-toggle="modal"
+                     data-bs-target="#updateMembershipModal"
                   >
-                     <i class="bi bi-pencil mr-2"></i>
-                     Edit Client User Account
-                  </Link>
-               </div>
-            </div>
+                     Grant Membership
+                  </button>
 
+                  <button
+                     v-else
+                     type="button"
+                     class="rounded text-white lg:text-md px-3 py-2 bg-red-700"
+                     data-bs-toggle="modal"
+                     data-bs-target="#revokeMembership"
+                  >
+                     Revoke Membership
+                  </button>
+
+                  <MembershipModal :client="client" :users="users" />
+               </div>
+
+               <div class="flex justify-between">
+                  <div class="text-xl my-2">
+                     Username: <span class="font-bold">{{ client.user ? client.user.username : '-' }}</span>
+                  </div>
+
+                  <div v-if="client.user_id">
+                     <Link
+                        :href="route('users.view', { user: client.user_id })"
+                        class="inline-flex align-middle text-sm items-center px-4 py-2 my-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+                     >
+                        <i class="bi bi-pencil mr-2"></i>
+                        Edit Client User Account
+                     </Link>
+                  </div>
+               </div>
+
+            </div>
          </div>
+
+         
 
          <div v-if="success" class="px-2 py-1 my-3 bg-green-200 rounded border-1 border-green-500 ">
             <SuccessMessages :success="success" class="p-3"/>

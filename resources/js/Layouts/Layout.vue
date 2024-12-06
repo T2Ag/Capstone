@@ -197,7 +197,7 @@ const openSideBar = () => {
         isActive('/trainingTransactions')
       }">
         <div>
-          <i class="bi bi-person mr-3"></i>
+          <i class="bi bi-person-fill"></i>
           <span>TRAINING</span>        
         </div>
 

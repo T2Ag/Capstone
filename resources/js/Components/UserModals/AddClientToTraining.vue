@@ -66,17 +66,16 @@ const form = useForm({
 const selectedClientName = ref('');
 
 const updateClientId = () => {
+   const client = props.clients.find(c => {
+      const fullName = `${c.first_name} ${c.middle_initial || ''} ${c.last_name}`.trim().replace(/\s+/g, ' ');
+      return fullName === selectedClientName.value;
+   });
 
-  const client = props.clients.find(c => {
-    const fullName = `${c.first_name} ${c.middle_initial || ''} ${c.last_name}`.trim().replace(/\s+/g, ' ');
-    return fullName === selectedClientName.value;
-  });
-
-    if (client) {
-        form.client_id = client.id;
-    } else {
-        form.client_id = '';
-    }
+   if (client) {
+      form.client_id = client.id;
+   } else {
+      form.client_id = '';
+   }
 };
 
 const resetSelectedClientName = () => {

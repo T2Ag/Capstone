@@ -70,11 +70,11 @@
             <!-- Roles -->
             <div class="mb-4">
                <label for="create-role" class="form-label">Roles</label>
-               <div v-for="role in roles" :key="role.id" class="form-check">
-                 <input class="form-check-input" type="radio" :id="'create-role-' + role.id" :value="role.name" v-model="form.role">
-                 <label class="form-check-label capitalize " :for="'create-role-' + role.id">
-                   {{ role.name }}
-                 </label>
+               <div class="form-check">
+               <input class="form-check-input" type="radio" id="create-role-admin" value="admin" v-model="form.role">
+               <label class="form-check-label capitalize" for="create-role-admin">
+                  Admin
+               </label>
                </div>
                <span v-if="form.errors.role" class="text-red-500">{{ form.errors.role }}</span>
             </div>

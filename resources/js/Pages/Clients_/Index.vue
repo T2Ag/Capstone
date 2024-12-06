@@ -179,7 +179,7 @@
                            <td> {{ isMember(client) }} </td>
                            <td> {{ formatDate(client.date) }}</td>
 
-                           <td class="items-center my-auto align-middle py-3 px-3">
+                           <td class="items-center my-auto align-middle py-2 px-3">
 
                               <Link :href="route('clients.view',  { client: client.id })" class="mx-2">
                                  <i class="bi bi-eye text-[1.5rem] "></i>
@@ -195,7 +195,7 @@
                                  </svg>  
                               </button> -->
                               
-                              <EditClientModal :client="client" :registrations="registrations" :key="`editModal-${client.id}`"/>
+                              <EditClientModal :client="client" :registrations="registrations"  :key="`editModal-${client.id}`" />
                            </td>
                         </tr>
                      </tbody>

@@ -122,16 +122,16 @@ class Client extends Model
                 $query->whereHas('payment_method', function ($q) {
                     $q->where('type', 'monthly'); 
                 })->where(function ($q) use ($today) {
-                    $q->doesntHave('transactions')
-                        ->orWhereHas('transactions', function ($q) use ($today) {
-                            $q->whereHas('payment_method', function ($q) {
-                                $q->where('type', 'monthly'); 
-                            })
-                            ->orderBy('transaction_date') 
-                            ->where('end_date', '<', $today);
-                        });
+                    $q->whereDoesntHave('transactions', function ($q) use ($today) {
+                        $q->whereHas('payment_method', function ($q) {
+                            $q->where('type', 'monthly'); 
+                        })
+                        ->where('start_date', '<=', $today)
+                        ->where('end_date', '>=', $today);
+                    });
                 });
             }
+            
             // Filter for "active" clients
             if ($filters['active_filter'] === 'active') {
                 $query->whereHas('payment_method', function ($q) {

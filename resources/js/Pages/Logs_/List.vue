@@ -51,7 +51,7 @@
                      <input list="clients_options" class="form-control" id="clients" name="clients" autocomplete="off" type="text" v-model="selectedClientName" @input="updateClientId" placeholder="Search and select a client">
                      <datalist id="clients_options">
                         <option v-for="client in clients">
-                           {{ client.first_name }} {{ client.last_name }}
+                           {{ client.first_name }} {{ client.middle_initial}} {{ client.last_name }}
                         </option>
                      </datalist>
                      <input type="hidden" name="client_id" v-model="form.client_id"/>
@@ -172,7 +172,7 @@
                :key="log.id"
                class="text-center bg-white hover:bg-gray-50 transition-colors duration-200"
                >
-               <td class="py-2 px-3">{{ log.client.first_name }} {{ log.client.middle_initial + '.' }} {{ log.client.last_name }}</td>
+               <td class="py-2 px-3">{{ log.client.first_name }} {{ log.client.middle_initial? log.client.middle_initial + '.' : '' }} {{ log.client.last_name }}</td>
                <td class="py-2 px-3">{{ log.payment_method ? log.payment_method.type: '' }}</td>
                <td class="py-2 px-3">{{ log && log.transaction_id ? "Paid" : "Unpaid" }}</td>
                <td class="py-2 px-3">{{ formatDate(log.date) }}</td>
@@ -355,18 +355,18 @@ const selectedClientName = ref('');
 
 // Update client ID when a name is selected from the datalist
 const updateClientId = () => {
-   const client = props.clients.find(
-      c => `${c.first_name} ${c.last_name}` === selectedClientName.value
-   );
+   const client = props.clients.find(c => {
+      const fullName = `${c.first_name} ${c.middle_initial || ''} ${c.last_name}`.trim().replace(/\s+/g, ' ');
+      return fullName === selectedClientName.value;
+   });
 
-      if (client) {
-         form.client_id = client.id;
-      } else {
-         form.client_id = '';
-      }
+   if (client) {
+      form.client_id = client.id;
+   } else {
+      form.client_id = '';
+   }
 };
 
-//reseting client name
 const resetSelectedClientName = () => {
    selectedClientName.value = ''
 };

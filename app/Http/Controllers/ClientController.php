@@ -33,7 +33,7 @@ class ClientController extends Controller
             'date_filter' => $request->input('date_filter'),
             'search' => $request->input('search')
         ])
-        ->paginate(10)->withQueryString();
+        ->paginate(8)->withQueryString();
 
         // Add the first active transaction for each client
         $clients->transform(function ($client) {
@@ -112,9 +112,20 @@ class ClientController extends Controller
             'registration_id' => 'required|exists:registrations,id',
         ]);
 
+        $exists = Client::where('first_name', $request->first_name)
+        ->where('last_name', $request->last_name)
+        ->where('middle_initial', $request->middle_initial)
+        ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withErrors([
+                'first_name' => 'A client with the same name already exists.',
+            ])->withInput();
+        }
+
         $client->update($validatedData);
 
-        return redirect()->route('clients')->with('success', 'Client updated successfully.');
+        return redirect()->back()->with('success', 'Client updated successfully.');
     }
 
     public function view($id)

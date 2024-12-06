@@ -20,7 +20,7 @@
                   </p>
 
                   <p class="text-white/90 font-bold">
-                     Your Gym visits this week
+                     Your Gym visits
                   </p>
                </div>
             </div>
@@ -37,7 +37,7 @@
                            Your Monthly Plan is still active!
                         </p>
                         <p class="text-white font-semibold">
-                           This will expire on: {{ latestMonthlyTransaction.end_date }}
+                           This will expire on: {{ latestMonthlyTransaction && latestMonthlyTransaction.end_date ? latestMonthlyTransaction.end_date : '-'}}
                         </p>
                      </div>
                   </div>
@@ -48,7 +48,7 @@
                            Your Monthly Plan is Expired!
                         </p>
                         <p class="text-white font-semibold">
-                           Expired on: {{ latestMonthlyTransaction.end_date }}
+                           Expired on: {{ latestMonthlyTransaction && latestMonthlyTransaction.end_date ? latestMonthlyTransaction.end_date : '-'}}
                         </p>
                      </div>
                   </div>

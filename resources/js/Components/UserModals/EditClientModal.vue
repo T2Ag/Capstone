@@ -145,6 +145,8 @@ const form = useForm({
 
 const submit = () => {
   form.put(route("clients.update", props.client.id), {
+    preserveState: true,
+    preserveScroll: true,
     onSuccess: () => {
       const modalElement = document.querySelector(
         `#editModal-${props.client.id}`
