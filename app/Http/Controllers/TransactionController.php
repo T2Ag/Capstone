@@ -90,7 +90,7 @@ class TransactionController extends Controller
 
         $log = Log::findOrFail($validatedData['log_id']);
 
-        $description = match($client->payment_method->type) {
+        $description = match($log->payment_method->type) {
             'monthly' => 'Monthly Payment for ' . ($client->first_name . ' ' . $client->middle_initial. ' ' . $client->last_name),
             'walk-in' => 'Walk-in Payment for '. ($client->first_name . ' ' . $client->middle_initial. ' ' . $client->last_name),
             default => 'General Payment'

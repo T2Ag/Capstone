@@ -115,6 +115,7 @@ class ClientController extends Controller
         $exists = Client::where('first_name', $request->first_name)
         ->where('last_name', $request->last_name)
         ->where('middle_initial', $request->middle_initial)
+        ->where('id', '!=', $client->id)
         ->exists();
 
         if ($exists) {

@@ -120,6 +120,66 @@
                      <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">2024</span>
                   </div>
 
+                  <div class="flex">
+                     <div class="flex flex-col px-4">
+                        <div class="mb-6 flex items-center">
+                           <h3 class="text-lg text-gray-700 font-semibold">Last Weeks' Earnings</h3>
+                           <span class="ml-2 px-2 py-1 text-xl font-semibold">{{"₱ " +  totalEarningsLastWeek.toFixed(2) }}</span>
+                        </div>
+
+                        <div class="mb-6 flex items-center">
+                           <h3 class="text-lg text-gray-700 font-semibold">Last Months Earnings</h3>
+                           <span class="ml-2 px-2 py-1 text-xl font-semibold">{{"₱ " +  totalEarningsLastMonth.toFixed(2) }}</span>
+                        </div>
+
+                        
+                     </div>
+
+                     
+
+
+                     <div class="flex flex-col  px-4">
+
+                        <div class="mb-6 flex items-center ">
+                           <h3 class="text-lg text-green-500 font-semibold">This Week Earnings</h3>
+                           <span class="ml-2 px-2 py-1 text-xl font-semibold">{{"₱ " +  totalEarningsThisWeek.toFixed(2) }}</span>
+
+                           <span v-if="determinePercentageStatus(weekEarningsPercentage) === 'positive'" class="text-green-500">
+                              <i class="bi bi-caret-up-fill"></i>
+                              {{ weekEarningsPercentage + '%'}}
+                              
+                           </span>
+                           <span v-if="determinePercentageStatus(weekEarningsPercentage) === 'negative'" class="text-red-500">
+                              <i class="bi bi-caret-down-fill"></i>
+                              {{ weekEarningsPercentage + '%'}}
+                           </span>
+                           <span v-if="determinePercentageStatus(weekEarningsPercentage) === 'neutral'" class="text-gray-500">
+                              {{ weekEarningsPercentage + '%'}}
+                           </span>
+
+                        </div>
+
+                        <div class="mb-6 flex items-center">
+                           <h3 class="text-lg text-green-500 font-semibold">This Months Earnings</h3>
+                           <span class="ml-2 px-2 py-1 text-xl font-semibold">{{"₱ " +  totalEarningsThisMonth.toFixed(2) }}</span>
+
+                           <span v-if="determinePercentageStatus(monthEarningsPercentage) === 'positive'" class="text-green-500">
+                              <i class="bi bi-caret-up-fill"></i>
+                              {{ monthEarningsPercentage + '%'}}
+                              
+                           </span>
+                           <span v-if="determinePercentageStatus(monthEarningsPercentage) === 'negative'" class="text-red-500">
+                              <i class="bi bi-caret-down-fill"></i>
+                              {{ monthEarningsPercentage + '%'}}
+                           </span>
+                           <span v-if="determinePercentageStatus(weekEarningsPercentage) === 'neutral'" class="text-gray-500">
+                              {{ monthEarningsPercentage + '%'}}
+                           </span>
+                        </div>
+                     </div>
+
+                  </div>
+
                   <div class="lg:flex gap-6">
 
                      <!-- Chart Section -->
@@ -150,54 +210,54 @@
 
                         <!-- Small Screen Version -->
                         <div class="lg:hidden flex-1 bg-gradient-to-r from-emerald-400 to-emerald-700 rounded-lg shadow-lg">
-                              <div class="flex items-center p-6">
-                                 <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
-                                    <i class="bi bi-people text-2xl text-white"></i>
-                                 </div>
-                                 <div class="ml-4">
-                                    <p class=" font-bold text-white">
-                                          {{ totalLogsThisMonth }}
-                                    </p>
-                                    <p class="text-white/90">
-                                          Visits this month
-                                    </p>
-                                 </div>
+                           <div class="flex items-center p-6">
+                              <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
+                                 <i class="bi bi-people text-2xl text-white"></i>
                               </div>
+                              <div class="ml-4">
+                                 <p class=" font-bold text-white">
+                                       {{ totalLogsThisMonth }}
+                                 </p>
+                                 <p class="text-white/90">
+                                       Visits this month
+                                 </p>
+                              </div>
+                           </div>
                         </div>
 
                         <!-- Earnings Card -->
                         <!-- Large Screen Version -->
                         <div class="hidden lg:flex flex-1 bg-gradient-to-b from-blue-400 to-blue-700 rounded-xl shadow-lg overflow-hidden">
-                              <div class="p-6 flex flex-col items-center justify-between h-full w-full">
-                                 <div class="bg-white/10 rounded-full p-4 mb-4">
-                                    <span class="text-4xl text-white">₱</span>
-                                 </div>
-                                 <div class="text-center flex-grow flex flex-col justify-center">
-                                    <span class="block text-4xl font-bold text-white mb-2">
-                                          {{ "₱" + totalEarningsThisMonth }}
-                                    </span>
-                                    <div class="text-white/90 text-lg font-medium">
-                                          Earnings this month
-                                    </div>
+                           <div class="p-6 flex flex-col items-center justify-between h-full w-full">
+                              <div class="bg-white/10 rounded-full p-4 mb-4">
+                                 <span class="text-4xl text-white">₱</span>
+                              </div>
+                              <div class="text-center flex-grow flex flex-col justify-center">
+                                 <span class="block text-4xl font-bold text-white mb-2">
+                                       {{ "₱" + totalEarningsThisMonth.toFixed(2) }}
+                                 </span>
+                                 <div class="text-white/90 text-lg font-medium">
+                                       Earnings this month
                                  </div>
                               </div>
+                           </div>
                         </div>
 
                         <!-- Small Screen Version -->
                         <div class="lg:hidden flex-1 bg-gradient-to-r from-blue-400 to-blue-700 rounded-lg shadow-lg">
-                              <div class="flex items-center p-6">
-                                 <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
-                                    <span class="text-2xl text-white">₱</span>
-                                 </div>
-                                 <div class="ml-4">
-                                    <p class=" font-bold text-white">
-                                          {{ "₱" + totalEarningsThisMonth }}
-                                    </p>
-                                    <p class="text-white/90">
-                                          Earnings this month
-                                    </p>
-                                 </div>
+                           <div class="flex items-center p-6">
+                              <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white/20">
+                                 <span class="text-2xl text-white">₱</span>
                               </div>
+                              <div class="ml-4">
+                                 <p class=" font-bold text-white">
+                                       {{ "₱" + totalEarningsThisMonth.toFixed(2) }}
+                                 </p>
+                                 <p class="text-white/90">
+                                       Earnings this month
+                                 </p>
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -321,7 +381,15 @@ const props = defineProps({
    totalActiveMonthlyClients: Number,
    announcements: Array,
    firstAnnouncement: Object,
-   activeMonthlyClients: Array
+   activeMonthlyClients: Array,
+
+   totalEarningsThisWeek: Number,
+   totalEarningsLastWeek: Number,
+   weekEarningsPercentage: Number,
+
+   totalEarningsLastMonth: Number,
+   monthEarningsPercentage: Number,
+
 });
 
 const formatDate = (dateString) => {
@@ -330,5 +398,15 @@ const formatDate = (dateString) => {
       day: 'numeric', 
       year: 'numeric'
    })
+}
+
+const determinePercentageStatus = (percentage) => {
+  if (percentage > 0) {
+    return 'positive'
+  } else if (percentage < 0) {
+    return 'negative'
+  } else if (percentage = 0) {
+    return 'neutral'
+  }
 }
 </script>

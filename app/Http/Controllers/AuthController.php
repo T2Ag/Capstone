@@ -125,11 +125,33 @@ class AuthController extends Controller
         $totalMembers = Client::whereNotNull('user_id')->count();
     
         $totalEarnings = Transaction::sum('total_amount');
+
+        $totalEarningsThisWeek = Transaction::whereBetween('transaction_date', [now()->startOfWeek(), now()->endOfWeek()])->sum('total_amount');
+
+        $totalEarningsLastWeek = Transaction::whereBetween('transaction_date', [
+            now()->subWeek()->startOfWeek(), 
+            now()->subWeek()->endOfWeek()
+        ])->sum('total_amount');
     
+        // Calculate percentage change
+        $weekEarningsPercentage = $totalEarningsLastWeek > 0
+        ? round((($totalEarningsThisWeek - $totalEarningsLastWeek) / $totalEarningsLastWeek) * 100 )
+        : 0;
+
         // Calculate total number of logs for the current week
         $totalLogsThisMonth = Log::whereBetween('date', [now()->startOfMonth(), now()->endOfMonth()])->count();
     
         $totalEarningsThisMonth = Transaction::whereBetween('transaction_date', [now()->startOfMonth(), now()->endOfMonth()])->sum('total_amount');
+
+        $totalEarningsLastMonth = Transaction::whereBetween('transaction_date', [
+            now()->subMonth()->startOfMonth(),
+            now()->subMonth()->endOfMonth()
+        ])->sum('total_amount');
+
+        $monthEarningsPercentage = $totalEarningsLastMonth > 0
+        ? round((($totalEarningsThisMonth - $totalEarningsLastMonth) / $totalEarningsLastMonth) * 100 )
+        : 0;
+
     
         // Get the first announcement (oldest)
         $firstAnnouncement = Announcement::orderBy('created_at', 'desc')->first();
@@ -152,6 +174,14 @@ class AuthController extends Controller
             'announcements' => $announcements,
             'totalActiveMonthlyClients' => $totalActiveMonthlyClients,
             'activeMonthlyClients' => $activeMonthlyClients,
+
+            'totalEarningsThisWeek' => $totalEarningsThisWeek,
+
+            'totalEarningsLastWeek' => $totalEarningsLastWeek,
+            'weekEarningsPercentage' => $weekEarningsPercentage,
+
+            'totalEarningsLastMonth' => $totalEarningsLastMonth,
+            'monthEarningsPercentage' => $monthEarningsPercentage,
 
         ]);
     }

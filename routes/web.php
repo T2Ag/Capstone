@@ -33,7 +33,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])->middleware(['throttle:6,1'])->name('verification.send');
 });
 
-Route::middleware(['auth', 'role:admin', 'verified'])->group(function () {
+// , 'verified'
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/scan', [LogController::class, 'scan'])->name('scan');
     Route::post('/scan', [LogController::class, 'scanFullScreen'])->name('scanFullScreen');
     Route::get('/register', [RegisterController::class, 'index'])->name('register.index');
@@ -55,7 +56,9 @@ Route::middleware(['auth', 'role:admin|user'])->group(function () {
     Route::put('/edit/{user}', [UserController::class, 'editProfile'])->name('editProfile');
 });
 
-Route::middleware(['auth', 'role:admin', 'verified', 'twofactor'])->group(function () {
+// , 'verified', 'twofactor'
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
     //dashboard
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 
@@ -74,7 +77,8 @@ Route::middleware(['auth', 'role:admin', 'verified', 'twofactor'])->group(functi
     Route::delete('/users/{user}',[UserController::class, 'destroy'])->name('users.destroy');
 });
 
-Route::middleware(['auth', 'role:admin',  'verified', 'twofactor'])->group(function () {
+// ,  'verified', 'twofactor'
+Route::middleware(['auth', 'role:admin'])->group(function () {
     // Clients
     Route::get('/clients', [ClientController::class, 'index'])->name('clients');
     Route::post('/clients',[ClientController::class, 'store'])->name('clients.store');
