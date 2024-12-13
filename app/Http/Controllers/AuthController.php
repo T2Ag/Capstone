@@ -92,7 +92,7 @@ class AuthController extends Controller
         $year = $request->input('year', now()->year);
 
         $gymVisits = Log::selectRaw(
-            "strftime('%m', date) as month, COUNT(*) as total_visits"
+            "MONTH(date) as month, COUNT(*) as total_visits"
         )
         ->whereNotNull('transaction_id')
         ->groupBy('month')
@@ -175,21 +175,21 @@ class AuthController extends Controller
             'totals' => $totals,
             'totalClients' => $totalClients,
             'totalMembers' => $totalMembers,
-            'totalEarnings' => $totalEarnings,
+            'totalEarnings' => (float)$totalEarnings,
             'totalCoaches' => $totalCoaches,
             'totalLogsThisMonth' => $totalLogsThisMonth,
-            'totalEarningsThisMonth' => $totalEarningsThisMonth,
+            'totalEarningsThisMonth' => (float)$totalEarningsThisMonth,
             'firstAnnouncement' => $firstAnnouncement,
             'announcements' => $announcements,
             'totalActiveMonthlyClients' => $totalActiveMonthlyClients,
             'activeMonthlyClients' => $activeMonthlyClients,
 
-            'totalEarningsThisWeek' => $totalEarningsThisWeek,
+            'totalEarningsThisWeek' => (float)$totalEarningsThisWeek,
 
-            'totalEarningsLastWeek' => $totalEarningsLastWeek,
+            'totalEarningsLastWeek' => (float)$totalEarningsLastWeek,
             'weekEarningsPercentage' => $weekEarningsPercentage,
 
-            'totalEarningsLastMonth' => $totalEarningsLastMonth,
+            'totalEarningsLastMonth' => (float)$totalEarningsLastMonth,
             'monthEarningsPercentage' => $monthEarningsPercentage,
 
             'totalWalkInClients' => $totalWalkInClients,

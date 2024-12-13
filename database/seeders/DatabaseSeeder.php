@@ -24,13 +24,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             RegistrationSeeder::class,
             PaymentMethodSeeder::class,
-            CoachSeeder::class,
-            TrainingSeeder::class,
-            ClientSeeder::class,
-            TrainingTransactionSeeder::class,
             AnnouncementSeeder::class,
-            TodoListSeeder::class,
-            TransactionSeeder::class
         ]);
     }
 }
