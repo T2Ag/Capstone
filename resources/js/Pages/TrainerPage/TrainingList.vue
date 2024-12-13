@@ -5,13 +5,12 @@
          <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-semibold text-gray-800">Training List</h1>
 
-            <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">
+            <!-- <button type="button" class="rounded text-white px-3 py-2 bg-red-700" data-bs-toggle="modal" data-bs-target="#createModal">
                Add Training
-            </button>
+            </button> -->
 
             <AddCoachTraining :coach="coach" />
             
-
          </div>
 
          <div v-if="success" class="px-2 py-1 bg-green-200 rounded border-1 border-green-500 mb-4">
@@ -41,13 +40,13 @@
                   <div class="flex justify-end space-x-2 mt-4">
                      <Link :href="route('trainingList.view',  { training: training.id })" class="text-blue-500 text-[20px] ">
                         <i class="bi bi-eye text-xl"></i>
-                     </lINK>
-                     <button class="text-green-500 hover:text-green-700 transition-colors" :data-bs-toggle="'modal'" :data-bs-target="`#editModal-${training.id}`">
+                     </Link>
+                     <!-- <button class="text-green-500 hover:text-green-700 transition-colors" :data-bs-toggle="'modal'" :data-bs-target="`#editModal-${training.id}`">
                         <i class="bi bi-pencil text-xl"></i>
                      </button>
                      <button class="text-red-500 hover:text-red-700 transition-colors" @click="openDeleteModal(training)" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <i class="bi bi-trash text-xl"></i>
-                     </button>
+                     </button> -->
                   </div>
                </div>
 

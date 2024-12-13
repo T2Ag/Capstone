@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Log;
 use App\Models\TodoList;
+use App\Models\Training;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,6 +19,8 @@ class UserPageController extends Controller
         $totalGymVisits = $user->client ? $user->client->logs->count() : 0;
 
         $paymentMethod = $user->client ? $user->client->payment_method : null;
+
+        $training = Training::with('coach')->find($user->client->training_id);
 
         // Get the latest monthly transaction for the user's client
         $latestMonthlyTransaction = $user->client
@@ -33,6 +38,7 @@ class UserPageController extends Controller
         $announcements = Announcement::where('id', '!=', optional($firstAnnouncement)->id)
             ->orderBy('created_at', 'desc')
             ->paginate(3);
+            
     
         return Inertia::render('UserPage/UserIndex', [
             'user' => $user,
@@ -40,6 +46,7 @@ class UserPageController extends Controller
             'firstAnnouncement' => $firstAnnouncement,
             'announcements' => $announcements,
             'paymentMethod' => $paymentMethod,
+            'training' => $training,
             'latestMonthlyTransaction' => $latestMonthlyTransaction,
         ]);
     }
@@ -47,7 +54,7 @@ class UserPageController extends Controller
     public function userToDoList(Request $request)
     {
         $user = User::with('client')->find($request->user()->id);
-        
+
         // Check if the client exists
         if (!$user->client) {
             return Inertia::render('UserPage/ToDoList', [
@@ -58,9 +65,51 @@ class UserPageController extends Controller
 
         $todos = TodoList::where('client_id', $user->client->id)->get();
 
+        // Load the training and its coach for the user's client
+        $training = Training::with('coach')->find($user->client->training_id);
+
         return Inertia::render('UserPage/ToDoList', [
             'user' => $user,
             'todos' => $todos,
+            'training' => $training,
+            'success' => session('success')
+        ]);
+    }
+
+    public function userHistory(Request $request)
+    {
+        $user = User::with('client')->find($request->user()->id);
+
+        // Ensure the user's client relationship exists
+        $client = $user->client;
+
+        if (!$client) {
+            return Inertia::render('UserPage/History', [
+                'user' => $user,
+                'logs' => [],
+                'transactions' => [],
+                'success' => session('success'),
+            ]);
+        }
+
+        // Fetch logs for the user's client
+        $logs = Log::with('client', 'payment_method')
+        ->where('client_id', $client->id) 
+        ->orderBy('date', 'desc')
+        ->paginate(10)
+        ->withQueryString();
+
+        // Fetch transactions for the user's client
+        $transactions = Transaction::with('client', 'payment_method')
+        ->where('client_id', $client->id) 
+        ->orderBy('date', 'desc')
+        ->paginate(10)
+        ->withQueryString();
+        
+        return Inertia::render('UserPage/History', [
+            'user' => $user,
+            'logs' => $logs,
+            'transactions' => $transactions,
             'success' => session('success')
         ]);
     }

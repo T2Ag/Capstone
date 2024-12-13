@@ -13,9 +13,9 @@
             </div>
       
             <div class="flex justify-end my-2 mx-2">
-               <button type="button" class="rounded text-white px-3 py-2 bg-gradient-to-r from-red-600 to-red-500" data-bs-toggle="modal" data-bs-target="#createModal">
+               <!-- <button type="button" class="rounded text-white px-3 py-2 bg-gradient-to-r from-red-600 to-red-500" data-bs-toggle="modal" data-bs-target="#createModal">
                   Add Client
-               </button>
+               </button> -->
             </div>
       
          </div>

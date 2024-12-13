@@ -120,7 +120,12 @@ const openSideBar = () => {
 
     <div class="p-2.5 mt-3 text-gray-700 flex text-[15px] font-bold rounded px-4 duration-300 cursor-pointer hover:bg-gray-100 hover:text-red-500"
     :class="{'bg-gray-100 text-red-500': isActive('/userToDoList')}">
-      <Link :href="route('userToDoList')">TO DO LISTS</Link>
+      <Link :href="route('userToDoList')">TRAINING</Link>
+    </div>
+
+    <div class="p-2.5 mt-3 text-gray-700 flex text-[15px] font-bold rounded px-4 duration-300 cursor-pointer hover:bg-gray-100 hover:text-red-500"
+    :class="{'bg-gray-100 text-red-500': isActive('/userHistory')}">
+      <Link :href="route('userHistory')">GYM HISTORY</Link>
     </div>
 
     

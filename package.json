@@ -17,6 +17,8 @@
     "dependencies": {
         "@inertiajs/vue3": "^1.2.0",
         "@vitejs/plugin-vue": "^5.1.2",
+        "apexcharts": "^4.2.0",
+        "flowbite": "^2.5.2",
         "html5-qrcode": "^2.3.8",
         "vue": "^3.4.38",
         "vue-router": "^4.4.3",

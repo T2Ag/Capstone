@@ -87,8 +87,9 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        $year = $request->input('year', now()->year);
 
         $gymVisits = Log::selectRaw(
             "strftime('%m', date) as month, COUNT(*) as total_visits"
@@ -160,6 +161,14 @@ class AuthController extends Controller
         $announcements = Announcement::where('id', '!=', optional($firstAnnouncement)->id)
             ->orderBy('created_at', 'desc')
             ->get();
+
+        $totalWalkInClients = Client::whereHas('payment_method', function($query) {
+            $query->where('type', 'walk-in');
+        })->count();
+
+        $totalMonthlyClients = Client::whereHas('payment_method', function($query) {
+            $query->where('type', 'monthly');
+        })->count();
     
         return Inertia::render('Admin/AdminIndex', [
             'months' => $months,
@@ -182,6 +191,10 @@ class AuthController extends Controller
 
             'totalEarningsLastMonth' => $totalEarningsLastMonth,
             'monthEarningsPercentage' => $monthEarningsPercentage,
+
+            'totalWalkInClients' => $totalWalkInClients,
+            
+            'totalMonthlyClients' => $totalMonthlyClients,
 
         ]);
     }

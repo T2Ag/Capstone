@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CoachController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TodoListController;
 use App\Http\Controllers\TrainerPageController;
 use App\Http\Controllers\TrainingController;
@@ -26,6 +27,8 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/export-monthly-report', [ReportController::class, 'exportMonthlyReport'])->name('export.monthly.report');
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
@@ -166,5 +169,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::post('/userToDoList', [UserPageController::class, 'store'])->name('userToDoList.store');
     Route::put('/userToDoList/{todo}', [UserPageController::class, 'update'])->name('userToDoList.update');
     Route::delete('userToDoList/{todo}', [UserPageController::class, 'destroy'])->name('userToDoList.destroy');
+    
+    Route::get('/userHistory', [UserPageController::class, 'userHistory'])->name('userHistory');
 
 });

@@ -68,6 +68,46 @@
             </div>
          </div>
 
+         <!-- Trainor Section -->
+         <div class="bg-white mt-6 rounded-lg shadow-lg">
+            <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-400 border-b border-blue-300">
+               <p class="text-xl text-white font-semibold flex items-center">
+                  <i class="bi bi-person-badge-fill mr-3"></i>
+                  TRAINING DETAILS
+               </p>
+            </div>
+
+            <div class="p-6">
+               <div class="flex items-center mb-4">
+                  <i class="bi bi-person-circle text-blue-500 text-3xl mr-4"></i>
+                  <h2 class="text-2xl font-bold text-gray-800">Meet Your Trainor</h2>
+               </div>
+
+               <p class="text-gray-600" v-if="training">
+                  Stay connected and motivated with personalized training sessions.
+               </p>
+
+               <!-- If there's no training -->
+               <div v-else>
+                  <p class="text-gray-600">
+                     You're not currently enrolled in any training. Contact us to start your personalized training sessions!
+                  </p>
+               </div>
+
+               <ul v-if="training" class="mt-4 space-y-3">
+                  <li class="flex items-center">
+                     <i class="bi bi-check-circle text-blue-500 mr-3"></i>
+                     <span class="text-gray-700">Trainor Name: {{ training.coach.first_name }} {{ training.coach.middle_initial ? training.coach.middle_initial + '.' : '' }} {{ training.coach.last_name }}</span>
+                  </li>
+
+                  <li class="flex items-center">
+                     <i class="bi bi-check-circle text-blue-500 mr-3"></i>
+                     <span class="text-gray-700">Training Name: {{ training.name }}</span>
+                  </li>
+               </ul>
+            </div>
+         </div>
+
          <!-- First Announcement Section -->
          <div v-if="firstAnnouncement" class="bg-white mt-4 m-3 rounded-lg shadow-lg overflow-hidden flex-1">
             <div class="bg-gradient-to-r from-red-500 to-red-400 p-6">
@@ -157,7 +197,8 @@ const props = defineProps({
    announcements: (Array, Object),
    firstAnnouncement: Object,
    paymentMethod: Object,
-   latestMonthlyTransaction: Object
+   latestMonthlyTransaction: Object,
+   training: Object
 })
 
 // Function to check if today's date is between start and end dates
